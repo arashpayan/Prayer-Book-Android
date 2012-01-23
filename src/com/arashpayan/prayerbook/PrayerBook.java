@@ -1,34 +1,34 @@
 package com.arashpayan.prayerbook;
 
 import android.app.ActionBar;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.DataSetObserver;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
+import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class PrayerBook extends FragmentActivity
 {
     public static final int CONTENT_VIEW_ID = 10101010;
     public static final String TAG = "PrayerBook";
+    
+    private FragmentActivity currentFragment;
+    
+    public final static int ACTIONITEM_SETTINGS             = 5;
+    public final static int ACTIONITEM_ABOUT                = 6;
     
     /** Called when the activity is first created. */
     @Override
@@ -42,7 +42,7 @@ public class PrayerBook extends FragmentActivity
             // then we need to copy over the latest database
             File databaseFile = new File(getFilesDir(), "pbdb.db");
             Database.databaseFile = databaseFile;
-            Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
+//            Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
             try {
                 BufferedInputStream is = new BufferedInputStream(getResources().openRawResource(R.raw.pbdb), 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
@@ -70,21 +70,71 @@ public class PrayerBook extends FragmentActivity
         getActionBar().setListNavigationCallbacks(new NavigationList(this), new ActionBar.OnNavigationListener() {
 
             public boolean onNavigationItemSelected(int arg0, long arg1) {
-                Log.i(PrayerBook.TAG, "onNavigationItemSelected("+arg0+", "+arg1+")");
+//                Toast.makeText(getApplicationContext(), "onNavigationItemSelected", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
         
         FrameLayout frame = new FrameLayout(this);
         frame.setId(CONTENT_VIEW_ID);
-        setContentView(frame, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        setContentView(frame);
         
         CategoriesFragment categoriesFragment = new CategoriesFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(CONTENT_VIEW_ID, categoriesFragment).commit();
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, ACTIONITEM_SETTINGS, ACTIONITEM_SETTINGS, "Settings");
+        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, "About");
         
-//        CategoryPrayersFragment categoryPrayersFragment = new CategoryPrayersFragment("Detachment");
+        return true;
+    }
+    
+    @Override
+    public void onStart() {
+        super.onStart();
+        
+        Log.i(TAG, "PrayerBook::onStart");
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "PrayerBook::onPause");
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        Log.i(TAG, "PrayerBook::onResume");
+    }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        
+        Log.i(TAG, "PrayerBook::onStop");
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        
+        Log.i(TAG, "PrayerBook::onDestroy");
+        
+//        FragmentManager fm = getSupportFragmentManager();
+//        
 //        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.add(CONTENT_VIEW_ID, categoryPrayersFragment).commit();
+//        ft.replace(RESULT_OK, null);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        Log.i(TAG, "PrayerBook::onConfigurationChanged");
     }
 }

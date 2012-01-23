@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.arashpayan.util.Graphics;
 
 /**
@@ -27,6 +29,11 @@ import com.arashpayan.util.Graphics;
 public class CategoryPrayersFragment extends Fragment {
     
     private String category;
+    private CategoryPrayersAdapter adapter;
+    
+//    public CategoryPrayersFragment() {
+//        
+//    }
     
     public CategoryPrayersFragment(String category) {
         super();
@@ -42,12 +49,25 @@ public class CategoryPrayersFragment extends Fragment {
     }
     
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        setHasOptionsMenu(false);
+    }
+    
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ListView list = new ListView(getActivity());
-        list.setAdapter(new CategoryPrayersAdapter());
+        adapter = new CategoryPrayersAdapter();
+        list.setAdapter(adapter);
         list.setOnItemClickListener(new OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {
+                PrayerFragment prayerFragment = new PrayerFragment(itemId);
+                
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(PrayerBook.CONTENT_VIEW_ID, prayerFragment).commit();
             }
         });
         
@@ -74,7 +94,11 @@ public class CategoryPrayersFragment extends Fragment {
         }
 
         public long getItemId(int position) {
-            return position;
+            prayersCursor.moveToPosition(position);
+            int idColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
+            long prayerId = prayersCursor.getLong(idColumnIndex);
+            
+            return prayerId;
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -84,7 +108,7 @@ public class CategoryPrayersFragment extends Fragment {
             else
             {
                 tv = new TextView(getActivity());
-                tv.setTextColor(Color.argb(255, 255, 255, 255));
+//                tv.setTextColor(Color.argb(255, 255, 255, 255));
                 tv.setPadding(Graphics.pixels(tv.getContext(), 8), 0, 0, 0);
                 tv.setMinimumHeight(Graphics.pixels(tv.getContext(), 48));
                 tv.setGravity(Graphics.GRAVITY_CENTER_VERTICAL | Graphics.GRAVITY_LEFT);
@@ -98,6 +122,5 @@ public class CategoryPrayersFragment extends Fragment {
             
             return tv;
         }
-        
     }
 }

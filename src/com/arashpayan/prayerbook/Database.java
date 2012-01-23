@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,9 @@ public class Database {
     public final static String PRAYERTEXT_COLUMN    = "prayerText";
     public final static String CITATION_COLUMN      = "citation";
     public final static String WORDCOUNT_COLUMN     = "wordCount";
+    public final static String SEARCHTEXT_COLUMN    = "searchText";
+    
+    private HashMap<String, Integer> prayerCountCache;
     
     private Database() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
@@ -41,6 +45,8 @@ public class Database {
             Log.w(PrayerBook.TAG, "Got a null when trying to popen the database.");
         else
             Log.i(PrayerBook.TAG, "Opened prayer database");
+        
+        prayerCountCache = new HashMap<String, Integer>();
     }
     
     public synchronized static Database getInstance() {
@@ -67,6 +73,28 @@ public class Database {
         return cursor;
     }
     
+    public int getPrayerCountForCategory(String category, String language) {
+        // check the cache first
+        if (prayerCountCache.containsKey(language + category))
+            return prayerCountCache.get(language + category);
+        
+        String[] selectionArgs = {category, language};
+        Cursor cursor = pbDatabase.rawQuery(
+                "SELECT COUNT(id) FROM prayers WHERE category=? and language=?",
+                selectionArgs);
+        
+        if (cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            prayerCountCache.put(language+category, new Integer(count));
+            return count;
+        }
+        
+        // should never happen
+        return 0;
+    }
+    
     private Map<String, List> getCategories() {
         for (String lang : languages)
         {
@@ -78,9 +106,7 @@ public class Database {
     
     public Cursor getPrayers(String category) {
         String[] cols = {ID_COLUMN,
-//                            PRAYERTEXT_COLUMN,
                             OPENINGWORDS_COLUMN,
-//                            CITATION_COLUMN,
                             CATEGORY_COLUMN,
                             AUTHOR_COLUMN,
                             LANGUAGE_COLUMN,
@@ -97,6 +123,15 @@ public class Database {
                 null,
                 null,
                 null);
+        
+        return cursor;
+    }
+    
+    public Cursor getPrayer(long prayerId) {
+        String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN};
+        String selectionClause = ID_COLUMN + "=?";
+        String[] selectionArgs = {new Long(prayerId).toString()};
+        Cursor cursor = pbDatabase.query(PRAYERS_TABLE, cols, selectionClause, selectionArgs, null, null, null);
         
         return cursor;
     }

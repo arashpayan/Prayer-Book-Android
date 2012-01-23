@@ -5,19 +5,29 @@
 package com.arashpayan.prayerbook;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings.TextSize;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.arashpayan.util.Graphics;
 
 /**
@@ -33,6 +43,13 @@ public class CategoriesFragment extends Fragment {
         super.onAttach(activity);
             
         Log.i(PrayerBook.TAG, "CategoriesFragment.onAttach()");
+    }
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+//        setHasOptionsMenu(true);
     }
     
     @Override
@@ -54,6 +71,57 @@ public class CategoriesFragment extends Fragment {
         });
         
         return list;
+    }
+    
+    class CategoryView extends RelativeLayout {
+        private TextView categoryTextView;
+        private TextView prayerCountTextView;
+        
+        private static final int CATEGORY_TEXTVIEW_ID       = 38;
+        private static final int PRAYER_COUNT_TEXTVIEW_ID   = 32;
+        
+        public CategoryView(Context context) {
+            super(context);
+            
+            setMinimumHeight(Graphics.pixels(context, 48));
+            
+            categoryTextView = new TextView(context);
+            categoryTextView.setTextSize(17 * getResources().getConfiguration().fontScale);
+            categoryTextView.setPadding(Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 8));
+            categoryTextView.setTypeface(Typeface.DEFAULT_BOLD);
+            categoryTextView.setId(CATEGORY_TEXTVIEW_ID);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+            params.addRule(ALIGN_PARENT_LEFT, NO_ID);
+            params.addRule(RelativeLayout.CENTER_VERTICAL, CATEGORY_TEXTVIEW_ID);
+            categoryTextView.setLayoutParams(params);
+            addView(categoryTextView);
+            
+            prayerCountTextView = new TextView(context);
+            prayerCountTextView.setTextSize(17 * getResources().getConfiguration().fontScale);
+            prayerCountTextView.setPadding(Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 16), Graphics.pixels(context, 8));
+            prayerCountTextView.setId(PRAYER_COUNT_TEXTVIEW_ID);
+            params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+            params.addRule(ALIGN_PARENT_RIGHT, NO_ID);
+            params.addRule(CENTER_VERTICAL, PRAYER_COUNT_TEXTVIEW_ID);
+            prayerCountTextView.setLayoutParams(params);
+            addView(prayerCountTextView);
+        }
+        
+        public CharSequence getCategory() {
+            return categoryTextView.getText();
+        }
+        
+        public void setCategory(CharSequence aCategory) {
+            categoryTextView.setText(aCategory);
+        }
+        
+        public CharSequence getPrayerCount() {
+            return (String)prayerCountTextView.getText();
+        }
+        
+        public void setPrayerCount(CharSequence aPrayerCount) {
+            prayerCountTextView.setText(aPrayerCount);
+        }
     }
     
     class CategoriesAdapter extends BaseAdapter {
@@ -90,24 +158,21 @@ public class CategoriesFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView tv = null;
+            CategoryView categoryView = null;
             if (convertView != null)
-                tv = (TextView)convertView;
+                categoryView = (CategoryView)convertView;
             else
-            {
-                tv = new TextView(getActivity());
-                tv.setTextColor(Color.argb(255, 255, 255, 255));
-                tv.setPadding(Graphics.pixels(tv.getContext(), 8), 0, 0, 0);
-                tv.setMinimumHeight(Graphics.pixels(tv.getContext(), 48));
-                tv.setGravity(Graphics.GRAVITY_CENTER_VERTICAL | Graphics.GRAVITY_LEFT);
-                tv.setTextSize(17);
-            }
+                categoryView = new CategoryView(getActivity());
+            
             categoriesCursor.moveToPosition(position);
             int categoryColumnIndex = categoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
             String category = categoriesCursor.getString(categoryColumnIndex);
-            tv.setText(category);
+            categoryView.setCategory(category);
             
-            return tv;
+            int prayerCount = Database.getInstance().getPrayerCountForCategory(category, "en");
+            categoryView.setPrayerCount(Integer.toString(prayerCount));
+            
+            return categoryView;
         }
     }
 }
