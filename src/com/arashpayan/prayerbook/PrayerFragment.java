@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ShareActionProvider;
 import android.widget.Toast;
 import java.net.URLEncoder;
 
@@ -33,6 +34,8 @@ public class PrayerFragment extends Fragment {
     private static final int ACTIONITEM_INCREASETEXT        = 1;
     private static final int ACTIONITEM_DECREASETEXT        = 2;
     private static final int ACTIONITEM_SHARE               = 3;
+    
+    public PrayerFragment() {}
     
     public PrayerFragment(long aPrayerId) {
         super();
@@ -62,35 +65,45 @@ public class PrayerFragment extends Fragment {
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         menu.add(0, ACTIONITEM_INCREASETEXT, ACTIONITEM_INCREASETEXT, "A+").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add(0, ACTIONITEM_DECREASETEXT, ACTIONITEM_DECREASETEXT, "A-").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, "Share");
+        
+        MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, "Share");
+        ShareActionProvider shareActionProvider = new ShareActionProvider(getActivity());
+        shareItem.setActionProvider(shareActionProvider);
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+        shareActionProvider.setShareIntent(sharingIntent);
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == ACTIONITEM_INCREASETEXT)
-        {
-            scale += 0.05f;
-            webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
-        }
-        else if (item.getItemId() == ACTIONITEM_DECREASETEXT)
-        {
-            scale -= 0.05f;
-            webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
-        }
-        else if (item.getItemId() == ACTIONITEM_SHARE)
-        {
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        switch (item.getItemId()) {
+            case ACTIONITEM_INCREASETEXT:
+                scale += 0.05f;
+                webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                break;
+            case ACTIONITEM_DECREASETEXT:
+                scale -= 0.05f;
+                webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                break;
+            case ACTIONITEM_SHARE:
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                break;
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
         }
         
-        return false;
+        return true;
     }
     
     @Override
     public void onStart() {
         super.onStart();
+        
+        getActivity().getActionBar().setTitle("");
         
         // Create the html for the prayer
         webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
@@ -164,7 +177,6 @@ public class PrayerFragment extends Fragment {
     
     private String getPrayerText() {
         int searchTextIndex = prayerCursor.getColumnIndexOrThrow(Database.SEARCHTEXT_COLUMN);
-        Log.i(PrayerBook.TAG, "searchTextIndex: " + searchTextIndex);
         
         return prayerCursor.getString(searchTextIndex);
     }

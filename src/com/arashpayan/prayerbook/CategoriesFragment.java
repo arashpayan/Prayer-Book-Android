@@ -4,8 +4,10 @@
  */
 package com.arashpayan.prayerbook;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -13,21 +15,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings.TextSize;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.arashpayan.util.Graphics;
 
 /**
@@ -37,6 +35,13 @@ import com.arashpayan.util.Graphics;
 public class CategoriesFragment extends Fragment {
     
     private CategoriesAdapter categoriesAdapter;
+    
+    private static final int ACTIONITEM_SEARCH          = 0;
+    private static final int ACTIONITEM_LANGUAGES       = 1;
+    private static final int ACTIONITEM_ABOUT           = 2;
+    
+    private int firstVisiblePosition;
+    private ListView list;
     
     @Override
     public void onAttach(Activity activity) {
@@ -49,12 +54,75 @@ public class CategoriesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-//        setHasOptionsMenu(true);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        setHasOptionsMenu(true);
+    }
+    
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+        MenuItem menuItem = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menuItem.setIcon(R.drawable.ic_action_search);
+//        SearchManager searchManager = (SearchManager)getActivity().getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView = new SearchView(getActivity());
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        item.setActionView(searchView);
+//
+//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//        item.setIcon(R.drawable.ic_action_search);
+//        menu
+        menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
+        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case ACTIONITEM_SEARCH:
+                
+                break;
+            case ACTIONITEM_LANGUAGES:
+                Intent i = new Intent(getActivity(), LanguagesActivity.class);
+                startActivityForResult(i, 0);
+                break;
+            case ACTIONITEM_ABOUT:
+                AboutDialogFragment adf = new AboutDialogFragment();
+                adf.show(getFragmentManager(), "dialog");
+                break;
+            default:
+                return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public void onStart() {
+        super.onStart();
+        
+        getActivity().getActionBar().setTitle("Prayer Book");
+        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActivity().getActionBar().setHomeButtonEnabled(false);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        
+        firstVisiblePosition = list.getFirstVisiblePosition();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        list.setSelectionFromTop(firstVisiblePosition, 0);
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView list = new ListView(getActivity());
+        list = new ListView(getActivity());
         categoriesAdapter = new CategoriesAdapter();
         list.setAdapter(categoriesAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,6 +152,7 @@ public class CategoriesFragment extends Fragment {
             super(context);
             
             setMinimumHeight(Graphics.pixels(context, 48));
+            setBackgroundColor(Color.argb(0, 0, 0, 0));
             
             categoryTextView = new TextView(context);
             categoryTextView.setTextSize(17 * getResources().getConfiguration().fontScale);
@@ -116,7 +185,7 @@ public class CategoriesFragment extends Fragment {
         }
         
         public CharSequence getPrayerCount() {
-            return (String)prayerCountTextView.getText();
+            return prayerCountTextView.getText();
         }
         
         public void setPrayerCount(CharSequence aPrayerCount) {

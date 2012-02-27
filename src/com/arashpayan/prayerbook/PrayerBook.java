@@ -36,13 +36,15 @@ public class PrayerBook extends FragmentActivity
     {
         super.onCreate(savedInstanceState);
         
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        
         int dbVersion = Preferences.getInstance(getApplication()).getDatabaseVersion();
         if (dbVersion != 1)
         {
             // then we need to copy over the latest database
             File databaseFile = new File(getFilesDir(), "pbdb.db");
             Database.databaseFile = databaseFile;
-//            Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
+            Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
             try {
                 BufferedInputStream is = new BufferedInputStream(getResources().openRawResource(R.raw.pbdb), 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
@@ -64,13 +66,10 @@ public class PrayerBook extends FragmentActivity
         
         Database.getInstance();
         
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setTitle("");
         getActionBar().setListNavigationCallbacks(new NavigationList(this), new ActionBar.OnNavigationListener() {
 
             public boolean onNavigationItemSelected(int arg0, long arg1) {
-//                Toast.makeText(getApplicationContext(), "onNavigationItemSelected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "onNavigationItemSelected", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -84,13 +83,18 @@ public class PrayerBook extends FragmentActivity
         ft.add(CONTENT_VIEW_ID, categoriesFragment).commit();
     }
     
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, ACTIONITEM_SETTINGS, ACTIONITEM_SETTINGS, "Settings");
-        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, "About");
-        
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        menu.add(0, ACTIONITEM_SETTINGS, ACTIONITEM_SETTINGS, "Settings");
+//        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, "About");
+//        
+//        return true;
+//    }
+    
+//    public boolean onOptionsItemSelected(Menu menu) {
+//        Toast.makeText(this, "onOptionsItemSelected", Toast.LENGTH_SHORT).show();
+//        return true;
+//    }
     
     @Override
     public void onStart() {
