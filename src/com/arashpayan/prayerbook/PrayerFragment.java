@@ -7,24 +7,20 @@ package com.arashpayan.prayerbook;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.ShareActionProvider;
-import android.widget.Toast;
-import java.net.URLEncoder;
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  *
  * @author arash
  */
-public class PrayerFragment extends Fragment {
+public class PrayerFragment extends SherlockFragment {
     
     private WebView webView = null;
     private Cursor prayerCursor;
@@ -61,18 +57,20 @@ public class PrayerFragment extends Fragment {
         return webView;
     }
     
+    
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         menu.add(0, ACTIONITEM_INCREASETEXT, ACTIONITEM_INCREASETEXT, "A+").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add(0, ACTIONITEM_DECREASETEXT, ACTIONITEM_DECREASETEXT, "A-").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, "Share");
         
-        MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, "Share");
-        ShareActionProvider shareActionProvider = new ShareActionProvider(getActivity());
-        shareItem.setActionProvider(shareActionProvider);
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
-        shareActionProvider.setShareIntent(sharingIntent);
+//        MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, "Share");
+//        ShareActionProvider shareActionProvider = new ShareActionProvider(getActivity());
+//        shareItem.setActionProvider(shareActionProvider);
+//        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+//        sharingIntent.setType("text/plain");
+//        sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+//        shareActionProvider.setShareIntent(sharingIntent);
     }
     
     @Override

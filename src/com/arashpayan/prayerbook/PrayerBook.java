@@ -1,18 +1,16 @@
 package com.arashpayan.prayerbook;
 
-import android.app.ActionBar;
 import android.content.res.Configuration;
+import android.content.res.Resources.Theme;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import com.actionbarsherlock.ActionBarSherlock;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,12 +18,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class PrayerBook extends FragmentActivity
+public class PrayerBook extends SherlockFragmentActivity
 {
     public static final int CONTENT_VIEW_ID = 10101010;
     public static final String TAG = "PrayerBook";
     
-    private FragmentActivity currentFragment;
+    private SherlockFragmentActivity currentFragment;
     
     public final static int ACTIONITEM_SETTINGS             = 5;
     public final static int ACTIONITEM_ABOUT                = 6;
@@ -34,8 +32,11 @@ public class PrayerBook extends FragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+//        setTheme(Sherlock);
+//        setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
+        getApplication().setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
         
+        super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         
         int dbVersion = Preferences.getInstance(getApplication()).getDatabaseVersion();
@@ -43,10 +44,10 @@ public class PrayerBook extends FragmentActivity
         {
             // then we need to copy over the latest database
             File databaseFile = new File(getFilesDir(), "pbdb.db");
-            Database.databaseFile = databaseFile;
+            Database.databaseFile = databaseFile; 
             Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
             try {
-                BufferedInputStream is = new BufferedInputStream(getResources().openRawResource(R.raw.pbdb), 8192);
+                BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet") /*getResources().openRawResource(R.raw.pbdb)*/, 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
                 byte[] data = new byte[4096];
                 while (is.available() != 0)
@@ -65,8 +66,9 @@ public class PrayerBook extends FragmentActivity
         }
         
         Database.getInstance();
-        
-        getActionBar().setListNavigationCallbacks(new NavigationList(this), new ActionBar.OnNavigationListener() {
+        ActionBarSherlock sherlock = getSherlock();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setListNavigationCallbacks(new NavigationList(this), new ActionBar.OnNavigationListener() {
 
             public boolean onNavigationItemSelected(int arg0, long arg1) {
                 Toast.makeText(getApplicationContext(), "onNavigationItemSelected", Toast.LENGTH_SHORT).show();

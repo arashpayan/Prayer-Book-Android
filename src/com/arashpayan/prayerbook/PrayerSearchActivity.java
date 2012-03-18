@@ -4,12 +4,12 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.support.v4.app.FragmentActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 /**
  *
  * @author arash
  */
-public class PrayerSearchActivity extends FragmentActivity {
+public class PrayerSearchActivity extends SherlockFragmentActivity {
     
 }

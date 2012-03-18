@@ -10,13 +10,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import com.actionbarsherlock.app.SherlockDialogFragment;
 
 /**
  *
  * @author arash
  */
-public class AboutDialogFragment extends DialogFragment {
+public class AboutDialogFragment extends SherlockDialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstance) {

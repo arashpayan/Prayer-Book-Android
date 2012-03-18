@@ -5,13 +5,13 @@
 package com.arashpayan.prayerbook;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
 /**
  *
  * @author arash
  */
-public class LanguagesActivity extends PreferenceActivity {
+public class LanguagesActivity extends SherlockPreferenceActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {

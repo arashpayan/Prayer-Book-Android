@@ -4,13 +4,13 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockActivity;
 
 /**
  *
  * @author arash
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends SherlockActivity {
     
     
     
