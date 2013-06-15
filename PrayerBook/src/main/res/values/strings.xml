@@ -15,4 +15,5 @@
     <string name="persian">فارسی</string>
     <string name="french">Français</string>
     <string name="dutch">Nederlands</string>
+    <string name="favorites">Favorites</string>
 </resources>
