@@ -1,14 +1,13 @@
 package com.arashpayan.prayerbook;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -17,10 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
-import com.arashpayan.util.L;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,9 +30,10 @@ import java.io.OutputStream;
 public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigationListener
 {
     private static final String TAG = "PrayerBook";
-    
-    public final static int ACTIONITEM_LANGUAGES            = 5;
-    public final static int ACTIONITEM_ABOUT                = 6;
+
+    private final static int ACTIONITEM_SEARCH              = 4;
+    private final static int ACTIONITEM_LANGUAGES           = 5;
+    private final static int ACTIONITEM_ABOUT               = 6;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -52,7 +51,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
             Database.databaseFile = databaseFile; 
             Log.i(TAG, "database file: " + databaseFile.getAbsolutePath());
             try {
-                BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet") /*getResources().openRawResource(R.raw.pbdb)*/, 8192);
+                BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet"), 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
                 byte[] data = new byte[4096];
                 while (is.available() != 0)
@@ -82,6 +81,9 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
+        item.setIcon(R.drawable.ic_action_search);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
         menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
 
@@ -89,14 +91,76 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menu) {
-        Toast.makeText(this, "onOptionsItemSelected", Toast.LENGTH_SHORT).show();
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case ACTIONITEM_SEARCH:
+
+                break;
+            case ACTIONITEM_LANGUAGES:
+                showLanguageDialog();
+                break;
+            case ACTIONITEM_ABOUT:
+                AboutDialogFragment adf = new AboutDialogFragment();
+                adf.show(getSupportFragmentManager(), "dialog");
+                break;
+            default:
+                return false;
+        }
+
         return true;
     }
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         return true;
+    }
+
+    private void showLanguageDialog() {
+        Preferences prefs = Preferences.getInstance(getApplication());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.languages);
+        builder.setMultiChoiceItems(new CharSequence[]{getString(R.string.english),
+                getString(R.string.espanol),
+                getString(R.string.farsi),
+                getString(R.string.francais),
+                getString(R.string.nederlands)},
+                new boolean[]{
+                        prefs.isEnglishEnabled(),
+                        prefs.isSpanishEnabled(),
+                        prefs.isPersianEnabled(),
+                        prefs.isFrenchEnabled(),
+                        prefs.isDutchEnabled()},
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        switch (which) {
+                            case 0:
+                                Preferences.getInstance(getApplication()).setEnglishEnabled(isChecked);
+                                break;
+                            case 1:
+                                Preferences.getInstance(getApplication()).setSpanishEnabled(isChecked);
+                                break;
+                            case 2:
+                                Preferences.getInstance(getApplication()).setPersianEnabled(isChecked);
+                                break;
+                            case 3:
+                                Preferences.getInstance(getApplication()).setFrenchEnabled(isChecked);
+                                break;
+                            case 4:
+                                Preferences.getInstance(getApplication()).setDutchEnabled(isChecked);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                App.postOnBus(new LanguagesChangedEvent());
+            }
+        });
+        builder.show();
     }
 
     static private class NavigationSpinnerAdapter extends BaseAdapter {

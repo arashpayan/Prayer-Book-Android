@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 public class CategoryPrayersActivity extends FragmentActivity {
     
     public static final String CATEGORY_ARGUMENT = "Category";
+    public static final String LANGUAGE_ARGUMENT = "Language";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,9 +23,11 @@ public class CategoryPrayersActivity extends FragmentActivity {
         
         if (savedInstanceState == null) {
             String category = getIntent().getStringExtra(CATEGORY_ARGUMENT);
+            Database.Language language = getIntent().getParcelableExtra(LANGUAGE_ARGUMENT);
             CategoryPrayersFragment fragment = new CategoryPrayersFragment();
             Bundle args = new Bundle();
             args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, category);
+            args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, language);
             fragment.setArguments(args);
             
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

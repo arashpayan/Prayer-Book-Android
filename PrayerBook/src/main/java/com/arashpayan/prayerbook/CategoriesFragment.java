@@ -4,27 +4,36 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CursorAdapter;
+import android.util.Pair;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
+import com.arashpayan.util.L;
+import com.commonsware.cwac.merge.MergeAdapter;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  *
@@ -35,74 +44,85 @@ public class CategoriesFragment extends Fragment {
     public static final String CATEGORIES_TAG = "Categories";
     
     private CategoriesAdapter categoriesAdapter;
-    
-    private static final int ACTIONITEM_SEARCH          = 0;
-    private static final int ACTIONITEM_LANGUAGES       = 1;
-    private static final int ACTIONITEM_ABOUT           = 2;
+    private MergeAdapter mMergeAdapter;
     
     private int firstVisiblePosition;
-    private ListView list;
-    
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    private ListView mListView;
+
+    private MergeAdapter buildAdapter() {
+        LinkedList<Database.Language> enabledLanguages = getEnabledLanguages();
+        MergeAdapter mergeAdapter = new MergeAdapter();
+        boolean showSectionTitles = enabledLanguages.size() > 1;
+        for (Database.Language l : enabledLanguages) {
+            if (showSectionTitles) {
+                ListSectionTitle title = new ListSectionTitle(getActivity(), getString(l.humanName));
+                mergeAdapter.addView(title, false);
+            }
+            CategoriesAdapter adapter = new CategoriesAdapter(l);
+            mergeAdapter.addAdapter(adapter);
+        }
+
+        return mergeAdapter;
     }
-    
-    @Override
+
+    private LinkedList<Database.Language> getEnabledLanguages() {
+        Preferences preferences = Preferences.getInstance(getActivity().getApplication());
+        LinkedList<Database.Language> enabledLanguages = new LinkedList<Database.Language>();
+        if (preferences.isEnglishEnabled()) {
+            enabledLanguages.add(Database.Language.English);
+        }
+        if (preferences.isSpanishEnabled()) {
+            enabledLanguages.add(Database.Language.Spanish);
+        }
+        if (preferences.isPersianEnabled()) {
+            enabledLanguages.add(Database.Language.Persian);
+        }
+        if (preferences.isFrenchEnabled()) {
+            enabledLanguages.add(Database.Language.French);
+        }
+        if (preferences.isDutchEnabled()) {
+            enabledLanguages.add(Database.Language.Dutch);
+        }
+
+        if (enabledLanguages.isEmpty()) {
+            // find the user's locale and see if it matches any of the known languages
+            Locale defaultLocale = Locale.getDefault();
+            String langCode = defaultLocale.getLanguage();
+            if (langCode.startsWith(Database.Language.English.code)) {
+                enabledLanguages.add(Database.Language.English);
+            } else if (langCode.startsWith(Database.Language.Spanish.code)) {
+                enabledLanguages.add(Database.Language.Spanish);
+            } else if (langCode.startsWith(Database.Language.Persian.code)) {
+                enabledLanguages.add(Database.Language.French);
+            } else if (langCode.startsWith(Database.Language.French.code)) {
+                enabledLanguages.add(Database.Language.Dutch);
+            }
+        }
+
+        // if it's still empty, just enable English
+        if (enabledLanguages.isEmpty()) {
+            enabledLanguages.add(Database.Language.English);
+        }
+
+        return enabledLanguages;
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-//        getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//        setHasOptionsMenu(true);
+
+        App.registerOnBus(this);
     }
-    
-    @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-        MenuItem menuItem = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        
-        
-//        SearchManager searchManager = (SearchManager)getActivity().getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView = new SearchView(getActivity());
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-//        item.setActionView(searchView);
-//
-//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//        item.setIcon(R.drawable.ic_action_search);
-//        menu
-        
-        
-        
-        menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
-        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        App.unregisterFromBus(this);
     }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case ACTIONITEM_SEARCH:
-                
-                break;
-            case ACTIONITEM_LANGUAGES:
-                Intent i = new Intent(getActivity(), LanguagesActivity.class);
-                startActivityForResult(i, 0);
-                break;
-            case ACTIONITEM_ABOUT:
-                AboutDialogFragment adf = new AboutDialogFragment();
-                adf.show(getFragmentManager(), "dialog");
-                break;
-            default:
-                return false;
-        }
-        
-        return true;
-    }
-    
+
     @Override
     public void onStart() {
         super.onStart();
-        
-//        getActivity().getActionBar().setTitle("Prayer Book");
+
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
         getActivity().getActionBar().setHomeButtonEnabled(false);
     }
@@ -111,31 +131,48 @@ public class CategoriesFragment extends Fragment {
     public void onPause() {
         super.onPause();
         
-        firstVisiblePosition = list.getFirstVisiblePosition();
+        firstVisiblePosition = mListView.getFirstVisiblePosition();
     }
     
     @Override
     public void onResume() {
         super.onResume();
-        
-        list.setSelectionFromTop(firstVisiblePosition, 0);
+
+        mListView.setSelectionFromTop(firstVisiblePosition, 0);
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        list = new ListView(getActivity());
-        categoriesAdapter = new CategoriesAdapter();
-        list.setAdapter(categoriesAdapter);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView = new ListView(getActivity());
+        mMergeAdapter = buildAdapter();
+        mListView.setAdapter(mMergeAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {
-                Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
-                i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, (String)categoriesAdapter.getItem(index));
-                startActivity(i);
+                onCategoryClicked(index, itemId);
             }
         });
         
-        return list;
+        return mListView;
+    }
+
+    private void onCategoryClicked(int index, long itemId) {
+        L.i("index: " + index + ", itemId: " + itemId);
+        Pair<String, Database.Language> item = (Pair<String, Database.Language>) mMergeAdapter.getItem(index);
+        Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
+        i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, item.first);
+        i.putExtra(CategoryPrayersActivity.LANGUAGE_ARGUMENT, (Parcelable) item.second);
+        startActivity(i);
+    }
+
+    @Subscribe
+    public void onLanguagesChanged(LanguagesChangedEvent event) {
+        if (mListView == null) {
+            return;
+        }
+
+        mMergeAdapter = buildAdapter();
+        mListView.setAdapter(mMergeAdapter);
     }
     
     class CategoryView extends RelativeLayout {
@@ -150,10 +187,11 @@ public class CategoriesFragment extends Fragment {
             
             setMinimumHeight(Graphics.pixels(context, 48));
             setBackgroundColor(Color.argb(0, 0, 0, 0));
+            int eightDp = Graphics.pixels(context, 8);
             
             categoryTextView = new TextView(context);
-            categoryTextView.setTextSize(17 * getResources().getConfiguration().fontScale);
-            categoryTextView.setPadding(Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 8));
+            categoryTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+            categoryTextView.setPadding(Graphics.pixels(context, 16), eightDp, eightDp, eightDp);
             categoryTextView.setTypeface(Typeface.DEFAULT_BOLD);
             categoryTextView.setId(CATEGORY_TEXTVIEW_ID);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
@@ -163,8 +201,8 @@ public class CategoriesFragment extends Fragment {
             addView(categoryTextView);
             
             prayerCountTextView = new TextView(context);
-            prayerCountTextView.setTextSize(17 * getResources().getConfiguration().fontScale);
-            prayerCountTextView.setPadding(Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 16), Graphics.pixels(context, 8));
+            prayerCountTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+            prayerCountTextView.setPadding(eightDp, eightDp, Graphics.pixels(context, 16), eightDp);
             prayerCountTextView.setId(PRAYER_COUNT_TEXTVIEW_ID);
             params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
             params.addRule(ALIGN_PARENT_RIGHT, NO_ID);
@@ -189,15 +227,17 @@ public class CategoriesFragment extends Fragment {
             prayerCountTextView.setText(aPrayerCount);
         }
     }
-    
+
     class CategoriesAdapter extends BaseAdapter {
         
         private Database prayersDb;
         private Cursor categoriesCursor;
+        private Database.Language mLanguage;
         
-        public CategoriesAdapter() {
+        public CategoriesAdapter(Database.Language language) {
+            this.mLanguage = language;
             prayersDb = Database.getInstance();
-            categoriesCursor = prayersDb.getCategories("en");
+            categoriesCursor = prayersDb.getCategories(mLanguage);
         }
         
         @Override
@@ -216,11 +256,15 @@ public class CategoriesFragment extends Fragment {
         public Object getItem(int position) {
             categoriesCursor.moveToPosition(position);
             int categoryColumnIndex = categoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
-            return categoriesCursor.getString(categoryColumnIndex);
+            return Pair.create(categoriesCursor.getString(categoryColumnIndex), mLanguage);
         }
         
         public long getItemId(int position) {
             return position;
+        }
+
+        public Database.Language getLanguage() {
+            return mLanguage;
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -235,7 +279,7 @@ public class CategoriesFragment extends Fragment {
             String category = categoriesCursor.getString(categoryColumnIndex);
             categoryView.setCategory(category);
             
-            int prayerCount = Database.getInstance().getPrayerCountForCategory(category, "en");
+            int prayerCount = Database.getInstance().getPrayerCountForCategory(category, mLanguage.code);
             categoryView.setPrayerCount(Integer.toString(prayerCount));
             
             return categoryView;

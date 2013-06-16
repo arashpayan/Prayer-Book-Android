@@ -6,6 +6,8 @@ package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import com.arashpayan.util.L;
 import java.io.File;
@@ -18,25 +20,71 @@ import java.util.Map;
  * @author arash
  */
 public class Database {
-    
-    static Database singleton = null;
+
+    public enum Language implements Parcelable {
+
+        Dutch("nl", R.string.nederlands),
+        English("en", R.string.english),
+        French("fr", R.string.francais),
+        Persian("fa", R.string.farsi),
+        Spanish("es", R.string.espanol);
+
+        public final String code;
+        public final int humanName;
+
+        Language(String code, int humanName) {
+            this.code = code;
+            this.humanName = humanName;
+        }
+
+        public static Language get(String code) {
+            for (Language l : values()) {
+                if (l.code.equals(code)) {
+                    return l;
+                }
+            }
+
+            return English;
+        }
+
+        public static final Creator<Language> CREATOR = new Parcelable.Creator<Language>() {
+            public Language createFromParcel(Parcel p) {
+                String code = p.readString();
+                return get(code);
+            }
+
+            public Language[] newArray(int size) {
+                return new Language[size];
+            }
+        };
+
+        public int describeContents() {
+            return 0;
+        }
+
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(code);
+        }
+    }
+
+    private static Database singleton = null;
     public static File databaseFile;
     
     private SQLiteDatabase pbDatabase;
     
-    private String[] languages = {"en", "es", "fa", "fr"};
+//    private String[] languages = {"en", "es", "fa", "fr"};
     
     private final static String PRAYERS_TABLE    = "prayers";
-    
-    public final static String ID_COLUMN            = "id";
-    public final static String CATEGORY_COLUMN      = "category";
-    public final static String LANGUAGE_COLUMN      = "language";
-    public final static String OPENINGWORDS_COLUMN  = "openingWords";
-    public final static String AUTHOR_COLUMN        = "author";
-    public final static String PRAYERTEXT_COLUMN    = "prayerText";
-    public final static String CITATION_COLUMN      = "citation";
-    public final static String WORDCOUNT_COLUMN     = "wordCount";
-    public final static String SEARCHTEXT_COLUMN    = "searchText";
+
+    public final static String ID_COLUMN                = "id";
+    public final static String CATEGORY_COLUMN          = "category";
+    public final static String LANGUAGE_COLUMN          = "language";
+    public final static String OPENINGWORDS_COLUMN      = "openingWords";
+    public final static String AUTHOR_COLUMN            = "author";
+    public final static String PRAYERTEXT_COLUMN        = "prayerText";
+    public final static String CITATION_COLUMN          = "citation";
+    public final static String WORDCOUNT_COLUMN         = "wordCount";
+    public final static String SEARCHTEXT_COLUMN        = "searchText";
     
     private HashMap<String, Integer> prayerCountCache;
     
@@ -57,9 +105,9 @@ public class Database {
         return singleton;
     }
     
-    public Cursor getCategories(String lang) {
+    public Cursor getCategories(Language language) {
         String[] cols = {CATEGORY_COLUMN};
-        String[] selectionArgs = {lang};
+        String[] selectionArgs = {language.code};
         Cursor cursor = pbDatabase.query(
                 true,
                 PRAYERS_TABLE,
@@ -96,24 +144,24 @@ public class Database {
         return 0;
     }
     
-    private Map<String, List> getCategories() {
-        for (String lang : languages)
-        {
-            
-        }
-        
-        return null;
-    }
+//    private Map<String, List> getCategories() {
+//        for (String lang : languages)
+//        {
+//
+//        }
+//
+//        return null;
+//    }
     
-    public Cursor getPrayers(String category) {
+    public Cursor getPrayers(String category, Language language) {
         String[] cols = {ID_COLUMN,
                             OPENINGWORDS_COLUMN,
                             CATEGORY_COLUMN,
                             AUTHOR_COLUMN,
                             LANGUAGE_COLUMN,
                             WORDCOUNT_COLUMN};
-        String selectionClause = "category=? AND language='en'";
-        String[] selectionArgs = {category};
+        String selectionClause = "category=? AND language=?";
+        String[] selectionArgs = {category, language.code};
         Cursor cursor = pbDatabase.query(
                 true,
                 PRAYERS_TABLE,

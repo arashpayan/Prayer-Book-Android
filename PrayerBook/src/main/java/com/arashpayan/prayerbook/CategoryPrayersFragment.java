@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,16 +34,21 @@ public class CategoryPrayersFragment extends Fragment {
     
     public static final String CATEGORYPRAYERS_TAG = "CategoryPrayers";
     public static final String CATEGORY_ARGUMENT = "Category";
+    public static final String LANGUAGE_ARGUMENT = "Language";
     private String mCategory;
-    private CategoryPrayersAdapter adapter;
-    
+    private Database.Language mLanguage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         mCategory = getArguments().getString(CATEGORY_ARGUMENT, null);
+        mLanguage = getArguments().getParcelable(LANGUAGE_ARGUMENT);
         if (mCategory == null) {
             throw new IllegalArgumentException("You must provide a category");
+        }
+        if (mLanguage == null) {
+            throw new IllegalArgumentException("You must provide a language");
         }
         
         setHasOptionsMenu(true);
@@ -51,7 +57,7 @@ public class CategoryPrayersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ListView list = new ListView(getActivity());
-        adapter = new CategoryPrayersAdapter();
+        CategoryPrayersAdapter adapter = new CategoryPrayersAdapter(getActivity(), mCategory, mLanguage);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new OnItemClickListener() {
 
@@ -102,10 +108,13 @@ public class CategoryPrayersFragment extends Fragment {
         
         public PrayerItemView(Context context) {
             super(context);
-            
+
+            int eightDp = Graphics.pixels(context, 8);
+            int sixteenDp = Graphics.pixels(context, 16);
+
             titleTextView = new TextView(context);
-            titleTextView.setTextSize(16 * getResources().getConfiguration().fontScale);
-            titleTextView.setPadding(Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 8), Graphics.pixels(context, 2));
+            titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+            titleTextView.setPadding(sixteenDp, eightDp, eightDp, Graphics.pixels(context, 2));
             titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
             titleTextView.setLines(1);
             titleTextView.setId(TITLE_TEXTVIEW_ID);
@@ -117,8 +126,8 @@ public class CategoryPrayersFragment extends Fragment {
             addView(titleTextView);
             
             authorTextView = new TextView(context);
-            authorTextView.setTextSize(14 * getResources().getConfiguration().fontScale);
-            authorTextView.setPadding(Graphics.pixels(context, 8), 0, Graphics.pixels(context, 8), Graphics.pixels(context, 8));
+            authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            authorTextView.setPadding(sixteenDp, 0, eightDp, eightDp);
             authorTextView.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
             authorTextView.setTextColor(Color.rgb(128, 128, 128));
             authorTextView.setId(AUTHOR_TEXTVIEW_ID);
@@ -129,10 +138,10 @@ public class CategoryPrayersFragment extends Fragment {
             addView(authorTextView);
             
             wordCountTextView = new TextView(context);
-            wordCountTextView.setTextSize(14 * getResources().getConfiguration().fontScale);
-            wordCountTextView.setPadding(Graphics.pixels(context, 0), Graphics.pixels(context, 0), Graphics.pixels(context, 8), Graphics.pixels(context, 8));
+            wordCountTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            wordCountTextView.setPadding(Graphics.pixels(context, 0), Graphics.pixels(context, 0), sixteenDp, eightDp);
             wordCountTextView.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
-            wordCountTextView.setTextColor(Color.WHITE);
+            wordCountTextView.setTextColor(Color.GRAY);
             wordCountTextView.setId(WORDCOUNT_TEXTVIEW_ID);
             params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
             params.addRule(ALIGN_PARENT_RIGHT);
@@ -167,14 +176,16 @@ public class CategoryPrayersFragment extends Fragment {
             
     }
     
-    class CategoryPrayersAdapter extends BaseAdapter {
+    static class CategoryPrayersAdapter extends BaseAdapter {
         
         private Database prayersDb;
         private Cursor prayersCursor;
+        private Context mContext;
 
-        public CategoryPrayersAdapter() {
+        public CategoryPrayersAdapter(Context context, String category, Database.Language language) {
+            this.mContext = context;
             prayersDb = Database.getInstance();
-            prayersCursor = prayersDb.getPrayers(mCategory);
+            prayersCursor = prayersDb.getPrayers(category, language);
         }
         
         public int getCount() {
@@ -198,7 +209,7 @@ public class CategoryPrayersFragment extends Fragment {
             if (convertView != null)
                 piv = (PrayerItemView)convertView;
             else
-                piv = new PrayerItemView(getActivity());
+                piv = new PrayerItemView(mContext);
             
             prayersCursor.moveToPosition(position);
             
@@ -212,7 +223,7 @@ public class CategoryPrayersFragment extends Fragment {
             
             int wordCountColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
             String wordCount = prayersCursor.getString(wordCountColumnIndex);
-            piv.setWordCount("~" + wordCount + " " + getResources().getString(R.string.words));
+            piv.setWordCount("~" + wordCount + " " + mContext.getResources().getString(R.string.words));
             
             return piv;
         }

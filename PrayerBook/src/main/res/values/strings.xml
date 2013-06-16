@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <string name="app_name">Prayer Book</string>
     <string name="prayers">Prayers</string>
@@ -16,4 +18,10 @@
     <string name="french">Français</string>
     <string name="dutch">Nederlands</string>
     <string name="favorites">Favorites</string>
+    <string name="espanol">Español</string>
+    <string name="farsi">فارسی</string>
+    <string name="francais">Français</string>
+    <string name="nederlands">Nederlands</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>

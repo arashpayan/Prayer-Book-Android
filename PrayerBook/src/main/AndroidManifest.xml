@@ -7,8 +7,9 @@
 
     <application android:allowBackup="true"
         android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher"
-        android:theme="@style/AppTheme">
+        android:icon="@drawable/icon"
+        android:theme="@style/AppTheme"
+        android:name=".App">
         <activity android:name="PrayerBook"
                   android:label="@string/app_name">
             <intent-filter>
