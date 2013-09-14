@@ -16,6 +16,9 @@ import android.support.v4.widget.CursorAdapter;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
@@ -39,7 +43,7 @@ import java.util.Locale;
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment {
+public class CategoriesFragment extends Fragment implements SearchView.OnQueryTextListener {
     
     public static final String CATEGORIES_TAG = "Categories";
     
@@ -48,6 +52,8 @@ public class CategoriesFragment extends Fragment {
     
     private int firstVisiblePosition;
     private ListView mListView;
+
+    private final static int ACTIONITEM_SEARCH      = 1;
 
     private MergeAdapter buildAdapter() {
         LinkedList<Database.Language> enabledLanguages = getEnabledLanguages();
@@ -111,6 +117,17 @@ public class CategoriesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         App.registerOnBus(this);
+//        setHasOptionsMenu(true);
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem item = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
+        item.setIcon(R.drawable.ic_action_search);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        SearchView searchView = new SearchView(getActivity());
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        item.setActionView(searchView);
     }
 
     public void onDestroy() {
@@ -126,7 +143,15 @@ public class CategoriesFragment extends Fragment {
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
         getActivity().getActionBar().setHomeButtonEnabled(false);
     }
-    
+
+//    public boolean onOptionsItemSelected (MenuItem item) {
+//        if (item.getItemId() == ACTIONITEM_SEARCH) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -157,7 +182,6 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void onCategoryClicked(int index, long itemId) {
-        L.i("index: " + index + ", itemId: " + itemId);
         Pair<String, Database.Language> item = (Pair<String, Database.Language>) mMergeAdapter.getItem(index);
         Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
         i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, item.first);
@@ -174,7 +198,28 @@ public class CategoriesFragment extends Fragment {
         mMergeAdapter = buildAdapter();
         mListView.setAdapter(mMergeAdapter);
     }
-    
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+//        L.i("onQueryTextSubmit: " + s);
+
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+//        L.i("onQueryTextChange: " + s);
+//        if (s.trim().isEmpty()) {
+//            mMergeAdapter = buildAdapter();
+//            mListView.setAdapter(mMergeAdapter);
+//        } else {
+//            mMergeAdapter = new MergeAdapter();
+//            mMergeAdapter.ad
+//        }
+
+        return true;
+    }
+
     class CategoryView extends RelativeLayout {
         private TextView categoryTextView;
         private TextView prayerCountTextView;

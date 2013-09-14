@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="app_name">Prayer Book</string>
-    <string name="prayers">Prayers</string>
+    <string name="app_name">Oraciones</string>
+    <string name="prayers">Oraciones</string>
     <string name="words">words</string>
-    <string name="about">About</string>
-    <string name="search">Search</string>
-    <string name="languages">Languages</string>
+    <string name="about">Acerca de</string>
+    <string name="search">Buscador</string>
+    <string name="languages">Idiomas</string>
     <string name="share">Share</string>
     <string name="english">English</string>
     <string name="spanish">Español</string>

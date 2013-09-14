@@ -15,10 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
+import com.arashpayan.util.L;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,7 +33,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
 {
     private static final String TAG = "PrayerBook";
 
-    private final static int ACTIONITEM_SEARCH              = 4;
     private final static int ACTIONITEM_LANGUAGES           = 5;
     private final static int ACTIONITEM_ABOUT               = 6;
 
@@ -39,9 +40,9 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(new NavigationSpinnerAdapter(this), this);
-        getActionBar().setTitle(null);
+//        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+//        getActionBar().setListNavigationCallbacks(new NavigationSpinnerAdapter(this), this);
+//        getActionBar().setTitle(null);
         
         int dbVersion = Preferences.getInstance(getApplication()).getDatabaseVersion();
         if (dbVersion != 1)
@@ -81,9 +82,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
-        item.setIcon(R.drawable.ic_action_search);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
         menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
 
@@ -93,9 +91,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case ACTIONITEM_SEARCH:
-
-                break;
             case ACTIONITEM_LANGUAGES:
                 showLanguageDialog();
                 break;
@@ -108,6 +103,12 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
         }
 
         return true;
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        getActionBar().setTitle(R.string.app_name);
     }
 
     @Override

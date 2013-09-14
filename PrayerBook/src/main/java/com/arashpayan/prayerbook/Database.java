@@ -175,6 +175,49 @@ public class Database {
         
         return cursor;
     }
+
+    public Cursor getPrayersWithKeywords(String []keywords, Language[] languages) {
+        String []cols = {ID_COLUMN, OPENINGWORDS_COLUMN, CATEGORY_COLUMN, AUTHOR_COLUMN, WORDCOUNT_COLUMN };
+        StringBuilder whereClause = new StringBuilder();
+        boolean firstKeyword = true;
+        for (String kw : keywords) {
+            if (kw.isEmpty()) {
+                continue;
+            }
+            if (!firstKeyword) {
+                whereClause.append(" AND");
+            } else {
+                firstKeyword = false;
+            }
+
+            whereClause.append(" searchText LIKE %");
+            whereClause.append(kw);
+            whereClause.append("%");
+        }
+
+        // build the language portion of the query
+        StringBuilder languageClause = new StringBuilder();
+        for (int i=0; i<languages.length; i++) {
+            if (i == languages.length-1) {
+                languageClause.append("language='");
+                languageClause.append(languages[i].code);
+                languageClause.append("'");
+            } else {
+                languageClause.append("language='");
+                languageClause.append(languages[i].code);
+                languageClause.append("' OR ");
+            }
+        }
+
+        // append the languages to the clause
+        whereClause.append(" AND (");
+        whereClause.append(languageClause);
+        whereClause.append(")");
+
+        Cursor cursor = pbDatabase.query(PRAYERS_TABLE, cols, whereClause.toString(), null, null, null, LANGUAGE_COLUMN);
+
+        return cursor;
+    }
     
     public Cursor getPrayer(long prayerId) {
         String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN};
