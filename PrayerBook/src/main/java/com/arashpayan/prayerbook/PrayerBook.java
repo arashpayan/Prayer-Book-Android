@@ -81,9 +81,9 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search)
-                .setIcon(R.drawable.ic_action_search)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//        menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search)
+//                .setIcon(R.drawable.ic_action_search)
+//                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
         menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
 
