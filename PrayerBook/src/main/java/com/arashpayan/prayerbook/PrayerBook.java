@@ -33,6 +33,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
 {
     private static final String TAG = "PrayerBook";
 
+    private final static int ACTIONITEM_SEARCH              = 4;
     private final static int ACTIONITEM_LANGUAGES           = 5;
     private final static int ACTIONITEM_ABOUT               = 6;
 
@@ -45,8 +46,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
 //        getActionBar().setTitle(null);
         
         int dbVersion = Preferences.getInstance(getApplication()).getDatabaseVersion();
-        if (dbVersion != 1)
-        {
+        if (dbVersion != 1) {
             // then we need to copy over the latest database
             File databaseFile = new File(getFilesDir(), "pbdb.db");
             Database.databaseFile = databaseFile; 
@@ -55,8 +55,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
                 BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet"), 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
                 byte[] data = new byte[4096];
-                while (is.available() != 0)
-                {
+                while (is.available() != 0) {
                     int numRead = is.read(data);
                     if (numRead != 0)
                         os.write(data);
@@ -82,6 +81,9 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search)
+                .setIcon(R.drawable.ic_action_search)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
         menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
 
@@ -91,6 +93,9 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case ACTIONITEM_SEARCH:
+
+                break;
             case ACTIONITEM_LANGUAGES:
                 showLanguageDialog();
                 break;

@@ -73,10 +73,6 @@ public class PrayerFragment extends Fragment {
         MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, R.string.share);
         ShareActionProvider provider = new ShareActionProvider(getActivity());
         shareItem.setActionProvider(provider);
-//        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-//        sharingIntent.setType("text/plain");
-//        sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
-//        provider.setShareIntent(sharingIntent);
     }
     
     @Override
@@ -109,13 +105,6 @@ public class PrayerFragment extends Fragment {
         }
         
         return true;
-    }
-    
-    @Override
-    public void onResume() {
-        super.onResume();
-        
-        getActivity().getActionBar().setTitle("");
     }
     
     public String getPrayerHTML() {

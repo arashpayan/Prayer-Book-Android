@@ -117,7 +117,6 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         super.onCreate(savedInstanceState);
 
         App.registerOnBus(this);
-//        setHasOptionsMenu(true);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -140,8 +139,8 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     public void onStart() {
         super.onStart();
 
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-        getActivity().getActionBar().setHomeButtonEnabled(false);
+//        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+//        getActivity().getActionBar().setHomeButtonEnabled(false);
     }
 
 //    public boolean onOptionsItemSelected (MenuItem item) {

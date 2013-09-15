@@ -1,22 +1,4 @@
-# OS X
-*.DS_Store
-
-# NetBeans
-gen/*
-bin/*
-
-#Android Studio
-*/build*
-*.iml
-*.iws
-*.ipr
-.idea/
-
-# Local config
-local.properties
-
-#build stuff
-*.apk
-*.ap_
-*.dex
-*.class
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store

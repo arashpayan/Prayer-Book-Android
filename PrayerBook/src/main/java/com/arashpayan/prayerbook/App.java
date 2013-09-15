@@ -47,6 +47,9 @@ public class App extends Application {
 
     public static void registerOnBus(final Object object) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
+            if (mApp == null) {
+                L.w("THE APP IS NULL!!! YOU'RE GONNA CRASH");
+            }
             mApp.mBus.register(object);
         } else {
             postOnMainThread(new Runnable() {
