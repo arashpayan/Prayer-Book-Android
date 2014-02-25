@@ -92,10 +92,6 @@ public class Database {
     
     private Database() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-        if (pbDatabase == null)
-            L.i("Got a null when trying to open the database.");
-        else
-            L.i("Opened prayer database");
         
         prayerCountCache = new HashMap<String, Integer>();
     }
