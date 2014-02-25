@@ -119,7 +119,15 @@ public class PrayerFragment extends Fragment {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-        sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
+        
+        int langIndex = prayerCursor.getColumnIndexOrThrow(Database.LANGUAGE_COLUMN);
+        String langCode = prayerCursor.getString(langIndex);
+        Database.Language lang = Database.Language.get(langCode);
+        if (!lang.rightToLeft) {
+            sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
+        } else {
+            sb.append("<html dir=\"rtl\" xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
+        }
         sb.append("<head>\n");
         sb.append("<meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
         sb.append("<meta content=\"utf-8\" http-equiv=\"encoding\">");

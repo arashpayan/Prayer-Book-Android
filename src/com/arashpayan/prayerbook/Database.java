@@ -23,18 +23,20 @@ public class Database {
 
     public enum Language implements Parcelable {
 
-        Dutch("nl", R.string.nederlands),
-        English("en", R.string.english),
-        French("fr", R.string.francais),
-        Persian("fa", R.string.farsi),
-        Spanish("es", R.string.espanol);
+        Dutch("nl", R.string.nederlands, false),
+        English("en", R.string.english, false),
+        French("fr", R.string.francais, false),
+        Persian("fa", R.string.farsi, true),
+        Spanish("es", R.string.espanol, false);
 
         public final String code;
         public final int humanName;
+        public final boolean rightToLeft;
 
-        Language(String code, int humanName) {
+        Language(String code, int humanName, boolean rightToLeft) {
             this.code = code;
             this.humanName = humanName;
+            this.rightToLeft = rightToLeft;
         }
 
         public static Language get(String code) {
@@ -220,9 +222,9 @@ public class Database {
     }
     
     public Cursor getPrayer(long prayerId) {
-        String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN};
+        String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN, LANGUAGE_COLUMN};
         String selectionClause = ID_COLUMN + "=?";
-        String[] selectionArgs = {new Long(prayerId).toString()};
+        String[] selectionArgs = {Long.valueOf(prayerId).toString()};
         Cursor cursor = pbDatabase.query(PRAYERS_TABLE, cols, selectionClause, selectionArgs, null, null, null);
         
         return cursor;
