@@ -72,7 +72,7 @@ public class Database {
     private static Database singleton = null;
     public static File databaseFile;
     
-    private SQLiteDatabase pbDatabase;
+    private final SQLiteDatabase pbDatabase;
     
 //    private String[] languages = {"en", "es", "fa", "fr"};
     

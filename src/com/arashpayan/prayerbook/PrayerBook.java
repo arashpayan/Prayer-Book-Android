@@ -15,12 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
-import com.arashpayan.util.L;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,9 +39,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-//        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-//        getActionBar().setListNavigationCallbacks(new NavigationSpinnerAdapter(this), this);
-//        getActionBar().setTitle(null);
         
         int dbVersion = Preferences.getInstance(getApplication()).getDatabaseVersion();
         if (dbVersion != 1) {
@@ -62,7 +57,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
                 }
                 is.close();
                 os.close();
-                
+                Preferences.getInstance(getApplication()).setDatabaseVersion(1);
             } catch (IOException ex) {
                 Log.w(TAG, "Error writing prayer database", ex);
             }
