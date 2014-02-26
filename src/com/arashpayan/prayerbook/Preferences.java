@@ -46,7 +46,7 @@ public class Preferences {
     public int getDatabaseVersion() {
         return mPrefs.getInt(PREFERENCE_DATABASE_VERSION, 0);
     }
-
+    
     public boolean isDutchEnabled() {
         return mPrefs.getBoolean(PREFERENCE_DUTCH_PRAYERS, false);
     }

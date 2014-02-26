@@ -13,11 +13,9 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.arashpayan.util.Graphics;
-import com.arashpayan.util.L;
 
 import java.io.IOException;
 import java.io.InputStream;

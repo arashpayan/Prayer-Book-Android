@@ -6,13 +6,10 @@ package com.arashpayan.prayerbook;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +18,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.arashpayan.util.Graphics;
 
 /**
  *
@@ -99,9 +92,9 @@ public class CategoryPrayersFragment extends Fragment {
     
     static class CategoryPrayersAdapter extends BaseAdapter {
         
-        private Database prayersDb;
-        private Cursor prayersCursor;
-        private Context mContext;
+        private final Database prayersDb;
+        private final Cursor prayersCursor;
+        private final Context mContext;
 
         public CategoryPrayersAdapter(Context context, String category, Database.Language language) {
             this.mContext = context;
@@ -126,7 +119,7 @@ public class CategoryPrayersFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            PrayerItemView piv = null;
+            PrayerItemView piv;
             if (convertView != null)
                 piv = (PrayerItemView)convertView;
             else

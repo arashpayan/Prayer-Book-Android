@@ -12,7 +12,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -31,11 +29,9 @@ import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
-import com.arashpayan.util.L;
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -113,12 +109,14 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         return enabledLanguages;
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         App.registerOnBus(this);
     }
 
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem item = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
         item.setIcon(R.drawable.ic_action_search);
@@ -129,6 +127,7 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         item.setActionView(searchView);
     }
 
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -220,8 +219,8 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     }
 
     class CategoryView extends RelativeLayout {
-        private TextView categoryTextView;
-        private TextView prayerCountTextView;
+        private final TextView categoryTextView;
+        private final TextView prayerCountTextView;
         
         private static final int CATEGORY_TEXTVIEW_ID       = 38;
         private static final int PRAYER_COUNT_TEXTVIEW_ID   = 32;
@@ -274,9 +273,9 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
 
     class CategoriesAdapter extends BaseAdapter {
         
-        private Database prayersDb;
-        private Cursor categoriesCursor;
-        private Database.Language mLanguage;
+        private final Database prayersDb;
+        private final Cursor categoriesCursor;
+        private final Database.Language mLanguage;
         
         public CategoriesAdapter(Database.Language language) {
             this.mLanguage = language;

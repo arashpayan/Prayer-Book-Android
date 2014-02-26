@@ -1,26 +1,22 @@
 package com.arashpayan.prayerbook;
 
-import android.*;
-import android.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.TypedValue;
-import android.view.View;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.arashpayan.util.Graphics;
-import com.arashpayan.util.L;
 
 /**
  * Created by arash on 6/16/13.
  */
 public class PrayerItemView extends RelativeLayout {
-    private TextView titleTextView;
-    private TextView authorTextView;
-    private TextView wordCountTextView;
+    private final TextView titleTextView;
+    private final TextView authorTextView;
+    private final TextView wordCountTextView;
     private RatingBar mFavoriteRatingBar;
 
     private static final int TITLE_TEXTVIEW_ID      = 29;
