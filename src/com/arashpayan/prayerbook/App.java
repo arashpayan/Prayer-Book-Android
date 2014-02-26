@@ -6,6 +6,12 @@ import android.os.Looper;
 
 import com.arashpayan.util.L;
 import com.squareup.otto.Bus;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by arash on 6/16/13.
@@ -16,12 +22,39 @@ public class App extends Application {
     private Handler mMainThreadHandler;
     private static volatile App mApp;
 
+    @Override
     public void onCreate() {
         mApp = this;
         super.onCreate();
 
+        copyDatabaseFile();
         mBus = new Bus();
         mMainThreadHandler = new Handler(Looper.getMainLooper());
+    }
+    
+    private void copyDatabaseFile() {
+        int dbVersion = Preferences.getInstance(this).getDatabaseVersion();
+        if (dbVersion != 1) {
+            // then we need to copy over the latest database
+            File databaseFile = new File(getFilesDir(), "pbdb.db");
+            Database.databaseFile = databaseFile; 
+            L.i("database file: " + databaseFile.getAbsolutePath());
+            try {
+                BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet"), 8192);
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
+                byte[] data = new byte[4096];
+                while (is.available() != 0) {
+                    int numRead = is.read(data);
+                    if (numRead != 0)
+                        os.write(data);
+                }
+                is.close();
+                os.close();
+                Preferences.getInstance(this).setDatabaseVersion(1);
+            } catch (IOException ex) {
+                L.w("Error writing prayer database", ex);
+            }
+        }
     }
 
     public static void postOnBus(final Object event) {

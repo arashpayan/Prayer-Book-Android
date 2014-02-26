@@ -19,7 +19,7 @@ import com.arashpayan.util.Graphics;
  */
 public class ListSectionTitle extends TextView {
     
-    private Paint mPaint = new Paint();
+    private final Paint mPaint = new Paint();
     
     public ListSectionTitle(Context aContext) {
         this(aContext, null);

@@ -8,12 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-import com.arashpayan.util.L;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -74,8 +70,6 @@ public class Database {
     
     private final SQLiteDatabase pbDatabase;
     
-//    private String[] languages = {"en", "es", "fa", "fr"};
-    
     private final static String PRAYERS_TABLE    = "prayers";
 
     public final static String ID_COLUMN                = "id";
@@ -88,7 +82,7 @@ public class Database {
     public final static String WORDCOUNT_COLUMN         = "wordCount";
     public final static String SEARCHTEXT_COLUMN        = "searchText";
     
-    private HashMap<String, Integer> prayerCountCache;
+    private final HashMap<String, Integer> prayerCountCache;
     
     private Database() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
@@ -97,8 +91,9 @@ public class Database {
     }
     
     public synchronized static Database getInstance() {
-        if (singleton == null)
+        if (singleton == null) {
             singleton = new Database();
+        }
         
         return singleton;
     }
@@ -122,34 +117,25 @@ public class Database {
     
     public int getPrayerCountForCategory(String category, String language) {
         // check the cache first
-        if (prayerCountCache.containsKey(language + category))
+        if (prayerCountCache.containsKey(language + category)) {
             return prayerCountCache.get(language + category);
+        }
         
         String[] selectionArgs = {category, language};
         Cursor cursor = pbDatabase.rawQuery(
                 "SELECT COUNT(id) FROM prayers WHERE category=? and language=?",
                 selectionArgs);
         
-        if (cursor.getCount() > 0)
-        {
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             int count = cursor.getInt(0);
-            prayerCountCache.put(language+category, new Integer(count));
+            prayerCountCache.put(language+category, Integer.valueOf(count));
             return count;
         }
         
         // should never happen
         return 0;
     }
-    
-//    private Map<String, List> getCategories() {
-//        for (String lang : languages)
-//        {
-//
-//        }
-//
-//        return null;
-//    }
     
     public Cursor getPrayers(String category, Language language) {
         String[] cols = {ID_COLUMN,
