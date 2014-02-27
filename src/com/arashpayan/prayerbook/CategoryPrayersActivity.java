@@ -26,7 +26,7 @@ public class CategoryPrayersActivity extends FragmentActivity {
 
         if (savedInstanceState == null) {
             String category = getIntent().getStringExtra(CATEGORY_ARGUMENT);
-            Database.Language language = getIntent().getParcelableExtra(LANGUAGE_ARGUMENT);
+            Language language = getIntent().getParcelableExtra(LANGUAGE_ARGUMENT);
             CategoryPrayersFragment fragment = new CategoryPrayersFragment();
             Bundle args = new Bundle();
             args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, category);

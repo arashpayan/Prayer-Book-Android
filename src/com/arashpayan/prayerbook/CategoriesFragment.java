@@ -52,10 +52,10 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     private final static int ACTIONITEM_SEARCH      = 1;
 
     private MergeAdapter buildAdapter() {
-        LinkedList<Database.Language> enabledLanguages = getEnabledLanguages();
+        LinkedList<Language> enabledLanguages = getEnabledLanguages();
         MergeAdapter mergeAdapter = new MergeAdapter();
         boolean showSectionTitles = enabledLanguages.size() > 1;
-        for (Database.Language l : enabledLanguages) {
+        for (Language l : enabledLanguages) {
             if (showSectionTitles) {
                 ListSectionTitle title = new ListSectionTitle(getActivity(), getString(l.humanName));
                 mergeAdapter.addView(title, false);
@@ -67,43 +67,29 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         return mergeAdapter;
     }
 
-    private LinkedList<Database.Language> getEnabledLanguages() {
+    private LinkedList<Language> getEnabledLanguages() {
         Preferences preferences = Preferences.getInstance(getActivity().getApplication());
-        LinkedList<Database.Language> enabledLanguages = new LinkedList<Database.Language>();
-        if (preferences.isEnglishEnabled()) {
-            enabledLanguages.add(Database.Language.English);
-        }
-        if (preferences.isSpanishEnabled()) {
-            enabledLanguages.add(Database.Language.Spanish);
-        }
-        if (preferences.isPersianEnabled()) {
-            enabledLanguages.add(Database.Language.Persian);
-        }
-        if (preferences.isFrenchEnabled()) {
-            enabledLanguages.add(Database.Language.French);
-        }
-        if (preferences.isDutchEnabled()) {
-            enabledLanguages.add(Database.Language.Dutch);
+        LinkedList<Language> enabledLanguages = new LinkedList<Language>();
+        for (Language l : Language.values()) {
+            if (preferences.isLanguageEnabled(l)) {
+                enabledLanguages.add(l);
+            }
         }
 
         if (enabledLanguages.isEmpty()) {
             // find the user's locale and see if it matches any of the known languages
             Locale defaultLocale = Locale.getDefault();
             String langCode = defaultLocale.getLanguage();
-            if (langCode.startsWith(Database.Language.English.code)) {
-                enabledLanguages.add(Database.Language.English);
-            } else if (langCode.startsWith(Database.Language.Spanish.code)) {
-                enabledLanguages.add(Database.Language.Spanish);
-            } else if (langCode.startsWith(Database.Language.Persian.code)) {
-                enabledLanguages.add(Database.Language.French);
-            } else if (langCode.startsWith(Database.Language.French.code)) {
-                enabledLanguages.add(Database.Language.Dutch);
+            for (Language l : Language.values()) {
+                if (langCode.startsWith(l.code)) {
+                    enabledLanguages.add(l);
+                }
             }
         }
 
         // if it's still empty, just enable English
         if (enabledLanguages.isEmpty()) {
-            enabledLanguages.add(Database.Language.English);
+            enabledLanguages.add(Language.English);
         }
 
         return enabledLanguages;
@@ -180,7 +166,7 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     }
 
     private void onCategoryClicked(int index, long itemId) {
-        Pair<String, Database.Language> item = (Pair<String, Database.Language>) mMergeAdapter.getItem(index);
+        Pair<String, Language> item = (Pair<String, Language>) mMergeAdapter.getItem(index);
         Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
         i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, item.first);
         i.putExtra(CategoryPrayersActivity.LANGUAGE_ARGUMENT, (Parcelable) item.second);
@@ -275,9 +261,9 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         
         private final Database prayersDb;
         private final Cursor categoriesCursor;
-        private final Database.Language mLanguage;
+        private final Language mLanguage;
         
-        public CategoriesAdapter(Database.Language language) {
+        public CategoriesAdapter(Language language) {
             this.mLanguage = language;
             prayersDb = Database.getInstance();
             categoriesCursor = prayersDb.getCategories(mLanguage);
@@ -306,7 +292,7 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
             return position;
         }
 
-        public Database.Language getLanguage() {
+        public Language getLanguage() {
             return mLanguage;
         }
 

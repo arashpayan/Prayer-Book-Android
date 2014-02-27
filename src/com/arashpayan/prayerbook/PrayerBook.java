@@ -19,15 +19,14 @@ import android.widget.TextView;
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
 
-public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigationListener
-{
+public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigationListener {
+    
     private final static int ACTIONITEM_SEARCH              = 4;
     private final static int ACTIONITEM_LANGUAGES           = 5;
     private final static int ACTIONITEM_ABOUT               = 6;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
@@ -86,39 +85,18 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
         Preferences prefs = Preferences.getInstance(getApplication());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.languages);
-        builder.setMultiChoiceItems(new CharSequence[]{getString(R.string.english),
-                getString(R.string.espanol),
-                getString(R.string.farsi),
-                getString(R.string.francais),
-                getString(R.string.nederlands)},
-                new boolean[]{
-                        prefs.isEnglishEnabled(),
-                        prefs.isSpanishEnabled(),
-                        prefs.isPersianEnabled(),
-                        prefs.isFrenchEnabled(),
-                        prefs.isDutchEnabled()},
+        final Language[] langs = Language.values();
+        CharSequence[] langSequences = new CharSequence[langs.length];
+        boolean[] langEnabled = new boolean[langs.length];
+        for (int i=0; i<langs.length; i++) {
+            langSequences[i] = getString(langs[i].humanName);
+            langEnabled[i] = prefs.isLanguageEnabled(langs[i]);
+        }
+        builder.setMultiChoiceItems(langSequences, langEnabled,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        switch (which) {
-                            case 0:
-                                Preferences.getInstance(getApplication()).setEnglishEnabled(isChecked);
-                                break;
-                            case 1:
-                                Preferences.getInstance(getApplication()).setSpanishEnabled(isChecked);
-                                break;
-                            case 2:
-                                Preferences.getInstance(getApplication()).setPersianEnabled(isChecked);
-                                break;
-                            case 3:
-                                Preferences.getInstance(getApplication()).setFrenchEnabled(isChecked);
-                                break;
-                            case 4:
-                                Preferences.getInstance(getApplication()).setDutchEnabled(isChecked);
-                                break;
-                            default:
-                                break;
-                        }
+                        Preferences.getInstance(App.getApp()).setLanguageEnabled(langs[which], isChecked);
                     }
                 });
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -132,7 +110,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
 
     static private class NavigationSpinnerAdapter extends BaseAdapter {
 
-        private Context mContext;
+        private final Context mContext;
 
         public NavigationSpinnerAdapter(Context context) {
             mContext = context;
@@ -143,6 +121,7 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
             return 2;
         }
 
+        @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             TextView tv;
             if (convertView != null) {

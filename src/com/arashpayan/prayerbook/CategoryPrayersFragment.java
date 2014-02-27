@@ -29,7 +29,7 @@ public class CategoryPrayersFragment extends Fragment {
     public static final String CATEGORY_ARGUMENT = "Category";
     public static final String LANGUAGE_ARGUMENT = "Language";
     private String mCategory;
-    private Database.Language mLanguage;
+    private Language mLanguage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +96,7 @@ public class CategoryPrayersFragment extends Fragment {
         private final Cursor prayersCursor;
         private final Context mContext;
 
-        public CategoryPrayersAdapter(Context context, String category, Database.Language language) {
+        public CategoryPrayersAdapter(Context context, String category, Language language) {
             this.mContext = context;
             prayersDb = Database.getInstance();
             prayersCursor = prayersDb.getPrayers(category, language);

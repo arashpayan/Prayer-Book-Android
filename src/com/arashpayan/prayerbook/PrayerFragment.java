@@ -139,7 +139,7 @@ public class PrayerFragment extends Fragment {
         
         int langIndex = prayerCursor.getColumnIndexOrThrow(Database.LANGUAGE_COLUMN);
         String langCode = prayerCursor.getString(langIndex);
-        Database.Language lang = Database.Language.get(langCode);
+        Language lang = Language.get(langCode);
         if (!lang.rightToLeft) {
             sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
         } else {

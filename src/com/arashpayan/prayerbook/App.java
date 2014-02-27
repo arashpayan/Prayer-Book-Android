@@ -22,6 +22,10 @@ public class App extends Application {
     private Handler mMainThreadHandler;
     private static volatile App mApp;
 
+    public static App getApp() {
+        return mApp;
+    }
+    
     @Override
     public void onCreate() {
         mApp = this;
@@ -34,10 +38,10 @@ public class App extends Application {
     
     private void copyDatabaseFile() {
         int dbVersion = Preferences.getInstance(this).getDatabaseVersion();
+        File databaseFile = new File(getFilesDir(), "pbdb.db");
+        Database.databaseFile = databaseFile;
         if (dbVersion != 1) {
             // then we need to copy over the latest database
-            File databaseFile = new File(getFilesDir(), "pbdb.db");
-            Database.databaseFile = databaseFile; 
             L.i("database file: " + databaseFile.getAbsolutePath());
             try {
                 BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet"), 8192);
