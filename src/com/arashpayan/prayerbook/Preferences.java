@@ -17,8 +17,8 @@ public class Preferences {
     private SharedPreferences mPrefs = null;
     
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
-    
     private static final String PREFERENCE_DATABASE_VERSION = "DatabaseVersion";
+    private static final String PREFERENCE_PRAYER_TEXT_SCALAR = "PrayerTextScalar";
     
     private Preferences(Context ctx) {
         mPrefs = ctx.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
@@ -50,5 +50,13 @@ public class Preferences {
     
     public void setLanguageEnabled(Language lang, boolean shouldEnable) {
         mPrefs.edit().putBoolean(lang.code + "_enabled", shouldEnable).apply();
+    }
+    
+    public float getPrayerTextScalar() {
+        return mPrefs.getFloat(PREFERENCE_PRAYER_TEXT_SCALAR, 1.0f);
+    }
+    
+    public void setPrayerTextScalar(float scalar) {
+        mPrefs.edit().putFloat(PREFERENCE_PRAYER_TEXT_SCALAR, scalar).apply();
     }
 }

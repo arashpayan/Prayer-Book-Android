@@ -18,11 +18,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ShareActionProvider;
 
-import com.arashpayan.util.L;
-
-import java.io.File;
-import java.io.FileOutputStream;
-
 /**
  *
  * @author arash
@@ -52,6 +47,7 @@ public class PrayerFragment extends Fragment {
         }
         prayerCursor = Database.getInstance().getPrayer(mPrayerId);
         prayerCursor.moveToFirst();
+        mScale = Preferences.getInstance(App.getApp()).getPrayerTextScalar();
         
         setHasOptionsMenu(true);
     }
@@ -65,7 +61,7 @@ public class PrayerFragment extends Fragment {
         webView = new WebView(this.getActivity());
         webView.getSettings().setSupportZoom(true);
         webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
-        
+
         return webView;
     }
     
@@ -91,12 +87,18 @@ public class PrayerFragment extends Fragment {
         // .75 to 1.60
         switch (item.getItemId()) {
             case ACTIONITEM_INCREASETEXT:
-                mScale += 0.05f;
-                webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                if (mScale < 1.6f) {
+                    mScale += 0.05f;
+                    Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
+                    webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                }
                 break;
             case ACTIONITEM_DECREASETEXT:
-                mScale -= 0.05f;
-                webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                if (mScale > .75) {
+                    mScale -= 0.05f;
+                    Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
+                    webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                }
                 break;
             case ACTIONITEM_SHARE:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
