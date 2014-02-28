@@ -88,16 +88,9 @@ public class PrayerFragment extends Fragment {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // .75 to 1.60
         switch (item.getItemId()) {
             case ACTIONITEM_INCREASETEXT:
-                File externalCacheDir = getActivity().getExternalFilesDir(null);
-                File outputFile = new File(externalCacheDir, "output.html");
-                try {
-                    FileOutputStream fos = new FileOutputStream(outputFile);
-                    fos.write(getPrayerHTML().getBytes());
-                } catch (Exception ex) {
-                    L.e("Problem writing debug html", ex);
-                }
                 mScale += 0.05f;
                 webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
                 break;
