@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.Graphics;
 import com.commonsware.cwac.merge.MergeAdapter;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
 import com.squareup.otto.Subscribe;
 
 import java.util.LinkedList;
@@ -154,7 +155,9 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListView(getActivity());
         mMergeAdapter = buildAdapter();
-        mListView.setAdapter(mMergeAdapter);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(mMergeAdapter);
+        animationAdapter.setAbsListView(mListView);
+        mListView.setAdapter(animationAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {

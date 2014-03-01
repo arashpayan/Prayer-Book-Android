@@ -4,10 +4,15 @@
  */
 package com.arashpayan.prayerbook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
+import android.print.PrintManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +29,7 @@ import android.widget.ShareActionProvider;
  */
 public class PrayerFragment extends Fragment {
     
-    private WebView webView = null;
+    private WebView mWebView = null;
     private Cursor prayerCursor;
     private long mPrayerId;
     private float mScale = 1.0f;
@@ -32,6 +37,7 @@ public class PrayerFragment extends Fragment {
     private static final int ACTIONITEM_INCREASETEXT        = 1;
     private static final int ACTIONITEM_DECREASETEXT        = 2;
     private static final int ACTIONITEM_SHARE               = 3;
+    private static final int ACTIONITEM_PRINT               = 4;
     
     public static final String PRAYER_ID_ARGUMENT = "PrayerId";
     public static final String PRAYER_TAG = "Prayer";
@@ -58,11 +64,11 @@ public class PrayerFragment extends Fragment {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         }
         
-        webView = new WebView(this.getActivity());
-        webView.getSettings().setSupportZoom(true);
-        webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+        mWebView = new WebView(this.getActivity());
+        mWebView.getSettings().setSupportZoom(true);
+        mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
 
-        return webView;
+        return mWebView;
     }
     
     @Override
@@ -80,6 +86,10 @@ public class PrayerFragment extends Fragment {
         MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, R.string.share);
         ShareActionProvider provider = new ShareActionProvider(getActivity());
         shareItem.setActionProvider(provider);
+        
+        if (Build.VERSION.SDK_INT >= 19) {
+            menu.add(0, ACTIONITEM_PRINT, ACTIONITEM_PRINT, R.string.print_ellipsis);
+        }
     }
     
     @Override
@@ -90,14 +100,14 @@ public class PrayerFragment extends Fragment {
                 if (mScale < 1.6f) {
                     mScale += 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
-                    webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                    mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
                 }
                 break;
             case ACTIONITEM_DECREASETEXT:
                 if (mScale > .75) {
                     mScale -= 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
-                    webView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                    mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
                 }
                 break;
             case ACTIONITEM_SHARE:
@@ -105,6 +115,9 @@ public class PrayerFragment extends Fragment {
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                break;
+            case ACTIONITEM_PRINT:
+                printPrayer();
                 break;
             case android.R.id.home:
                 getFragmentManager().popBackStack();
@@ -193,5 +206,18 @@ public class PrayerFragment extends Fragment {
         int searchTextIndex = prayerCursor.getColumnIndexOrThrow(Database.SEARCHTEXT_COLUMN);
         
         return prayerCursor.getString(searchTextIndex);
+    }
+    
+    private void printPrayer() {
+        if (mWebView == null) {
+            // shouldn't happen, but just in case
+            return;
+        }
+        
+        PrintManager manager = (PrintManager)getActivity().getSystemService(Context.PRINT_SERVICE);
+        PrintDocumentAdapter adapter = mWebView.createPrintDocumentAdapter();
+        
+        String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
+        manager.print(jobName, adapter, new PrintAttributes.Builder().build());
     }
 }
