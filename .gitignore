@@ -1,4 +1,21 @@
+### OS X ###
+.DS_Store
+
+### Generated files ###
 bin/
 gen/
-.DS_Store
-private/
+out/
+build/
+
+### Local configs ###
+local.properties
+
+### IDEA/Android Studio ###
+.idea
+*.iml
+
+### IDEA workspace ###
+.idea/workspace/xml
+
+### Gradle cache ###
+.gradle
