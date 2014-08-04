@@ -75,10 +75,12 @@ public class CategoryPrayersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        
-        getActivity().getActionBar().setTitle(mCategory);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActivity().getActionBar().setHomeButtonEnabled(true);
+
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(mCategory);
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActivity().getActionBar().setHomeButtonEnabled(true);
+        }
     }
     
     @Override
@@ -113,9 +115,7 @@ public class CategoryPrayersFragment extends Fragment {
         public long getItemId(int position) {
             prayersCursor.moveToPosition(position);
             int idColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
-            long prayerId = prayersCursor.getLong(idColumnIndex);
-            
-            return prayerId;
+            return prayersCursor.getLong(idColumnIndex);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {

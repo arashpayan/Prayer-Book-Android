@@ -4,6 +4,7 @@
  */
 package com.arashpayan.prayerbook;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
-import android.print.PrintJob;
 import android.print.PrintManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,7 +31,6 @@ public class PrayerFragment extends Fragment {
     
     private WebView mWebView = null;
     private Cursor prayerCursor;
-    private long mPrayerId;
     private float mScale = 1.0f;
     
     private static final int ACTIONITEM_INCREASETEXT        = 1;
@@ -47,11 +46,11 @@ public class PrayerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         
         Bundle arguments = getArguments();
-        mPrayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
-        if (mPrayerId == -1) {
+        long prayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
+        if (prayerId == -1) {
             throw new IllegalArgumentException("You must provide a prayer id to this fragment");
         }
-        prayerCursor = Database.getInstance().getPrayer(mPrayerId);
+        prayerCursor = Database.getInstance().getPrayer(prayerId);
         prayerCursor.moveToFirst();
         mScale = Preferences.getInstance(App.getApp()).getPrayerTextScalar();
         
@@ -207,7 +206,8 @@ public class PrayerFragment extends Fragment {
         
         return prayerCursor.getString(searchTextIndex);
     }
-    
+
+    @TargetApi(19)
     private void printPrayer() {
         if (mWebView == null) {
             // shouldn't happen, but just in case

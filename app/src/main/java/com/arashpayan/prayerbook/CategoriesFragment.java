@@ -139,7 +139,7 @@ public class CategoriesFragment extends Fragment {
         startActivity(i);
     }
 
-    @Subscribe
+    @Subscribe @SuppressWarnings("unused")
     public void onLanguagesChanged(LanguagesChangedEvent event) {
         if (mListView == null) {
             return;

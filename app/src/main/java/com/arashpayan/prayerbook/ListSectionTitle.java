@@ -20,7 +20,8 @@ import com.arashpayan.util.Graphics;
 public class ListSectionTitle extends TextView {
     
     private final Paint mPaint = new Paint();
-    
+
+    @SuppressWarnings("unused")
     public ListSectionTitle(Context aContext) {
         this(aContext, null);
     }
@@ -39,8 +40,9 @@ public class ListSectionTitle extends TextView {
         setSingleLine();
         setTypeface(Typeface.DEFAULT_BOLD);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
-        if (title != null)
+        if (title != null) {
             setText(title);
+        }
     }
     
     @Override

@@ -16,6 +16,7 @@ import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.arashpayan.util.Graphics;
+import com.arashpayan.util.L;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ public class AboutDialogFragment extends DialogFragment {
         try {
             html = getStringFromInputStream(getResources().openRawResource(R.raw.about));
         } catch (IOException ex) {
+            L.e("Unable to open 'about' HTML", ex);
         }
         TextView tv = new TextView(getActivity());
         int sixteenDp = Graphics.pixels(getActivity(), 16);

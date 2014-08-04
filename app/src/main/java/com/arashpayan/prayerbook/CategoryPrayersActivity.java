@@ -22,7 +22,9 @@ public class CategoryPrayersActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        if (getActionBar() != null) {
+            getActionBar().setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        }
 
         if (savedInstanceState == null) {
             String category = getIntent().getStringExtra(CATEGORY_ARGUMENT);

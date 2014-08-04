@@ -51,7 +51,7 @@ public class Database {
     public Cursor getCategories(Language language) {
         String[] cols = {CATEGORY_COLUMN};
         String[] selectionArgs = {language.code};
-        Cursor cursor = pbDatabase.query(
+        return pbDatabase.query(
                 true,
                 PRAYERS_TABLE,
                 cols,
@@ -61,8 +61,6 @@ public class Database {
                 null,
                 null,
                 null);
-                
-        return cursor;
     }
     
     public int getPrayerCountForCategory(String category, String language) {
@@ -79,7 +77,7 @@ public class Database {
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             int count = cursor.getInt(0);
-            prayerCountCache.put(language+category, Integer.valueOf(count));
+            prayerCountCache.put(language+category, count);
             return count;
         }
         
@@ -96,7 +94,7 @@ public class Database {
                             WORDCOUNT_COLUMN};
         String selectionClause = "category=? AND language=?";
         String[] selectionArgs = {category, language.code};
-        Cursor cursor = pbDatabase.query(
+        return pbDatabase.query(
                 true,
                 PRAYERS_TABLE,
                 cols,
@@ -106,8 +104,6 @@ public class Database {
                 null,
                 null,
                 null);
-        
-        return cursor;
     }
 
     public Cursor getPrayersWithKeywords(String []keywords, Language[] languages) {
@@ -148,17 +144,14 @@ public class Database {
         whereClause.append(languageClause);
         whereClause.append(")");
 
-        Cursor cursor = pbDatabase.query(PRAYERS_TABLE, cols, whereClause.toString(), null, null, null, LANGUAGE_COLUMN);
-
-        return cursor;
+        return pbDatabase.query(PRAYERS_TABLE, cols, whereClause.toString(), null, null, null, LANGUAGE_COLUMN);
     }
     
     public Cursor getPrayer(long prayerId) {
         String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN, LANGUAGE_COLUMN};
         String selectionClause = ID_COLUMN + "=?";
         String[] selectionArgs = {Long.valueOf(prayerId).toString()};
-        Cursor cursor = pbDatabase.query(PRAYERS_TABLE, cols, selectionClause, selectionArgs, null, null, null);
-        
-        return cursor;
+
+        return pbDatabase.query(PRAYERS_TABLE, cols, selectionClause, selectionArgs, null, null, null);
     }
 }
