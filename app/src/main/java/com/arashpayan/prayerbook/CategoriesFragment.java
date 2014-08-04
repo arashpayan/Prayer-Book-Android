@@ -8,23 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
@@ -39,17 +34,14 @@ import java.util.Locale;
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class CategoriesFragment extends Fragment {
     
     public static final String CATEGORIES_TAG = "Categories";
-    
-    private CategoriesAdapter categoriesAdapter;
+
     private MergeAdapter mMergeAdapter;
     
     private int firstVisiblePosition;
     private ListView mListView;
-
-    private final static int ACTIONITEM_SEARCH      = 1;
 
     private MergeAdapter buildAdapter() {
         LinkedList<Language> enabledLanguages = getEnabledLanguages();
@@ -103,38 +95,11 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        MenuItem item = menu.add(0, ACTIONITEM_SEARCH, ACTIONITEM_SEARCH, R.string.search);
-//        item.setIcon(R.drawable.ic_action_search);
-//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//        SearchView searchView = new SearchView(getActivity());
-//        searchView.setIconifiedByDefault(true);
-//        searchView.setOnQueryTextListener(this);
-//        item.setActionView(searchView);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
 
         App.unregisterFromBus(this);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-//        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-//        getActivity().getActionBar().setHomeButtonEnabled(false);
-    }
-
-//    public boolean onOptionsItemSelected (MenuItem item) {
-//        if (item.getItemId() == ACTIONITEM_SEARCH) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
 
     @Override
     public void onPause() {
@@ -158,14 +123,15 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {
-                onCategoryClicked(index, itemId);
+                onCategoryClicked(index);
             }
         });
         
         return mListView;
     }
 
-    private void onCategoryClicked(int index, long itemId) {
+    private void onCategoryClicked(int index) {
+        @SuppressWarnings("unchecked")
         Pair<String, Language> item = (Pair<String, Language>) mMergeAdapter.getItem(index);
         Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
         i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, item.first);
@@ -181,27 +147,6 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
 
         mMergeAdapter = buildAdapter();
         mListView.setAdapter(mMergeAdapter);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-//        L.i("onQueryTextSubmit: " + s);
-
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-//        L.i("onQueryTextChange: " + s);
-//        if (s.trim().isEmpty()) {
-//            mMergeAdapter = buildAdapter();
-//            mListView.setAdapter(mMergeAdapter);
-//        } else {
-//            mMergeAdapter = new MergeAdapter();
-//            mMergeAdapter.ad
-//        }
-
-        return true;
     }
 
     class CategoryView extends RelativeLayout {
@@ -239,16 +184,8 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
             addView(prayerCountTextView);
         }
         
-        public CharSequence getCategory() {
-            return categoryTextView.getText();
-        }
-        
         public void setCategory(CharSequence aCategory) {
             categoryTextView.setText(aCategory);
-        }
-        
-        public CharSequence getPrayerCount() {
-            return prayerCountTextView.getText();
         }
         
         public void setPrayerCount(CharSequence aPrayerCount) {
@@ -272,8 +209,9 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         public boolean areAllItemsEnabled() {
             return true;
         }
-        
-        public boolean isEnabled() {
+
+        @Override
+        public boolean isEnabled(int position) {
             return true;
         }
         
@@ -289,10 +227,6 @@ public class CategoriesFragment extends Fragment implements SearchView.OnQueryTe
         
         public long getItemId(int position) {
             return position;
-        }
-
-        public Language getLanguage() {
-            return mLanguage;
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
