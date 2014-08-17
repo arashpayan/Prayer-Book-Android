@@ -19,6 +19,7 @@ public class Preferences {
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
     private static final String PREFERENCE_DATABASE_VERSION = "DatabaseVersion";
     private static final String PREFERENCE_PRAYER_TEXT_SCALAR = "PrayerTextScalar";
+    private static final String PREFERENCE_USE_CLASSIC_THEME = "UseClassicTheme";
     
     private Preferences(Context ctx) {
         mPrefs = ctx.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
@@ -58,5 +59,13 @@ public class Preferences {
     
     public void setPrayerTextScalar(float scalar) {
         mPrefs.edit().putFloat(PREFERENCE_PRAYER_TEXT_SCALAR, scalar).apply();
+    }
+
+    public boolean useClassicTheme() {
+        return mPrefs.getBoolean(PREFERENCE_USE_CLASSIC_THEME, false);
+    }
+
+    public void setUseClassicTheme(boolean useClassicTheme) {
+        mPrefs.edit().putBoolean(PREFERENCE_USE_CLASSIC_THEME, useClassicTheme).apply();
     }
 }

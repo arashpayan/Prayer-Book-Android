@@ -44,7 +44,7 @@ public class PrayerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         Bundle arguments = getArguments();
         long prayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
         if (prayerId == -1) {
@@ -69,7 +69,7 @@ public class PrayerFragment extends Fragment {
 
         return mWebView;
     }
-    
+
     @Override
     public void onPause() {
         super.onPause();
@@ -146,6 +146,20 @@ public class PrayerFragment extends Fragment {
         } else {
             sb.append("<html dir=\"rtl\" xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
         }
+        boolean useClassicTheme = Preferences.getInstance(App.getApp()).useClassicTheme();
+        String bgColor;
+        String versalAndAuthorColor;
+        String font;
+        if (useClassicTheme) {
+            bgColor = "#D6D2C9";
+            versalAndAuthorColor = "#992222";
+            font = "Georgia";
+        } else {
+            bgColor = "#ffffff";
+            versalAndAuthorColor = "#33b5e5";
+            font = "\"sans-serif\"";
+        }
+
         sb.append("<head>\n");
         sb.append("<meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
         sb.append("<meta content=\"utf-8\" http-equiv=\"encoding\">");
@@ -154,10 +168,10 @@ public class PrayerFragment extends Fragment {
         sb.append("<style type=\"text/css\">\n");
         sb.append("#prayer p {margin: 0 0px .75em 5px; color: #333333; font: normal ");
         sb.append(pFontWidth); sb.append("em/"); sb.append(pFontHeight); sb.append("em");
-        sb.append(" \"sans-serif\"; clear: both; text-indent: 1em;}\n");
+        sb.append(" " + font);
+        sb.append("; clear: both; text-indent: 1em;}\n");
         sb.append("#prayer p.opening {text-indent: 0;}\n");
-        // the background image goes here
-        sb.append("body { background: #ffffff; }\n");
+        sb.append("body { background: "); sb.append(bgColor); sb.append("; }\n");
         sb.append("#prayer p.commentcaps {font: normal ");
         sb.append(pComment); sb.append("em");
         sb.append(" \"sans-serif\"; color: #444433; text-transform: uppercase; margin: 0 0px 20px 5px; text-indent: 0; }\n");
@@ -169,11 +183,19 @@ public class PrayerFragment extends Fragment {
         sb.append(pComment); sb.append("em");
         sb.append(" \"sans-serif\"; color: #444433; margin: 0 0px 15px 5px; text-indent: 0;}\n");
         sb.append("#prayer h4#author { float: right; margin: 0 5px 25px 0; font: ");
+        if (useClassicTheme) {
+            sb.append("italic ");
+        }
         sb.append(authorWidth); sb.append("em/"); sb.append(authorHeight); sb.append("em");
-        sb.append(" \"sans-serif\"; color: #33b5e5; text-indent: 0.325em; font-weight: normal; font-size:1.25em }\n");
-        sb.append("span.versal {float: left; display: inline; position: relative; color: #33b5e5; font: normal ");
+        sb.append(" " + font);
+        sb.append("; color: ");
+        sb.append(versalAndAuthorColor);
+        sb.append("; text-indent: 0.325em; font-weight: normal; font-size:1.25em }\n");
+        sb.append("span.versal {float: left; display: inline; position: relative; color: ");
+        sb.append(versalAndAuthorColor); sb.append("; font: normal ");
         sb.append(versalWidth); sb.append("em/"); sb.append(versalHeight); sb.append("em");
-        sb.append(" \"sans-serif\"; margin: .115em .15em 0 0em; padding: 0;}\n");
+        sb.append(" " + font);
+        sb.append("; margin: .115em .15em 0 0em; padding: 0;}\n");
         sb.append("</style>\n</head>\n<body>\n<div id=\"prayer\">");
         
         // append the prayer text
