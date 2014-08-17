@@ -35,8 +35,9 @@ public class PrayerFragment extends Fragment {
     
     private static final int ACTIONITEM_INCREASETEXT        = 1;
     private static final int ACTIONITEM_DECREASETEXT        = 2;
-    private static final int ACTIONITEM_SHARE               = 3;
-    private static final int ACTIONITEM_PRINT               = 4;
+    private static final int ACTIONITEM_CLASSIC_THEME       = 3;
+    private static final int ACTIONITEM_SHARE               = 4;
+    private static final int ACTIONITEM_PRINT               = 5;
     
     public static final String PRAYER_ID_ARGUMENT = "PrayerId";
     public static final String PRAYER_TAG = "Prayer";
@@ -65,9 +66,13 @@ public class PrayerFragment extends Fragment {
         
         mWebView = new WebView(this.getActivity());
         mWebView.getSettings().setSupportZoom(true);
-        mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+        reloadPrayer();
 
         return mWebView;
+    }
+
+    private void reloadPrayer() {
+        mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
     }
 
     @Override
@@ -81,7 +86,11 @@ public class PrayerFragment extends Fragment {
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         menu.add(0, ACTIONITEM_INCREASETEXT, ACTIONITEM_INCREASETEXT, "A+").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add(0, ACTIONITEM_DECREASETEXT, ACTIONITEM_DECREASETEXT, "A-").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        
+
+        MenuItem item = menu.add(0, ACTIONITEM_CLASSIC_THEME, ACTIONITEM_CLASSIC_THEME, R.string.classic_theme);
+        item.setCheckable(true);
+        item.setChecked(Preferences.getInstance(App.getApp()).useClassicTheme());
+
         MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, R.string.share);
         ShareActionProvider provider = new ShareActionProvider(getActivity());
         shareItem.setActionProvider(provider);
@@ -99,15 +108,21 @@ public class PrayerFragment extends Fragment {
                 if (mScale < 1.6f) {
                     mScale += 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
-                    mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                    reloadPrayer();
                 }
                 break;
             case ACTIONITEM_DECREASETEXT:
                 if (mScale > .75) {
                     mScale -= 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
-                    mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+                    reloadPrayer();
                 }
+                break;
+            case ACTIONITEM_CLASSIC_THEME:
+                boolean useClassic = !item.isChecked(); // toggle the value
+                item.setChecked(useClassic);
+                Preferences.getInstance(App.getApp()).setUseClassicTheme(useClassic);
+                reloadPrayer();
                 break;
             case ACTIONITEM_SHARE:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);

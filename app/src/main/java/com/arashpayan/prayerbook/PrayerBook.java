@@ -16,7 +16,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
 
     private final static int ACTIONITEM_LANGUAGES           = 5;
     private final static int ACTIONITEM_ABOUT               = 6;
-    private final static int ACTIONITEM_CLASSIC_THEME       = 7;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,9 +34,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
         menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
-        MenuItem item = menu.add(0, ACTIONITEM_CLASSIC_THEME, ACTIONITEM_CLASSIC_THEME, R.string.classic_theme);
-        item.setCheckable(true);
-        item.setChecked(Preferences.getInstance(App.getApp()).useClassicTheme());
 
         return true;
     }
@@ -51,11 +47,6 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
             case ACTIONITEM_ABOUT:
                 AboutDialogFragment adf = new AboutDialogFragment();
                 adf.show(getSupportFragmentManager(), "dialog");
-                break;
-            case ACTIONITEM_CLASSIC_THEME:
-                boolean useClassic = !menuItem.isChecked(); // toggle the value
-                menuItem.setChecked(useClassic);
-                Preferences.getInstance(App.getApp()).setUseClassicTheme(useClassic);
                 break;
             default:
                 return false;
