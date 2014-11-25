@@ -182,12 +182,12 @@ public class PrayerFragment extends Fragment {
         // for XHTML compliance, we add a title
         sb.append("<title>Prayer</title>\n");
         sb.append("<style type=\"text/css\">\n");
-        sb.append("#prayer p {margin: 0 0px .75em 5px; color: #333333; font: normal ");
+        sb.append("#prayer p {margin: 0 0px .75em 0px; color: #333333; font: normal ");
         sb.append(pFontWidth); sb.append("em/"); sb.append(pFontHeight); sb.append("em");
         sb.append(" "); sb.append(font);
         sb.append("; clear: both; text-indent: 1em;}\n");
         sb.append("#prayer p.opening {text-indent: 0;}\n");
-        sb.append("body { background: "); sb.append(bgColor); sb.append("; }\n");
+        sb.append("body { padding: 8px; background: "); sb.append(bgColor); sb.append("; }\n");
         sb.append("#prayer p.commentcaps {font: normal ");
         sb.append(pComment); sb.append("em");
         sb.append(" \"sans-serif\"; color: #444433; text-transform: uppercase; margin: 0 0px 20px 5px; text-indent: 0; }\n");
