@@ -4,26 +4,22 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
-import com.arashpayan.util.Graphics;
+import com.arashpayan.util.L;
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
 
@@ -89,6 +85,7 @@ public class CategoriesFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        L.i("CategoriesFragment.onCreate");
         super.onCreate(savedInstanceState);
 
         App.registerOnBus(this);
@@ -110,6 +107,7 @@ public class CategoriesFragment extends Fragment {
     
     @Override
     public void onResume() {
+        L.i("CategoriesFragment.onResume");
         super.onResume();
 
         mListView.setSelectionFromTop(firstVisiblePosition, 0);
@@ -117,7 +115,10 @@ public class CategoriesFragment extends Fragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        L.i("CategoriesFragment.onCreateView");
+
         mListView = new ListView(getActivity());
+//        mListView.setBackgroundColor(Color.WHITE);
         mMergeAdapter = buildAdapter();
         mListView.setAdapter(mMergeAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,10 +134,18 @@ public class CategoriesFragment extends Fragment {
     private void onCategoryClicked(int index) {
         @SuppressWarnings("unchecked")
         Pair<String, Language> item = (Pair<String, Language>) mMergeAdapter.getItem(index);
-        Intent i = new Intent(getActivity(), CategoryPrayersActivity.class);
-        i.putExtra(CategoryPrayersActivity.CATEGORY_ARGUMENT, item.first);
-        i.putExtra(CategoryPrayersActivity.LANGUAGE_ARGUMENT, (Parcelable) item.second);
-        startActivity(i);
+        CategoryPrayersFragment fragment = new CategoryPrayersFragment();
+        Bundle args = new Bundle();
+        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, item.first);
+        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, (Parcelable)item.second);
+        fragment.setArguments(args);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.replace(R.id.pb_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.commit();
+
     }
 
     @Subscribe @SuppressWarnings("unused")
@@ -149,48 +158,9 @@ public class CategoriesFragment extends Fragment {
         mListView.setAdapter(mMergeAdapter);
     }
 
-    class CategoryView extends RelativeLayout {
-        private final TextView categoryTextView;
-        private final TextView prayerCountTextView;
-        
-        private static final int CATEGORY_TEXTVIEW_ID       = 38;
-        private static final int PRAYER_COUNT_TEXTVIEW_ID   = 32;
-        
-        public CategoryView(Context context) {
-            super(context);
-            
-            setMinimumHeight(Graphics.pixels(context, 48));
-            setBackgroundColor(Color.argb(0, 0, 0, 0));
-            int eightDp = Graphics.pixels(context, 8);
-            
-            categoryTextView = new TextView(context);
-            categoryTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            categoryTextView.setPadding(Graphics.pixels(context, 16), eightDp, eightDp, eightDp);
-            categoryTextView.setId(CATEGORY_TEXTVIEW_ID);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-            params.addRule(ALIGN_PARENT_LEFT, NO_ID);
-            params.addRule(RelativeLayout.CENTER_VERTICAL, CATEGORY_TEXTVIEW_ID);
-            categoryTextView.setLayoutParams(params);
-            addView(categoryTextView);
-            
-            prayerCountTextView = new TextView(context);
-            prayerCountTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            prayerCountTextView.setPadding(eightDp, eightDp, Graphics.pixels(context, 16), eightDp);
-            prayerCountTextView.setId(PRAYER_COUNT_TEXTVIEW_ID);
-            params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-            params.addRule(ALIGN_PARENT_RIGHT, NO_ID);
-            params.addRule(CENTER_VERTICAL, PRAYER_COUNT_TEXTVIEW_ID);
-            prayerCountTextView.setLayoutParams(params);
-            addView(prayerCountTextView);
-        }
-        
-        public void setCategory(CharSequence aCategory) {
-            categoryTextView.setText(aCategory);
-        }
-        
-        public void setPrayerCount(CharSequence aPrayerCount) {
-            prayerCountTextView.setText(aPrayerCount);
-        }
+    static class CategoryViewHolderItem {
+        TextView titleTextView;
+        TextView countTextView;
     }
 
     class CategoriesAdapter extends BaseAdapter {
@@ -230,21 +200,30 @@ public class CategoriesFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            CategoryView categoryView;
-            if (convertView != null)
-                categoryView = (CategoryView)convertView;
-            else
-                categoryView = new CategoryView(getActivity());
+            CategoryViewHolderItem holder;
+            if (convertView != null) {
+                holder = (CategoryViewHolderItem)convertView.getTag();
+            } else {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                convertView = inflater.inflate(R.layout.category, parent, false);
+
+                holder = new CategoryViewHolderItem();
+                holder.titleTextView = (TextView)convertView.findViewById(R.id.category_title);
+                holder.countTextView = (TextView)convertView.findViewById(R.id.category_prayers_count);
+
+                convertView.setTag(holder);
+            }
             
             categoriesCursor.moveToPosition(position);
             int categoryColumnIndex = categoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
+
             String category = categoriesCursor.getString(categoryColumnIndex);
-            categoryView.setCategory(category);
-            
+            holder.titleTextView.setText(category);
+
             int prayerCount = Database.getInstance().getPrayerCountForCategory(category, mLanguage.code);
-            categoryView.setPrayerCount(Integer.toString(prayerCount));
+            holder.countTextView.setText(Integer.toString(prayerCount));
             
-            return categoryView;
+            return convertView;
         }
     }
 }

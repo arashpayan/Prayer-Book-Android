@@ -14,6 +14,8 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.ShareActionProvider;
 
 /**
  *
@@ -93,7 +94,7 @@ public class PrayerFragment extends Fragment {
 
         MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, R.string.share);
         ShareActionProvider provider = new ShareActionProvider(getActivity());
-        shareItem.setActionProvider(provider);
+        MenuItemCompat.setActionProvider(shareItem, provider);
         
         if (Build.VERSION.SDK_INT >= 19) {
             menu.add(0, ACTIONITEM_PRINT, ACTIONITEM_PRINT, R.string.print_ellipsis);
@@ -183,7 +184,7 @@ public class PrayerFragment extends Fragment {
         sb.append("<style type=\"text/css\">\n");
         sb.append("#prayer p {margin: 0 0px .75em 5px; color: #333333; font: normal ");
         sb.append(pFontWidth); sb.append("em/"); sb.append(pFontHeight); sb.append("em");
-        sb.append(" " + font);
+        sb.append(" "); sb.append(font);
         sb.append("; clear: both; text-indent: 1em;}\n");
         sb.append("#prayer p.opening {text-indent: 0;}\n");
         sb.append("body { background: "); sb.append(bgColor); sb.append("; }\n");
@@ -202,14 +203,14 @@ public class PrayerFragment extends Fragment {
             sb.append("italic ");
         }
         sb.append(authorWidth); sb.append("em/"); sb.append(authorHeight); sb.append("em");
-        sb.append(" " + font);
+        sb.append(" "); sb.append(font);
         sb.append("; color: ");
         sb.append(versalAndAuthorColor);
         sb.append("; text-indent: 0.325em; font-weight: normal; font-size:1.25em }\n");
         sb.append("span.versal {float: left; display: inline; position: relative; color: ");
         sb.append(versalAndAuthorColor); sb.append("; font: normal ");
         sb.append(versalWidth); sb.append("em/"); sb.append(versalHeight); sb.append("em");
-        sb.append(" " + font);
+        sb.append(" "); sb.append(font);
         sb.append("; margin: .115em .15em 0 0em; padding: 0;}\n");
         sb.append("</style>\n</head>\n<body>\n<div id=\"prayer\">");
         
@@ -226,7 +227,7 @@ public class PrayerFragment extends Fragment {
         // append the citation (if there is one)
         int citationIndex = prayerCursor.getColumnIndexOrThrow(Database.CITATION_COLUMN);
         String citationText = prayerCursor.getString(citationIndex);
-        if (citationText == null || citationText.length() == 0) {
+        if (citationText != null && citationText.length() != 0) {
             sb.append("<p class=\"comment\"><br/><br/>");
             sb.append(citationText);
             sb.append("</p>");
@@ -244,7 +245,7 @@ public class PrayerFragment extends Fragment {
         return prayerCursor.getString(searchTextIndex);
     }
 
-    @TargetApi(19)
+    @TargetApi(19) @SuppressWarnings("deprecation")
     private void printPrayer() {
         if (mWebView == null) {
             // shouldn't happen, but just in case
@@ -252,7 +253,12 @@ public class PrayerFragment extends Fragment {
         }
         
         PrintManager manager = (PrintManager)getActivity().getSystemService(Context.PRINT_SERVICE);
-        PrintDocumentAdapter adapter = mWebView.createPrintDocumentAdapter();
+        PrintDocumentAdapter adapter;
+        if (Build.VERSION.SDK_INT >= 21) {
+            adapter = mWebView.createPrintDocumentAdapter("Prayer");
+        } else {
+            adapter = mWebView.createPrintDocumentAdapter();
+        }
         
         String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
         manager.print(jobName, adapter, new PrintAttributes.Builder().build());

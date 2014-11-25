@@ -4,49 +4,54 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
+import com.arashpayan.util.L;
 
-public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigationListener {
-
-    private final static int ACTIONITEM_LANGUAGES           = 5;
-    private final static int ACTIONITEM_ABOUT               = 6;
+public class PrayerBook extends ActionBarActivity implements ActionBar.OnNavigationListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.prayer_book);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.pb_toolbar);
+        setSupportActionBar(toolbar);
+
         if (savedInstanceState == null) {
             CategoriesFragment categoriesFragment = new CategoriesFragment();
+
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(android.R.id.content, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
+            ft.add(R.id.pb_container, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
             ft.commit();
         }
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, ACTIONITEM_LANGUAGES, ACTIONITEM_LANGUAGES, R.string.languages);
-        menu.add(0, ACTIONITEM_ABOUT, ACTIONITEM_ABOUT, R.string.about);
+        getMenuInflater().inflate(R.menu.categories_menu, menu);
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
+        L.i("PrayerBook.onOptionsItemSelected");
         switch (menuItem.getItemId()) {
-            case ACTIONITEM_LANGUAGES:
+            case R.id.action_languages:
                 showLanguageDialog();
                 break;
-            case ACTIONITEM_ABOUT:
+            case R.id.action_about:
                 AboutDialogFragment adf = new AboutDialogFragment();
-                adf.show(getSupportFragmentManager(), "dialog");
+                adf.show(getFragmentManager(), "dialog");
                 break;
             default:
                 return false;
@@ -59,8 +64,8 @@ public class PrayerBook extends FragmentActivity implements ActionBar.OnNavigati
     public void onResume() {
         super.onResume();
 
-        if (getActionBar() != null) {
-            getActionBar().setTitle(R.string.app_name);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.app_name);
         }
     }
 

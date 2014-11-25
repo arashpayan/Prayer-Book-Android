@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  *
@@ -60,9 +61,9 @@ public class CategoryPrayersFragment extends Fragment {
                 args.putLong(PrayerFragment.PRAYER_ID_ARGUMENT, itemId);
                 prayerFragment.setArguments(args);
                 
-                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(android.R.id.content, prayerFragment, PrayerFragment.PRAYER_TAG);
+                ft.replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.addToBackStack(PrayerFragment.PRAYER_TAG);
                 ft.commit();
@@ -91,8 +92,14 @@ public class CategoryPrayersFragment extends Fragment {
         
         return true;
     }
-    
-    static class CategoryPrayersAdapter extends BaseAdapter {
+
+    static class PrayerSummaryViewHolderItem {
+        TextView openingWords;
+        TextView author;
+        TextView wordCount;
+    }
+
+    class CategoryPrayersAdapter extends BaseAdapter {
         
         private final Database prayersDb;
         private final Cursor prayersCursor;
@@ -119,27 +126,36 @@ public class CategoryPrayersFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            PrayerItemView piv;
-            if (convertView != null)
-                piv = (PrayerItemView)convertView;
-            else
-                piv = new PrayerItemView(mContext);
+            PrayerSummaryViewHolderItem holder;
+            if (convertView != null) {
+                holder = (PrayerSummaryViewHolderItem)convertView.getTag();
+            } else {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                convertView = inflater.inflate(R.layout.prayer_summary, parent, false);
+
+                holder = new PrayerSummaryViewHolderItem();
+                holder.openingWords = (TextView)convertView.findViewById(R.id.prayer_summary);
+                holder.author = (TextView)convertView.findViewById(R.id.prayer_author);
+                holder.wordCount = (TextView)convertView.findViewById(R.id.prayer_word_count);
+
+                convertView.setTag(holder);
+            }
             
             prayersCursor.moveToPosition(position);
             
             int openingWordsColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.OPENINGWORDS_COLUMN);
             String openingWords = prayersCursor.getString(openingWordsColumnIndex);
-            piv.setTitle(openingWords);
+            holder.openingWords.setText(openingWords);
             
             int authorColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
             String author = prayersCursor.getString(authorColumnIndex);
-            piv.setAuthor(author);
+            holder.author.setText(author);
             
             int wordCountColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
             String wordCount = prayersCursor.getString(wordCountColumnIndex);
-            piv.setWordCount(wordCount + " " + mContext.getString(R.string.words));
+            holder.wordCount.setText(wordCount + " " + getString(R.string.words));
             
-            return piv;
+            return convertView;
         }
     }
 }
