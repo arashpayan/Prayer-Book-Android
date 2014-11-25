@@ -59,7 +59,7 @@ public class Database {
                 selectionArgs,
                 null,
                 null,
-                null,
+                CATEGORY_COLUMN + " ASC",
                 null);
     }
     
@@ -102,7 +102,7 @@ public class Database {
                 selectionArgs,
                 null,
                 null,
-                null,
+                OPENINGWORDS_COLUMN + " ASC",
                 null);
     }
 
