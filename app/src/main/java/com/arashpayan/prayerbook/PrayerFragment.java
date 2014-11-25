@@ -8,6 +8,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
@@ -85,19 +86,14 @@ public class PrayerFragment extends Fragment {
     
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-        menu.add(0, ACTIONITEM_INCREASETEXT, ACTIONITEM_INCREASETEXT, "A+").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, ACTIONITEM_DECREASETEXT, ACTIONITEM_DECREASETEXT, "A-").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        inflater.inflate(R.menu.prayer, menu);
 
-        MenuItem item = menu.add(0, ACTIONITEM_CLASSIC_THEME, ACTIONITEM_CLASSIC_THEME, R.string.classic_theme);
-        item.setCheckable(true);
-        item.setChecked(Preferences.getInstance(App.getApp()).useClassicTheme());
+        // set the current value for classic theme
+        menu.findItem(R.id.action_classic_theme).setChecked(Preferences.getInstance(App.getApp()).useClassicTheme());
 
-        MenuItem shareItem = menu.add(0, ACTIONITEM_SHARE, ACTIONITEM_SHARE, R.string.share);
-        ShareActionProvider provider = new ShareActionProvider(getActivity());
-        MenuItemCompat.setActionProvider(shareItem, provider);
-        
-        if (Build.VERSION.SDK_INT >= 19) {
-            menu.add(0, ACTIONITEM_PRINT, ACTIONITEM_PRINT, R.string.print_ellipsis);
+        // hide the print option on older devices
+        if (Build.VERSION.SDK_INT < 19) {
+            menu.findItem(R.id.action_print_prayer).setVisible(false);
         }
     }
     
@@ -105,37 +101,35 @@ public class PrayerFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // .75 to 1.60
         switch (item.getItemId()) {
-            case ACTIONITEM_INCREASETEXT:
+            case R.id.action_increase_text_size:
                 if (mScale < 1.6f) {
                     mScale += 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
                     reloadPrayer();
                 }
                 break;
-            case ACTIONITEM_DECREASETEXT:
+            case R.id.action_decrease_text_size:
                 if (mScale > .75) {
                     mScale -= 0.05f;
                     Preferences.getInstance(App.getApp()).setPrayerTextScalar(mScale);
                     reloadPrayer();
                 }
                 break;
-            case ACTIONITEM_CLASSIC_THEME:
+            case R.id.action_classic_theme:
                 boolean useClassic = !item.isChecked(); // toggle the value
                 item.setChecked(useClassic);
                 Preferences.getInstance(App.getApp()).setUseClassicTheme(useClassic);
                 reloadPrayer();
                 break;
-            case ACTIONITEM_SHARE:
+            case R.id.action_share_prayer:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 break;
-            case ACTIONITEM_PRINT:
+            case R.id.action_print_prayer:
                 printPrayer();
                 break;
-            case android.R.id.home:
-                getFragmentManager().popBackStack();
         }
         
         return true;

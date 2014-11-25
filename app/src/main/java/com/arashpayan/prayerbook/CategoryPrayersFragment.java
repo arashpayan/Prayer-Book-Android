@@ -83,15 +83,6 @@ public class CategoryPrayersFragment extends Fragment {
             getActivity().getActionBar().setHomeButtonEnabled(true);
         }
     }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            getActivity().onBackPressed();
-        }
-        
-        return true;
-    }
 
     static class PrayerSummaryViewHolderItem {
         TextView openingWords;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_increase_text_size"
+        android:title="A+"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_decrease_text_size"
+        android:title="A-"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_classic_theme"
+        android:title="@string/classic_theme"
+        android:checkable="true"/>
+    <item
+        android:id="@+id/action_share_prayer"
+        android:title="@string/share"
+        android:actionProviderClass="android.widget.ShareActionProvider"/>
+    <item
+        android:id="@+id/action_print_prayer"
+        android:title="@string/print_ellipsis"/>
+</menu>
