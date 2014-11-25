@@ -4,6 +4,8 @@
  */
 package com.arashpayan.prayerbook;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -11,6 +13,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,7 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
-import com.arashpayan.util.L;
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
 
@@ -85,10 +89,15 @@ public class CategoriesFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        L.i("CategoriesFragment.onCreate");
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
         App.registerOnBus(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.categories_menu, menu);
     }
 
     @Override
@@ -104,10 +113,26 @@ public class CategoriesFragment extends Fragment {
         
         firstVisiblePosition = mListView.getFirstVisiblePosition();
     }
-    
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_languages:
+                showLanguageDialog();
+                break;
+            case R.id.action_about:
+                AboutDialogFragment adf = new AboutDialogFragment();
+                adf.show(getFragmentManager(), "dialog");
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void onResume() {
-        L.i("CategoriesFragment.onResume");
         super.onResume();
 
         mListView.setSelectionFromTop(firstVisiblePosition, 0);
@@ -115,8 +140,6 @@ public class CategoriesFragment extends Fragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        L.i("CategoriesFragment.onCreateView");
-
         mListView = new ListView(getActivity());
 //        mListView.setBackgroundColor(Color.WHITE);
         mMergeAdapter = buildAdapter();
@@ -156,6 +179,33 @@ public class CategoriesFragment extends Fragment {
 
         mMergeAdapter = buildAdapter();
         mListView.setAdapter(mMergeAdapter);
+    }
+
+    private void showLanguageDialog() {
+        Preferences prefs = Preferences.getInstance(App.getApp());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.languages);
+        final Language[] langs = Language.values();
+        CharSequence[] langSequences = new CharSequence[langs.length];
+        boolean[] langEnabled = new boolean[langs.length];
+        for (int i=0; i<langs.length; i++) {
+            langSequences[i] = getString(langs[i].humanName);
+            langEnabled[i] = prefs.isLanguageEnabled(langs[i]);
+        }
+        builder.setMultiChoiceItems(langSequences, langEnabled,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        Preferences.getInstance(App.getApp()).setLanguageEnabled(langs[which], isChecked);
+                    }
+                });
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                App.postOnBus(new LanguagesChangedEvent());
+            }
+        });
+        builder.show();
     }
 
     static class CategoryViewHolderItem {
