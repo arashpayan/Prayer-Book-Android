@@ -15,8 +15,8 @@ public class PrayerBook extends ActionBarActivity implements ActionBar.OnNavigat
 
         setContentView(R.layout.prayer_book);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.pb_toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar)findViewById(R.id.pb_toolbar);
+//        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             CategoriesFragment categoriesFragment = new CategoriesFragment();

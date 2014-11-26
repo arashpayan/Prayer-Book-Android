@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="prayer_book_primary">#33b5e5</color>
-    <color name="prayer_book_primary_dark">#004b83</color>
-    <color name="prayer_book_accent">#0000FF</color>
-    <!--<color name="prayer_book_control_normal">#FF0000</color>-->
-    <!--<color name="prayer_book_control_activated">#00FF00</color>-->
-    <!--<color name="prayer_book_control_highlight">#00FFFF</color>-->
-    <!--<color name="prayer_book_switch_thumb_normal">#FFFF00</color>-->
+    <color name="prayer_book_primary">#9BBAD2</color>
+    <color name="prayer_book_primary_dark">#08538C</color>
+    <color name="prayer_book_accent">#FFC35F</color>
     <color name="black_87">#DD000000</color>
     <color name="black_54">#89000000</color>
 </resources>

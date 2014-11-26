@@ -68,6 +68,7 @@ public class PrayerFragment extends Fragment {
         
         mWebView = new WebView(this.getActivity());
         mWebView.getSettings().setSupportZoom(true);
+        mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         reloadPrayer();
 
         return mWebView;

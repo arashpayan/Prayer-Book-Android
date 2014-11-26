@@ -4,11 +4,9 @@
     <item
         android:id="@+id/action_languages"
         android:title="@string/languages"
-        android:orderInCategory="1"
-        android:showAsAction="never" />
+        android:orderInCategory="1" />
     <item
         android:id="@+id/action_about"
         android:title="@string/about"
-        android:orderInCategory="2"
-        android:showAsAction="never" />
+        android:orderInCategory="2" />
 </menu>
