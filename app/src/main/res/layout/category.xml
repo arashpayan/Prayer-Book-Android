@@ -22,7 +22,7 @@
         android:layout_centerVertical="true"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textSize="@dimen/abc_text_size_caption_material"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         android:text="7"/>
 
 </RelativeLayout>
