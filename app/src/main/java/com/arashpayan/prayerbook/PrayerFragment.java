@@ -25,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.arashpayan.util.L;
+
 /**
  *
  * @author arash
@@ -69,6 +71,7 @@ public class PrayerFragment extends Fragment {
         mWebView = new WebView(this.getActivity());
         mWebView.getSettings().setSupportZoom(true);
         mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mWebView.setKeepScreenOn(true);
         reloadPrayer();
 
         return mWebView;
