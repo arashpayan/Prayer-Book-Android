@@ -91,7 +91,6 @@ public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrol
         super.onResume();
 
         mActionBarHeight = getActivity().findViewById(R.id.pb_toolbar).getHeight();
-        L.i("onResume - " + mActionBarHeight);
     }
 
     @Override

@@ -5,4 +5,6 @@
     <color name="prayer_book_accent">#FFC35F</color>
     <color name="black_87">#DD000000</color>
     <color name="black_54">#89000000</color>
+    <color name="black">#FF000000</color>
+    <color name="clear">#00000000</color>
 </resources>

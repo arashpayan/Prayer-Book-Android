@@ -1,7 +1,6 @@
 package com.arashpayan.prayerbook;
 
 import android.app.ActionBar;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
