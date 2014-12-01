@@ -8,21 +8,20 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebView;
 
 import com.arashpayan.util.L;
@@ -31,17 +30,15 @@ import com.arashpayan.util.L;
  *
  * @author arash
  */
-public class PrayerFragment extends Fragment {
+public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrollChangedListener {
     
     private WebView mWebView = null;
     private Cursor prayerCursor;
     private float mScale = 1.0f;
-    
-    private static final int ACTIONITEM_INCREASETEXT        = 1;
-    private static final int ACTIONITEM_DECREASETEXT        = 2;
-    private static final int ACTIONITEM_CLASSIC_THEME       = 3;
-    private static final int ACTIONITEM_SHARE               = 4;
-    private static final int ACTIONITEM_PRINT               = 5;
+
+    private boolean mActionBarHidden = false;
+    private int mActionBarHeight = 0;
+    private float mPrevWebViewScrollY = 0;
     
     public static final String PRAYER_ID_ARGUMENT = "PrayerId";
     public static final String PRAYER_TAG = "Prayer";
@@ -72,6 +69,7 @@ public class PrayerFragment extends Fragment {
         mWebView.getSettings().setSupportZoom(true);
         mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mWebView.setKeepScreenOn(true);
+        mWebView.getViewTreeObserver().addOnScrollChangedListener(this);
         reloadPrayer();
 
         return mWebView;
@@ -87,7 +85,15 @@ public class PrayerFragment extends Fragment {
         
         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
-    
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mActionBarHeight = getActivity().findViewById(R.id.pb_toolbar).getHeight();
+        L.i("onResume - " + mActionBarHeight);
+    }
+
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.prayer, menu);
@@ -260,5 +266,27 @@ public class PrayerFragment extends Fragment {
         
         String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
         manager.print(jobName, adapter, new PrintAttributes.Builder().build());
+    }
+
+    @Override
+    public void onScrollChanged() {
+        float y = mWebView.getScrollY();
+        if (!mActionBarHidden && y >= mActionBarHeight && (mPrevWebViewScrollY - y) < 0) {
+            mActionBarHidden = true;
+            getActivity().findViewById(R.id.pb_toolbar).animate().
+                    y(-mActionBarHeight).
+                    setDuration(300).
+                    setInterpolator(new DecelerateInterpolator()).
+                    start();
+        } else if (mActionBarHidden && (mPrevWebViewScrollY - y) > 0) {
+            mActionBarHidden = false;
+            getActivity().findViewById(R.id.pb_toolbar).animate().
+                    y(0).
+                    setDuration(300).
+                    setInterpolator(new DecelerateInterpolator()).
+                    start();
+        }
+
+        mPrevWebViewScrollY = y;
     }
 }

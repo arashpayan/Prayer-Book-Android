@@ -1,6 +1,7 @@
 package com.arashpayan.prayerbook;
 
 import android.app.ActionBar;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,8 +16,8 @@ public class PrayerBook extends ActionBarActivity implements ActionBar.OnNavigat
 
         setContentView(R.layout.prayer_book);
 
-//        Toolbar toolbar = (Toolbar)findViewById(R.id.pb_toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.pb_toolbar);
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             CategoriesFragment categoriesFragment = new CategoriesFragment();

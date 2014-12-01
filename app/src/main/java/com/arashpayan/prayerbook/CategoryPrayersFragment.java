@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,10 +61,9 @@ public class CategoryPrayersFragment extends Fragment {
                 prayerFragment.setArguments(args);
                 
                 FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(PrayerFragment.PRAYER_TAG);
+                FragmentTransaction ft = fm.beginTransaction().
+                        replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG).
+                        addToBackStack(PrayerFragment.PRAYER_TAG);
                 ft.commit();
             }
         });
