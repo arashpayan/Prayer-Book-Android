@@ -37,7 +37,7 @@ public class Database {
     private Database() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
         
-        prayerCountCache = new HashMap<String, Integer>();
+        prayerCountCache = new HashMap<>();
     }
     
     public synchronized static Database getInstance() {
