@@ -6,22 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/pb_container"
-    android:background="@android:color/white" >
+    android:background="@android:color/white"
+    android:paddingTop="?attr/actionBarSize" >
 
-    <!--<android.widget.TextView-->
-        <!--android:id="@+id/toolbar_filler"-->
-        <!--android:layout_width="match_parent"-->
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/pb_toolbar"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:background="@android:color/holo_red_dark"-->
+        <!--android:layout_width="match_parent"-->
         <!--android:minHeight="?attr/actionBarSize"-->
-        <!--android:text="@string/abc_action_bar_home_description" />-->
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/pb_toolbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:background="@color/prayer_book_primary" />
+        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+        <!--android:background="@color/prayer_book_primary" />-->
 
 </LinearLayout>

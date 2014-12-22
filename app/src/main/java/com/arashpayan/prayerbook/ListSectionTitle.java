@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class ListSectionTitle extends TextView {
     }
     
     @Override
-    public void onDraw(Canvas canvas) {
+    public void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
         
         // draw a solid line at the bottom

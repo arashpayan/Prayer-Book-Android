@@ -7,14 +7,9 @@ package com.arashpayan.prayerbook;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.graphics.Palette;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +23,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
-import com.arashpayan.util.L;
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
 
@@ -66,7 +60,7 @@ public class CategoriesFragment extends Fragment {
 
     private LinkedList<Language> getEnabledLanguages() {
         Preferences preferences = Preferences.getInstance(getActivity().getApplication());
-        LinkedList<Language> enabledLanguages = new LinkedList<Language>();
+        LinkedList<Language> enabledLanguages = new LinkedList<>();
         for (Language l : Language.values()) {
             if (preferences.isLanguageEnabled(l)) {
                 enabledLanguages.add(l);
@@ -141,37 +135,11 @@ public class CategoriesFragment extends Fragment {
         super.onResume();
 
         mListView.setSelectionFromTop(firstVisiblePosition, 0);
-//        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.icon_512);
-//
-//        Palette.generateAsync(icon, new Palette.PaletteAsyncListener() {
-//            @Override
-//            public void onGenerated(Palette palette) {
-//                if (palette == null) {
-//                    L.i("Palette was null");
-//                    return;
-//                }
-//
-//                int dm = palette.getDarkMutedColor(0);
-//                int dv = palette.getDarkVibrantColor(0);
-//                int lm = palette.getLightMutedColor(0);
-//                int lv = palette.getLightVibrantColor(0);
-//                int m = palette.getMutedColor(0);
-//                int v = palette.getVibrantColor(0);
-//
-//                L.i("dm: (" + Color.red(dm) +", " + Color.green(dm) +", " + Color.blue(dm) + ")");
-//                L.i("dv: (" + Color.red(dv) +", " + Color.green(dv) +", " + Color.blue(dv) + ")");
-//                L.i("lm: (" + Color.red(lm) +", " + Color.green(lm) +", " + Color.blue(lm) + ")");
-//                L.i("lv: (" + Color.red(lv) +", " + Color.green(lv) +", " + Color.blue(lv) + ")");
-//                L.i("m: (" + Color.red(m) +", " + Color.green(m) +", " + Color.blue(m) + ")");
-//                L.i("v: (" + Color.red(v) +", " + Color.green(v) +", " + Color.blue(v) + ")");
-//            }
-//        });
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListView(getActivity());
-//        mListView.setBackgroundColor(Color.WHITE);
         mMergeAdapter = buildAdapter();
         mListView.setAdapter(mMergeAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -190,7 +158,7 @@ public class CategoriesFragment extends Fragment {
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
         args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, item.first);
-        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, (Parcelable)item.second);
+        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, item.second);
         fragment.setArguments(args);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();

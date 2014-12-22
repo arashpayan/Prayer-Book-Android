@@ -142,7 +142,7 @@ public class CategoryPrayersFragment extends Fragment {
             
             int wordCountColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
             String wordCount = prayersCursor.getString(wordCountColumnIndex);
-            holder.wordCount.setText(wordCount + " " + getString(R.string.words));
+            holder.wordCount.setText(wordCount + " " + mContext.getString(R.string.words));
             
             return convertView;
         }

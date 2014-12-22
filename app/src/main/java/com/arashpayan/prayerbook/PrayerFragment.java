@@ -20,25 +20,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebView;
-
-import com.arashpayan.util.L;
 
 /**
  *
  * @author arash
  */
-public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrollChangedListener {
+public class PrayerFragment extends Fragment {
     
     private WebView mWebView = null;
     private Cursor prayerCursor;
     private float mScale = 1.0f;
-
-    private boolean mActionBarHidden = false;
-    private int mActionBarHeight = 0;
-    private float mPrevWebViewScrollY = 0;
     
     public static final String PRAYER_ID_ARGUMENT = "PrayerId";
     public static final String PRAYER_TAG = "Prayer";
@@ -69,7 +61,6 @@ public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrol
         mWebView.getSettings().setSupportZoom(true);
         mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mWebView.setKeepScreenOn(true);
-        mWebView.getViewTreeObserver().addOnScrollChangedListener(this);
         reloadPrayer();
 
         return mWebView;
@@ -84,13 +75,6 @@ public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrol
         super.onPause();
         
         getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mActionBarHeight = getActivity().findViewById(R.id.pb_toolbar).getHeight();
     }
 
     @Override
@@ -265,27 +249,5 @@ public class PrayerFragment extends Fragment implements ViewTreeObserver.OnScrol
         
         String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
         manager.print(jobName, adapter, new PrintAttributes.Builder().build());
-    }
-
-    @Override
-    public void onScrollChanged() {
-        float y = mWebView.getScrollY();
-        if (!mActionBarHidden && y >= mActionBarHeight && (mPrevWebViewScrollY - y) < 0) {
-            mActionBarHidden = true;
-            getActivity().findViewById(R.id.pb_toolbar).animate().
-                    y(-mActionBarHeight).
-                    setDuration(300).
-                    setInterpolator(new DecelerateInterpolator()).
-                    start();
-        } else if (mActionBarHidden && (mPrevWebViewScrollY - y) > 0) {
-            mActionBarHidden = false;
-            getActivity().findViewById(R.id.pb_toolbar).animate().
-                    y(0).
-                    setDuration(300).
-                    setInterpolator(new DecelerateInterpolator()).
-                    start();
-        }
-
-        mPrevWebViewScrollY = y;
     }
 }

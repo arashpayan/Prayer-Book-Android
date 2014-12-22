@@ -42,6 +42,7 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     @Override
+    @android.support.annotation.NonNull
     public Dialog onCreateDialog(Bundle savedInstance) {
         Builder alertBuilder = new AlertDialog.Builder(getActivity());
         alertBuilder.setTitle(R.string.about);
@@ -52,8 +53,8 @@ public class AboutDialogFragment extends DialogFragment {
             L.e("Unable to open 'about' HTML", ex);
         }
         TextView tv = new TextView(getActivity());
-        int sixteenDp = Graphics.pixels(getActivity(), 16);
-        tv.setPadding(sixteenDp, sixteenDp, sixteenDp, sixteenDp);
+        int pad = Graphics.pixels(getActivity(), 24);
+        tv.setPadding(pad, pad, pad, pad);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
         tv.setText(Html.fromHtml(html));
         alertBuilder.setView(tv);
