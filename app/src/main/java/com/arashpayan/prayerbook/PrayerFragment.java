@@ -14,6 +14,8 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -94,6 +96,9 @@ public class PrayerFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // .75 to 1.60
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                break;
             case R.id.action_increase_text_size:
                 if (mScale < 1.6f) {
                     mScale += 0.05f;
@@ -123,11 +128,25 @@ public class PrayerFragment extends Fragment {
             case R.id.action_print_prayer:
                 printPrayer();
                 break;
+            default:
+                return false;
         }
         
         return true;
     }
-    
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle(null);
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setHomeButtonEnabled(true);
+        }
+    }
+
     public String getPrayerHTML() {
         float pFontWidth = (float)1.1 * mScale;
         float pFontHeight = (float)1.575 * mScale;

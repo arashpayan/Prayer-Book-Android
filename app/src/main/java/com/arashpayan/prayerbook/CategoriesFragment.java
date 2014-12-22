@@ -10,6 +10,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -134,6 +136,12 @@ public class CategoriesFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle(getString(R.string.app_name));
+            ab.setDisplayHomeAsUpEnabled(false);
+            ab.setHomeButtonEnabled(false);
+        }
         mListView.setSelectionFromTop(firstVisiblePosition, 0);
     }
     

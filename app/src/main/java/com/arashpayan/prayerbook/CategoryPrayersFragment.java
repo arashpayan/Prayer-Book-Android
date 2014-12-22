@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -46,7 +49,17 @@ public class CategoryPrayersFragment extends Fragment {
         
         setHasOptionsMenu(true);
     }
-    
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ListView list = new ListView(getActivity());
@@ -75,10 +88,11 @@ public class CategoryPrayersFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setTitle(mCategory);
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActivity().getActionBar().setHomeButtonEnabled(true);
+        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle(mCategory);
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setHomeButtonEnabled(true);
         }
     }
 

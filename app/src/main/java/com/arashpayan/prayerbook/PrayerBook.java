@@ -22,13 +22,4 @@ public class PrayerBook extends ActionBarActivity {
             ft.commit();
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.app_name);
-        }
-    }
 }
