@@ -45,9 +45,9 @@ public class CategoriesFragment extends Fragment {
     private ListView mListView;
 
     private MergeAdapter buildAdapter() {
-        LinkedList<Language> enabledLanguages = getEnabledLanguages();
+        Language[] enabledLanguages = Preferences.getInstance(App.getApp()).getEnabledLanguages();
         MergeAdapter mergeAdapter = new MergeAdapter();
-        boolean showSectionTitles = enabledLanguages.size() > 1;
+        boolean showSectionTitles = enabledLanguages.length > 1;
         for (Language l : enabledLanguages) {
             if (showSectionTitles) {
                 ListSectionTitle title = new ListSectionTitle(getActivity(), getString(l.humanName));
@@ -60,33 +60,33 @@ public class CategoriesFragment extends Fragment {
         return mergeAdapter;
     }
 
-    private LinkedList<Language> getEnabledLanguages() {
-        Preferences preferences = Preferences.getInstance(getActivity().getApplication());
-        LinkedList<Language> enabledLanguages = new LinkedList<>();
-        for (Language l : Language.values()) {
-            if (preferences.isLanguageEnabled(l)) {
-                enabledLanguages.add(l);
-            }
-        }
-
-        if (enabledLanguages.isEmpty()) {
-            // find the user's locale and see if it matches any of the known languages
-            Locale defaultLocale = Locale.getDefault();
-            String langCode = defaultLocale.getLanguage();
-            for (Language l : Language.values()) {
-                if (langCode.startsWith(l.code)) {
-                    enabledLanguages.add(l);
-                }
-            }
-        }
-
-        // if it's still empty, just enable English
-        if (enabledLanguages.isEmpty()) {
-            enabledLanguages.add(Language.English);
-        }
-
-        return enabledLanguages;
-    }
+//    private LinkedList<Language> getEnabledLanguages() {
+//        Preferences preferences = Preferences.getInstance(getActivity().getApplication());
+//        LinkedList<Language> enabledLanguages = new LinkedList<>();
+//        for (Language l : Language.values()) {
+//            if (preferences.isLanguageEnabled(l)) {
+//                enabledLanguages.add(l);
+//            }
+//        }
+//
+//        if (enabledLanguages.isEmpty()) {
+//            // find the user's locale and see if it matches any of the known languages
+//            Locale defaultLocale = Locale.getDefault();
+//            String langCode = defaultLocale.getLanguage();
+//            for (Language l : Language.values()) {
+//                if (langCode.startsWith(l.code)) {
+//                    enabledLanguages.add(l);
+//                }
+//            }
+//        }
+//
+//        // if it's still empty, just enable English
+//        if (enabledLanguages.isEmpty()) {
+//            enabledLanguages.add(Language.English);
+//        }
+//
+//        return enabledLanguages;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +125,9 @@ public class CategoriesFragment extends Fragment {
                 AboutDialogFragment adf = new AboutDialogFragment();
                 adf.show(getFragmentManager(), "dialog");
                 break;
+            case R.id.search_prayers:
+                onSearch();
+                break;
             default:
                 return false;
         }
@@ -141,6 +144,7 @@ public class CategoriesFragment extends Fragment {
             ab.setTitle(getString(R.string.app_name));
             ab.setDisplayHomeAsUpEnabled(false);
             ab.setHomeButtonEnabled(false);
+            ab.setDisplayShowTitleEnabled(true);
         }
         mListView.setSelectionFromTop(firstVisiblePosition, 0);
     }
@@ -174,7 +178,15 @@ public class CategoriesFragment extends Fragment {
         ft.addToBackStack(CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
         ft.replace(R.id.pb_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
         ft.commit();
+    }
 
+    private void onSearch() {
+        SearchFragment sf = new SearchFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(SearchFragment.SEARCHPRAYERS_TAG);
+        ft.replace(R.id.pb_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
+        ft.commit();
     }
 
     @Subscribe @SuppressWarnings("unused")

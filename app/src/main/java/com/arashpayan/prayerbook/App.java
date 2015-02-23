@@ -2,6 +2,7 @@ package com.arashpayan.prayerbook;
 
 import android.app.Application;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 
 import com.arashpayan.util.L;
@@ -20,6 +21,10 @@ public class App extends Application {
 
     private Bus mBus;
     private Handler mMainThreadHandler;
+
+    private Handler mBackgroundHandler;
+    private HandlerThread mBackgroundThread;
+
     private static volatile App mApp;
     private static final int LatestDatabaseVersion = 2;
 
@@ -35,6 +40,10 @@ public class App extends Application {
         copyDatabaseFile();
         mBus = new Bus();
         mMainThreadHandler = new Handler(Looper.getMainLooper());
+
+        mBackgroundThread = new HandlerThread("Prayer Book Background");
+        mBackgroundThread.start();
+        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
     
     private void copyDatabaseFile() {
@@ -81,6 +90,10 @@ public class App extends Application {
 
     public static void postOnMainThread(Runnable r) {
         mApp.mMainThreadHandler.post(r);
+    }
+
+    public static void postOnBackgroundThread(Runnable r) {
+        mApp.mBackgroundHandler.post(r);
     }
 
     public static void registerOnBus(final Object object) {

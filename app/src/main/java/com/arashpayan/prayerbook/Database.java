@@ -120,9 +120,9 @@ public class Database {
                 firstKeyword = false;
             }
 
-            whereClause.append(" searchText LIKE %");
+            whereClause.append(" searchText LIKE '%");
             whereClause.append(kw);
-            whereClause.append("%");
+            whereClause.append("%'");
         }
 
         // build the language portion of the query

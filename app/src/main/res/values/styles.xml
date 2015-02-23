@@ -5,10 +5,10 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/prayer_book_primary</item>
         <item name="colorPrimaryDark">@color/prayer_book_primary_dark</item>
-        <!--<item name="colorPrimaryDark">@color/black</item>-->
         <item name="colorAccent">@color/prayer_book_accent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="windowActionBarOverlay">true</item>
+        <!--<item name="android:textColorHint">@color/text_hint</item>-->
     </style>
 
 </resources>

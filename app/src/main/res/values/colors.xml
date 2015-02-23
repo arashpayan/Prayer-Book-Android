@@ -7,4 +7,5 @@
     <color name="black_54">#89000000</color>
     <color name="black">#FF000000</color>
     <color name="clear">#00000000</color>
+    <color name="text_hint">#44000000</color>
 </resources>

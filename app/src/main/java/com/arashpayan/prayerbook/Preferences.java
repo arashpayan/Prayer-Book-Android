@@ -8,6 +8,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.LinkedList;
+import java.util.Locale;
+
 /**
  *
  * @author arash
@@ -39,6 +42,33 @@ public class Preferences {
 
     public int getDatabaseVersion() {
         return mPrefs.getInt(PREFERENCE_DATABASE_VERSION, 0);
+    }
+
+    public Language[] getEnabledLanguages() {
+        LinkedList<Language> langs = new LinkedList<>();
+        for (Language l : Language.values()) {
+            if (isLanguageEnabled(l)) {
+                langs.add(l);
+            }
+        }
+
+        if (langs.isEmpty()) {
+            // find the user's locale and see if it matches any of the known languages
+            Locale defaultLocale = Locale.getDefault();
+            String langCode = defaultLocale.getLanguage();
+            for (Language l : Language.values()) {
+                if (langCode.startsWith(l.code)) {
+                    langs.add(l);
+                }
+            }
+        }
+
+        // if it's still empty, just enable English
+        if (langs.isEmpty()) {
+            langs.add(Language.English);
+        }
+
+        return langs.toArray(new Language[langs.size()]);
     }
     
     public void setDatabaseVersion(int version) {
