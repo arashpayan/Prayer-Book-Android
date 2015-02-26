@@ -22,6 +22,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.arashpayan.util.L;
+
 /**
  *
  * @author arash
@@ -135,6 +137,7 @@ public class CategoryPrayersFragment extends Fragment {
             } else {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 convertView = inflater.inflate(R.layout.prayer_summary, parent, false);
+                convertView.setClickable(false);
 
                 holder = new PrayerSummaryViewHolderItem();
                 holder.openingWords = (TextView)convertView.findViewById(R.id.prayer_summary);
