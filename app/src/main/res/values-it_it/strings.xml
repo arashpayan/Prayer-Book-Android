@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Libro di preghiere</string>
+  <string name="prayers">Preghiere</string>
+  <string name="words">parole</string>
+  <string name="about">Informazioni su</string>
+  <string name="search">Ricerca</string>
+  <string name="languages">Lingue</string>
+  <string name="share">Condividi</string>
+  <string name="english">Inglese</string>
+  <string name="spanish">Spagnolo</string>
+  <string name="persian">Persiano</string>
+  <string name="french">Francese</string>
+  <string name="dutch">Olandese</string>
+  <string name="favorites">Preferiti</string>
+  <string name="espanol">Spagnolo</string>
+  <string name="farsi">Persiano</string>
+  <string name="francais">Francese</string>
+  <string name="nederlands">Olandese</string>
+  <string name="slovencina">Sloveno</string>
+  <string name="cestina">Ceco</string>
+  <string name="ok">OK</string>
+  <string name="cancel">Annulla</string>
+  <string name="print_ellipsis">Stampa</string>
+  <string name="document">Documento</string>
+  <string name="classic_theme">Tema classico</string>
+</resources>

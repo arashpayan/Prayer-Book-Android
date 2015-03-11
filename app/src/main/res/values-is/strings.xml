@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Bænabók</string>
+  <string name="prayers">Bænir</string>
+  <string name="words">orð</string>
+  <string name="about">Um</string>
+  <string name="search">Leit</string>
+  <string name="languages">Tungumál</string>
+  <string name="share">Deila</string>
+  <string name="english">English</string>
+  <string name="spanish">Español</string>
+  <string name="persian">فارسی</string>
+  <string name="french">Français</string>
+  <string name="dutch">Nederlands</string>
+  <string name="favorites">Uppáhalds</string>
+  <string name="espanol">Español</string>
+  <string name="farsi">فارسی</string>
+  <string name="francais">Français</string>
+  <string name="nederlands">Nederlands</string>
+  <string name="slovencina">Slovenčina</string>
+  <string name="cestina">Čeština</string>
+  <string name="ok">Í lagi</string>
+  <string name="cancel">Hætta við</string>
+  <string name="print_ellipsis">Prenta...</string>
+  <string name="document">Skjöl</string>
+  <string name="classic_theme">Sígilt þema</string>
+</resources>
