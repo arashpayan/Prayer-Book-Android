@@ -1,5 +1,6 @@
 package com.arashpayan.prayerbook;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -34,11 +35,16 @@ public class SearchFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private SearchAdapter mSearchAdapter;
+    private CharSequence mQuery = null;
 
     public void onStart() {
         super.onStart();
 
-        ActionBarActivity activity = (ActionBarActivity)getActivity();
+        setHasOptionsMenu(true);
+    }
+
+    private void installSearchView() {
+        ActionBarActivity activity = (ActionBarActivity) getActivity();
         ActionBar ab = activity.getSupportActionBar();
         ab.setDisplayShowCustomEnabled(true);
 
@@ -46,17 +52,17 @@ public class SearchFragment extends Fragment {
         // Then we can retrieve it to add our listeners.
         ab.setCustomView(R.layout.search_view);
         SearchView sv = (SearchView) ab.getCustomView();
+        sv.setSaveEnabled(true);
         ab.setCustomView(sv);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                L.i("text submit: " + query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                L.i("text change: " + newText);
+                mQuery = newText;
                 final String trimmed = newText.trim();
                 if (trimmed.length() < 3) {
                     mSearchAdapter.setCursor(null);
@@ -84,17 +90,21 @@ public class SearchFragment extends Fragment {
         sv.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                L.i("onClose");
                 return false;
             }
         });
-        sv.requestFocus();
 
-        setHasOptionsMenu(true);
+        if (mQuery != null) {
+            sv.setQuery(mQuery, true);
+        } else {
+            sv.requestFocus();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        installSearchView();
+
         mRecyclerView = new RecyclerView(getActivity());
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -106,9 +116,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 onPrayerClicked(position);
-//                L.i("clicked item at position " + position);
-//                long prayerID = mSearchAdapter.getItemId(position);
-
             }
         }));
 
@@ -125,9 +132,12 @@ public class SearchFragment extends Fragment {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
 
-            SearchView sv = (SearchView) ab.getCustomView();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            // if there's no query saved, then show the keyboard
+            if (mQuery == null) {
+                SearchView sv = (SearchView) ab.getCustomView();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
         }
     }
 
@@ -135,7 +145,7 @@ public class SearchFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        ActionBarActivity activity = (ActionBarActivity)getActivity();
+        ActionBarActivity activity = (ActionBarActivity) getActivity();
         activity.getSupportActionBar().setDisplayShowCustomEnabled(false);
     }
 
