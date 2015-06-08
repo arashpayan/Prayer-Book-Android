@@ -10,7 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -44,7 +44,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void installSearchView() {
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar ab = activity.getSupportActionBar();
         ab.setDisplayShowCustomEnabled(true);
 
@@ -126,7 +126,7 @@ public class SearchFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null) {
             ab.setDisplayShowTitleEnabled(false);
             ab.setDisplayHomeAsUpEnabled(true);
@@ -145,7 +145,7 @@ public class SearchFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setDisplayShowCustomEnabled(false);
     }
 
@@ -162,7 +162,7 @@ public class SearchFragment extends Fragment {
     public void onPrayerClicked(int position) {
         // the keyboard might still be present, so dismiss it
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar ab = activity.getSupportActionBar();
         SearchView sv = (SearchView) ab.getCustomView();
         imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);

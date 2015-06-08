@@ -14,14 +14,14 @@ import android.os.Parcelable;
  */
 public enum Language implements Parcelable {
 
-    
+    Czech("cs", R.string.czech, false),
     English("en", R.string.english, false),
-    Spanish("es", R.string.espanol, false),
-    Persian("fa", R.string.farsi, true),
-    French("fr", R.string.francais, false),
-    Dutch("nl", R.string.nederlands, false),
-    Czech("cs", R.string.cestina, false),
-    Slovak("sk", R.string.slovencina, false);
+    Spanish("es", R.string.spanish, false),
+    Persian("fa", R.string.persian, true),
+    Fijian("fj", R.string.fijian, false),
+    French("fr", R.string.french, false),
+    Dutch("nl", R.string.dutch, false),
+    Slovak("sk", R.string.slovak, false);
 
     public final String code;
     public final int humanName;

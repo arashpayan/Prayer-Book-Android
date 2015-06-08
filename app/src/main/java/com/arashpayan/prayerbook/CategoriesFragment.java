@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -59,34 +59,6 @@ public class CategoriesFragment extends Fragment {
 
         return mergeAdapter;
     }
-
-//    private LinkedList<Language> getEnabledLanguages() {
-//        Preferences preferences = Preferences.getInstance(getActivity().getApplication());
-//        LinkedList<Language> enabledLanguages = new LinkedList<>();
-//        for (Language l : Language.values()) {
-//            if (preferences.isLanguageEnabled(l)) {
-//                enabledLanguages.add(l);
-//            }
-//        }
-//
-//        if (enabledLanguages.isEmpty()) {
-//            // find the user's locale and see if it matches any of the known languages
-//            Locale defaultLocale = Locale.getDefault();
-//            String langCode = defaultLocale.getLanguage();
-//            for (Language l : Language.values()) {
-//                if (langCode.startsWith(l.code)) {
-//                    enabledLanguages.add(l);
-//                }
-//            }
-//        }
-//
-//        // if it's still empty, just enable English
-//        if (enabledLanguages.isEmpty()) {
-//            enabledLanguages.add(Language.English);
-//        }
-//
-//        return enabledLanguages;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,7 +111,7 @@ public class CategoriesFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ActionBar ab = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null) {
             ab.setTitle(getString(R.string.app_name));
             ab.setDisplayHomeAsUpEnabled(false);
