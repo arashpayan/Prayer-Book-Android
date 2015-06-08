@@ -4,13 +4,13 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -27,9 +27,6 @@ import android.widget.TextView;
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
-
-import java.util.LinkedList;
-import java.util.Locale;
 
 /**
  *

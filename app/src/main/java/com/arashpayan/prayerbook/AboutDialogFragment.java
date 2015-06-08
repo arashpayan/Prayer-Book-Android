@@ -4,13 +4,12 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
@@ -44,7 +43,7 @@ public class AboutDialogFragment extends DialogFragment {
     @Override
     @android.support.annotation.NonNull
     public Dialog onCreateDialog(Bundle savedInstance) {
-        Builder alertBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
         alertBuilder.setTitle(R.string.about);
         String html = "";
         try {
