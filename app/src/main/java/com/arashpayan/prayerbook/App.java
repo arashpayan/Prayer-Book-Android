@@ -23,10 +23,9 @@ public class App extends Application {
     private Handler mMainThreadHandler;
 
     private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
 
     private static volatile App mApp;
-    private static final int LatestDatabaseVersion = 3;
+    private static final int LatestDatabaseVersion = 4;
 
     public static App getApp() {
         return mApp;
@@ -41,9 +40,9 @@ public class App extends Application {
         mBus = new Bus();
         mMainThreadHandler = new Handler(Looper.getMainLooper());
 
-        mBackgroundThread = new HandlerThread("Prayer Book Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+        HandlerThread bgThread = new HandlerThread("Prayer Book Background");
+        bgThread.start();
+        mBackgroundHandler = new Handler(bgThread.getLooper());
     }
     
     private void copyDatabaseFile() {
