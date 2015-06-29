@@ -7,14 +7,14 @@ android {
         applicationId 'com.arashpayan.prayerbook'
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 7
-        versionName '1.5'
+        versionCode 8
+        versionName '1.5.1'
     }
     productFlavors {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
