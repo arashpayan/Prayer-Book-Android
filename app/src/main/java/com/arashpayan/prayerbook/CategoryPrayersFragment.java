@@ -4,23 +4,21 @@
  */
 package com.arashpayan.prayerbook;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.arashpayan.util.L;
 
@@ -35,6 +33,9 @@ public class CategoryPrayersFragment extends Fragment {
     public static final String LANGUAGE_ARGUMENT = "Language";
     private String mCategory;
     private Language mLanguage;
+    private CategoryPrayersAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private Parcelable mRecyclerState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,20 @@ public class CategoryPrayersFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
+        // when your Fragments are just getting swapped within the same Activity.
+        if (mRecyclerView != null) {
+            mRecyclerState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            L.i("onback");
             getActivity().onBackPressed();
             return true;
         }
@@ -62,28 +75,45 @@ public class CategoryPrayersFragment extends Fragment {
         return false;
     }
 
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (mRecyclerState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerState);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView list = new ListView(getActivity());
-        CategoryPrayersAdapter adapter = new CategoryPrayersAdapter(getActivity(), mCategory, mLanguage);
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(new OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {
-                PrayerFragment prayerFragment = new PrayerFragment();
-                Bundle args = new Bundle();
-                args.putLong(PrayerFragment.PRAYER_ID_ARGUMENT, itemId);
-                prayerFragment.setArguments(args);
-                
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction().
-                        replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG).
-                        addToBackStack(PrayerFragment.PRAYER_TAG);
-                ft.commit();
+        RecyclerView mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(llm);
+        mAdapter = new CategoryPrayersAdapter(mCategory, mLanguage);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                onPrayerClicked(position);
             }
-        });
+        }));
         
-        return list;
+        return mRecyclerView;
+    }
+
+    private void onPrayerClicked(int position) {
+        PrayerFragment prayerFragment = new PrayerFragment();
+        Bundle args = new Bundle();
+        long prayerID = mAdapter.getItemId(position);
+        args.putLong(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
+        prayerFragment.setArguments(args);
+
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction().
+                replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG).
+                addToBackStack(null);
+        ft.commit();
     }
     
     @Override
@@ -96,72 +126,17 @@ public class CategoryPrayersFragment extends Fragment {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
         }
+        expandToolbar();
     }
 
-    static class PrayerSummaryViewHolderItem {
-        TextView openingWords;
-        TextView author;
-        TextView wordCount;
-    }
+    public void expandToolbar() {
+        AppBarLayout appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.appbar);
 
-    class CategoryPrayersAdapter extends BaseAdapter {
-        
-        private final Database prayersDb;
-        private final Cursor prayersCursor;
-        private final Context mContext;
-
-        public CategoryPrayersAdapter(Context context, String category, Language language) {
-            this.mContext = context;
-            prayersDb = Database.getInstance();
-            prayersCursor = prayersDb.getPrayers(category, language);
-        }
-        
-        public int getCount() {
-            return prayersCursor.getCount();
-        }
-
-        public Object getItem(int position) {
-            return "prayer: " + position;
-        }
-
-        public long getItemId(int position) {
-            prayersCursor.moveToPosition(position);
-            int idColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
-            return prayersCursor.getLong(idColumnIndex);
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            PrayerSummaryViewHolderItem holder;
-            if (convertView != null) {
-                holder = (PrayerSummaryViewHolderItem)convertView.getTag();
-            } else {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                convertView = inflater.inflate(R.layout.prayer_summary, parent, false);
-                convertView.setClickable(false);
-
-                holder = new PrayerSummaryViewHolderItem();
-                holder.openingWords = (TextView)convertView.findViewById(R.id.prayer_summary);
-                holder.author = (TextView)convertView.findViewById(R.id.prayer_author);
-                holder.wordCount = (TextView)convertView.findViewById(R.id.prayer_word_count);
-
-                convertView.setTag(holder);
-            }
-            
-            prayersCursor.moveToPosition(position);
-            
-            int openingWordsColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.OPENINGWORDS_COLUMN);
-            String openingWords = prayersCursor.getString(openingWordsColumnIndex);
-            holder.openingWords.setText(openingWords);
-            
-            int authorColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
-            String author = prayersCursor.getString(authorColumnIndex);
-            holder.author.setText(author);
-            
-            int wordCountColumnIndex = prayersCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
-            String wordCount = prayersCursor.getString(wordCountColumnIndex);
-            holder.wordCount.setText(wordCount + " " + mContext.getString(R.string.words));
-            
-            return convertView;
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        if(behavior!=null) {
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator);
+            behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -10000, false);
         }
     }
 }

@@ -5,27 +5,25 @@
 package com.arashpayan.prayerbook;
 
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Pair;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
-import com.commonsware.cwac.merge.MergeAdapter;
 import com.squareup.otto.Subscribe;
 
 /**
@@ -36,26 +34,9 @@ public class CategoriesFragment extends Fragment {
     
     public static final String CATEGORIES_TAG = "Categories";
 
-    private MergeAdapter mMergeAdapter;
-    
-    private int firstVisiblePosition;
-    private ListView mListView;
-
-    private MergeAdapter buildAdapter() {
-        Language[] enabledLanguages = Preferences.getInstance(App.getApp()).getEnabledLanguages();
-        MergeAdapter mergeAdapter = new MergeAdapter();
-        boolean showSectionTitles = enabledLanguages.length > 1;
-        for (Language l : enabledLanguages) {
-            if (showSectionTitles) {
-                ListSectionTitle title = new ListSectionTitle(getActivity(), getString(l.humanName));
-                mergeAdapter.addView(title, false);
-            }
-            CategoriesAdapter adapter = new CategoriesAdapter(l);
-            mergeAdapter.addAdapter(adapter);
-        }
-
-        return mergeAdapter;
-    }
+    private Parcelable mRecyclerState;
+    private RecyclerView mRecyclerView;
+    private CategoriesAdapter mCategoriesAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,8 +61,12 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        
-        firstVisiblePosition = mListView.getFirstVisiblePosition();
+
+        // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
+        // when your Fragments are just getting swapped within the same Activity.
+        if (mRecyclerView != null) {
+            mRecyclerState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        }
     }
 
     @Override
@@ -115,57 +100,79 @@ public class CategoriesFragment extends Fragment {
             ab.setHomeButtonEnabled(false);
             ab.setDisplayShowTitleEnabled(true);
         }
-        mListView.setSelectionFromTop(firstVisiblePosition, 0);
+        expandToolbar();
+    }
+
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (mRecyclerState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerState);
+        }
     }
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mListView = new ListView(getActivity());
-        mMergeAdapter = buildAdapter();
-        mListView.setAdapter(mMergeAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> adapterView, View itemView, int index, long itemId) {
-                onCategoryClicked(index);
+        mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(llm);
+        mCategoriesAdapter = new CategoriesAdapter(Language.English);
+        mRecyclerView.setAdapter(mCategoriesAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                onCategoryClicked(position);
             }
-        });
-        
-        return mListView;
+        }));
+
+        return mRecyclerView;
     }
 
-    private void onCategoryClicked(int index) {
-        @SuppressWarnings("unchecked")
-        Pair<String, Language> item = (Pair<String, Language>) mMergeAdapter.getItem(index);
+    private void onCategoryClicked(int position) {
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
-        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, item.first);
-        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, item.second);
+        String category = mCategoriesAdapter.getCategory(position);
+        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, mCategoriesAdapter.getCategory(position));
+        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, mCategoriesAdapter.getLanguage());
         fragment.setArguments(args);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.addToBackStack(CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.addToBackStack(null);
         ft.replace(R.id.pb_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
         ft.commit();
+    }
+
+    public void expandToolbar() {
+        AppBarLayout appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.appbar);
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        if(behavior!=null) {
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator);
+            behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -10000, false);
+        }
     }
 
     private void onSearch() {
         SearchFragment sf = new SearchFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.addToBackStack(SearchFragment.SEARCHPRAYERS_TAG);
+        ft.addToBackStack(null);
         ft.replace(R.id.pb_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
         ft.commit();
     }
 
     @Subscribe @SuppressWarnings("unused")
     public void onLanguagesChanged(LanguagesChangedEvent event) {
-        if (mListView == null) {
+        if (mRecyclerView == null) {
             return;
         }
 
-        mMergeAdapter = buildAdapter();
-        mListView.setAdapter(mMergeAdapter);
+        mCategoriesAdapter = new com.arashpayan.prayerbook.CategoriesAdapter(Language.English);
+        mRecyclerView.setAdapter(mCategoriesAdapter);
     }
 
     private void showLanguageDialog() {
@@ -193,74 +200,5 @@ public class CategoriesFragment extends Fragment {
             }
         });
         builder.show();
-    }
-
-    static class CategoryViewHolderItem {
-        TextView titleTextView;
-        TextView countTextView;
-    }
-
-    class CategoriesAdapter extends BaseAdapter {
-        
-        private final Database prayersDb;
-        private final Cursor categoriesCursor;
-        private final Language mLanguage;
-        
-        public CategoriesAdapter(Language language) {
-            this.mLanguage = language;
-            prayersDb = Database.getInstance();
-            categoriesCursor = prayersDb.getCategories(mLanguage);
-        }
-        
-        @Override
-        public boolean areAllItemsEnabled() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            return true;
-        }
-        
-        public int getCount() {
-            return categoriesCursor.getCount();
-        }
-        
-        public Object getItem(int position) {
-            categoriesCursor.moveToPosition(position);
-            int categoryColumnIndex = categoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
-            return Pair.create(categoriesCursor.getString(categoryColumnIndex), mLanguage);
-        }
-        
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            CategoryViewHolderItem holder;
-            if (convertView != null) {
-                holder = (CategoryViewHolderItem)convertView.getTag();
-            } else {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                convertView = inflater.inflate(R.layout.category, parent, false);
-
-                holder = new CategoryViewHolderItem();
-                holder.titleTextView = (TextView)convertView.findViewById(R.id.category_title);
-                holder.countTextView = (TextView)convertView.findViewById(R.id.category_prayers_count);
-
-                convertView.setTag(holder);
-            }
-            
-            categoriesCursor.moveToPosition(position);
-            int categoryColumnIndex = categoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
-
-            String category = categoriesCursor.getString(categoryColumnIndex);
-            holder.titleTextView.setText(category);
-
-            int prayerCount = Database.getInstance().getPrayerCountForCategory(category, mLanguage.code);
-            holder.countTextView.setText(Integer.toString(prayerCount));
-            
-            return convertView;
-        }
     }
 }

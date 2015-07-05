@@ -7,13 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by arash on 1/20/15.
+ * Created by arash on 7/5/15.
  */
-public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
+public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
-    private Cursor mCursor = null;
+    private final Cursor mCursor;
 
-    public SearchAdapter() {
+    public CategoryPrayersAdapter(String category, Language language) {
+        this.mCursor = Database.getInstance().getPrayers(category, language);
         setHasStableIds(true);
     }
 
@@ -31,8 +32,8 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
         int wordsColIdx = mCursor.getColumnIndexOrThrow(Database.OPENINGWORDS_COLUMN);
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
-        int ctgryColIdx = mCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
-        holder.detail.setText(mCursor.getString(ctgryColIdx));
+        int authorColIdx = mCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
+        holder.detail.setText(mCursor.getString(authorColIdx));
 
         int wrdCntColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
         holder.wordCount.setText(mCursor.getString(wrdCntColIdx) + " " + holder.wordCount.getContext().getString(R.string.words));
@@ -40,10 +41,6 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) {
-            return 0;
-        }
-
         return mCursor.getCount();
     }
 
@@ -55,10 +52,4 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
         int idColIdx = mCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
         return mCursor.getLong(idColIdx);
     }
-
-    public void setCursor(Cursor cursor) {
-        this.mCursor = cursor;
-        notifyDataSetChanged();
-    }
 }
-
