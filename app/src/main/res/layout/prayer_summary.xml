@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="56dp"
-    android:background="?android:selectableItemBackground"
-    android:clickable="true">
+    android:clickable="true"
+    android:background="@drawable/item_view_background" >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

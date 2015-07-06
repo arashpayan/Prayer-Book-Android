@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arashpayan.util.DividerItemDecoration;
 import com.arashpayan.util.L;
 
 /**
@@ -85,8 +86,9 @@ public class CategoryPrayersFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RecyclerView mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView = new RecyclerView(getActivity());
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
@@ -110,9 +112,10 @@ public class CategoryPrayersFragment extends Fragment {
         prayerFragment.setArguments(args);
 
         FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction().
-                replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG).
-                addToBackStack(null);
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        ft.replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG);
+        ft.addToBackStack(null);
         ft.commit();
     }
     

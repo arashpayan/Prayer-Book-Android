@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
+import com.arashpayan.util.DividerItemDecoration;
 import com.squareup.otto.Subscribe;
 
 /**
@@ -36,7 +37,7 @@ public class CategoriesFragment extends Fragment {
 
     private Parcelable mRecyclerState;
     private RecyclerView mRecyclerView;
-    private CategoriesAdapter mCategoriesAdapter;
+    private EnabledCategoriesAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,11 +116,13 @@ public class CategoriesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRecyclerView = new RecyclerView(getActivity());
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
-        mCategoriesAdapter = new CategoriesAdapter(Language.English);
-        mRecyclerView.setAdapter(mCategoriesAdapter);
+
+        mAdapter = new EnabledCategoriesAdapter(Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -133,15 +136,15 @@ public class CategoriesFragment extends Fragment {
     private void onCategoryClicked(int position) {
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
-        String category = mCategoriesAdapter.getCategory(position);
-        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, mCategoriesAdapter.getCategory(position));
-        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, mCategoriesAdapter.getLanguage());
+        String category = mAdapter.getCategory(position);
+        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, mAdapter.getCategory(position));
+        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, mAdapter.getLanguage(position));
         fragment.setArguments(args);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.addToBackStack(null);
+        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         ft.replace(R.id.pb_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -159,9 +162,9 @@ public class CategoriesFragment extends Fragment {
     private void onSearch() {
         SearchFragment sf = new SearchFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.addToBackStack(null);
+        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         ft.replace(R.id.pb_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -171,8 +174,8 @@ public class CategoriesFragment extends Fragment {
             return;
         }
 
-        mCategoriesAdapter = new com.arashpayan.prayerbook.CategoriesAdapter(Language.English);
-        mRecyclerView.setAdapter(mCategoriesAdapter);
+        mAdapter = new EnabledCategoriesAdapter(Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void showLanguageDialog() {

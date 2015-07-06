@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
+import com.arashpayan.util.DividerItemDecoration;
+
 /**
  * Created by arash on 12/22/14.
  */
@@ -99,6 +101,7 @@ public class SearchFragment extends Fragment {
 
         mRecyclerView = new RecyclerView(getActivity());
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
