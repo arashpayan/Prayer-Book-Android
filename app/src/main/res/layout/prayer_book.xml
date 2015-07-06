@@ -29,7 +29,6 @@
         android:id="@+id/pb_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="300dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>
