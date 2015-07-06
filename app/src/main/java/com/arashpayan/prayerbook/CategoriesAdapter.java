@@ -1,7 +1,6 @@
 package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
-import android.graphics.drawable.RippleDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
