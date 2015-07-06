@@ -1,12 +1,11 @@
 package com.arashpayan.prayerbook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -162,16 +161,11 @@ public class SearchFragment extends Fragment {
         SearchView sv = (SearchView) ab.getCustomView();
         imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
 
+        Intent intent = new Intent(getActivity(), PrayerActivity.class);
         long prayerID = mSearchAdapter.getItemId(position);
-        PrayerFragment prayerFragment = new PrayerFragment();
-        Bundle args = new Bundle();
-        args.putLong(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
-        prayerFragment.setArguments(args);
+        intent.putExtra(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
+        startActivity(intent);
 
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction().
-                replace(R.id.pb_container, prayerFragment, PrayerFragment.PRAYER_TAG).
-                addToBackStack(PrayerFragment.PRAYER_TAG);
-        ft.commit();
+        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 }

@@ -6,14 +6,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class PrayerBook extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.prayer_book);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.pb_toolbar);
+        setContentView(R.layout.main_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
@@ -21,7 +21,7 @@ public class PrayerBook extends AppCompatActivity {
 
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.pb_container, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
+            ft.add(R.id.main_container, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
             ft.commit();
         }
     }

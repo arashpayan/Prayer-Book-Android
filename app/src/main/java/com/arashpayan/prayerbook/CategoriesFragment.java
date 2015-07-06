@@ -148,7 +148,7 @@ public class CategoriesFragment extends Fragment {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        ft.replace(R.id.pb_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.replace(R.id.main_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -168,7 +168,7 @@ public class CategoriesFragment extends Fragment {
         SearchFragment sf = new SearchFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        ft.replace(R.id.pb_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
+        ft.replace(R.id.main_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
         ft.addToBackStack(null);
         ft.commit();
     }
