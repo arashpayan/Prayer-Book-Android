@@ -5,26 +5,30 @@
     android:minHeight="56dp"
     android:clickable="true"
     android:background="@drawable/item_view_background" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_prayers_count"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="@dimen/abc_text_size_body_1_material"
+        android:text="7"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/category_title"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:layout_alignRight="@id/category_prayers_count"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:textSize="@dimen/abc_text_size_title_material"
-        android:text="Aid and Assistance"
-        android:textColor="@android:color/black"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/category_prayers_count"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textSize="@dimen/abc_text_size_body_1_material"
-        android:text="7"/>
-
+        android:text="Onderricht: Tafelen van het Goddelijk Plan"
+        android:textColor="@android:color/black"
+        android:maxLines="1"
+        android:ellipsize="end" />
 </RelativeLayout>
