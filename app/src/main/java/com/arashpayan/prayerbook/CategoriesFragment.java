@@ -121,7 +121,7 @@ public class CategoriesFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mAdapter = new EnabledCategoriesAdapter(Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -134,6 +134,11 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void onCategoryClicked(int position) {
+        // get ouf of here if they tapped the header
+        if (mAdapter.isHeader(position)) {
+            return;
+        }
+
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
         String category = mAdapter.getCategory(position);
@@ -174,7 +179,7 @@ public class CategoriesFragment extends Fragment {
             return;
         }
 
-        mAdapter = new EnabledCategoriesAdapter(Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
         mRecyclerView.setAdapter(mAdapter);
     }
 
