@@ -26,12 +26,12 @@ public class App extends Application {
     private Handler mBackgroundHandler;
 
     private static volatile App mApp;
-    private static final int LatestDatabaseVersion = 4;
+    private static final int LatestDatabaseVersion = 5;
 
     public static App getApp() {
         return mApp;
     }
-    
+
     @Override
     public void onCreate() {
         mApp = this;
@@ -45,7 +45,7 @@ public class App extends Application {
         bgThread.start();
         mBackgroundHandler = new Handler(bgThread.getLooper());
     }
-    
+
     private void copyDatabaseFile() {
         int dbVersion = Preferences.getInstance(this).getDatabaseVersion();
         File databaseFile = new File(getFilesDir(), "pbdb.db");
