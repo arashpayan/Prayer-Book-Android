@@ -24,6 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.arashpayan.util.L;
+import com.samskivert.mustache.Mustache;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Locale;
+
 /**
  *
  * @author arash
@@ -35,7 +43,6 @@ public class PrayerFragment extends Fragment {
     private float mScale = 1.0f;
     
     public static final String PRAYER_ID_ARGUMENT = "PrayerId";
-    public static final String PRAYER_TAG = "Prayer";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,94 +162,67 @@ public class PrayerFragment extends Fragment {
         float authorHeight = (float)1.825 * mScale;
         float versalWidth = (float)3.5 * mScale;
         float versalHeight = (float)0.75 * mScale;
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-        
-        int langIndex = prayerCursor.getColumnIndexOrThrow(Database.LANGUAGE_COLUMN);
-        String langCode = prayerCursor.getString(langIndex);
-        Language lang = Language.get(langCode);
-        if (!lang.rightToLeft) {
-            sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
-        } else {
-            sb.append("<html dir=\"rtl\" xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
-        }
+
+        HashMap<String, String> args = new HashMap<>();
+        args.put("fontWidth", String.format(Locale.US, "%f", pFontWidth));
+        args.put("fontHeight", String.format(Locale.US, "%f", pFontHeight));
+        args.put("commentSize", String.format(Locale.US, "%f", pComment));
+        args.put("authorWidth", String.format(Locale.US, "%f", authorWidth));
+        args.put("authorHeight", String.format(Locale.US, "%f", authorHeight));
+        args.put("versalWidth", String.format(Locale.US, "%f", versalWidth));
+        args.put("versalHeight", String.format(Locale.US, "%f", versalHeight));
         boolean useClassicTheme = Preferences.getInstance(App.getApp()).useClassicTheme();
         String bgColor;
         String versalAndAuthorColor;
         String font;
+        String italicOrNothing;
         if (useClassicTheme) {
             bgColor = "#D6D2C9";
             versalAndAuthorColor = "#992222";
             font = "Georgia";
+            italicOrNothing = "italic";
         } else {
             bgColor = "#ffffff";
             versalAndAuthorColor = "#33b5e5";
-            font = "\"sans-serif\"";
+            font = "sans-serif";
+            italicOrNothing = "";
         }
+        args.put("backgroundColor", bgColor);
+        args.put("versalAndAuthorColor", versalAndAuthorColor);
+        args.put("font", font);
+        args.put("italicOrNothing", italicOrNothing);
 
-        sb.append("<head>\n");
-        sb.append("<meta content=\"text/html;charset=utf-8\" http-equiv=\"Content-Type\">\n");
-        sb.append("<meta content=\"utf-8\" http-equiv=\"encoding\">");
-        // for XHTML compliance, we add a title
-        sb.append("<title>Prayer</title>\n");
-        sb.append("<style type=\"text/css\">\n");
-        sb.append("#prayer p {margin: 0 0px .75em 0px; color: #333333; font: normal ");
-        sb.append(pFontWidth); sb.append("em/"); sb.append(pFontHeight); sb.append("em");
-        sb.append(" "); sb.append(font);
-        sb.append("; clear: both; text-indent: 1em;}\n");
-        sb.append("#prayer p.opening {text-indent: 0;}\n");
-        sb.append("body { padding: 8px; background: "); sb.append(bgColor); sb.append("; }\n");
-        sb.append("#prayer p.commentcaps {font: normal ");
-        sb.append(pComment); sb.append("em");
-        sb.append(" \"sans-serif\"; color: #444433; text-transform: uppercase; margin: 0 0px 20px 5px; text-indent: 0; }\n");
-        sb.append("#prayer p.comment {font: normal ");
-        sb.append(pComment); sb.append("em");
-        sb.append(" \"sans-serif\"; color: #444433; margin: 0 0px .825em 1.5em; text-indent: 0; }\n");
-        sb.append("#prayer p.noindent {text-indent: 0; margin-bottom: .25em;}\n");
-        sb.append("#prayer p.commentnoindent {font: normal ");
-        sb.append(pComment); sb.append("em");
-        sb.append(" \"sans-serif\"; color: #444433; margin: 0 0px 15px 5px; text-indent: 0;}\n");
-        sb.append("#prayer h4#author { float: right; margin: 0 5px 25px 0; font: ");
-        if (useClassicTheme) {
-            sb.append("italic ");
-        }
-        sb.append(authorWidth); sb.append("em/"); sb.append(authorHeight); sb.append("em");
-        sb.append(" "); sb.append(font);
-        sb.append("; color: ");
-        sb.append(versalAndAuthorColor);
-        sb.append("; text-indent: 0.325em; font-weight: normal; font-size:1.25em }\n");
-        sb.append("span.versal {float: left; display: inline; position: relative; color: ");
-        sb.append(versalAndAuthorColor); sb.append("; font: normal ");
-        sb.append(versalWidth); sb.append("em/"); sb.append(versalHeight); sb.append("em");
-        sb.append(" "); sb.append(font);
-        sb.append("; margin: .115em .15em 0 0em; padding: 0;}\n");
-        sb.append("</style>\n</head>\n<body>\n<div id=\"prayer\">");
-        
-        // append the prayer text
         int textIndex = prayerCursor.getColumnIndexOrThrow(Database.PRAYERTEXT_COLUMN);
         String prayerText = prayerCursor.getString(textIndex);
-        sb.append(prayerText);
-        
-        // append the author
+        args.put("prayer", prayerText);
+
         int authorIndex = prayerCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
         String authorText = prayerCursor.getString(authorIndex);
-        sb.append("<h4 id=\"author\">"); sb.append(authorText); sb.append("</h4>");
-        
-        // append the citation (if there is one)
+        args.put("author", authorText);
+
         int citationIndex = prayerCursor.getColumnIndexOrThrow(Database.CITATION_COLUMN);
         String citationText = prayerCursor.getString(citationIndex);
-        if (citationText != null && citationText.length() != 0) {
-            sb.append("<p class=\"comment\"><br/><br/>");
-            sb.append(citationText);
-            sb.append("</p>");
+        if (citationText.isEmpty()) {
+            L.i("no citation");
+            args.put("citation", "");
+        } else {
+            String citationHTML = String.format("<p class=\"comment\"><br/><br/>%s</p>", citationText);
+            args.put("citation", citationHTML);
         }
-        
-        // close up the document
-        sb.append("</div>\n</body>\n</html>");
-        
-        return sb.toString();
+
+        int langIndex = prayerCursor.getColumnIndexOrThrow(Database.LANGUAGE_COLUMN);
+        String langCode = prayerCursor.getString(langIndex);
+        Language lang = Language.get(langCode);
+        if (lang.rightToLeft) {
+            args.put("layoutDirection", "rtl");
+        } else {
+            args.put("layoutDirection", "ltr");
+        }
+
+        InputStream is = getResources().openRawResource(R.raw.prayer_template);
+        InputStreamReader isr = new InputStreamReader(is);
+
+        return Mustache.compiler().escapeHTML(false).compile(isr).execute(args);
     }
     
     private String getPrayerText() {
