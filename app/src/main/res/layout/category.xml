@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="56dp"
+    android:minHeight="48dp"
     android:clickable="true"
-    android:background="@drawable/item_view_background" >
+    android:background="@drawable/item_view_background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,20 +16,25 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textSize="@dimen/abc_text_size_body_1_material"
-        android:text="7"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/secondary_text_default_material_light"
+        tools:text="7"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/category_title"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
         android:layout_alignRight="@id/category_prayers_count"
+        android:layout_alignEnd="@id/category_prayers_count"
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
-        android:textSize="@dimen/abc_text_size_title_material"
-        android:text="Onderricht: Tafelen van het Goddelijk Plan"
-        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_centerVertical="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        tools:text="Onderricht: Tafelen van het Goddelijk Plan"
+        android:textColor="@color/primary_text_default_material_light"
         android:maxLines="1"
         android:ellipsize="end" />
 </RelativeLayout>

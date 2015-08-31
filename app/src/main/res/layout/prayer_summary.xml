@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="56dp"
     android:clickable="true"
-    android:background="@drawable/item_view_background" >
+    android:background="@drawable/item_view_background">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:lines="1"
         android:maxLines="1"
-        android:gravity="right"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:gravity="end"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:id="@+id/prayer_word_count"
-        android:textSize="@dimen/abc_text_size_caption_material"
-        android:textColor="@color/black_54"
-        android:text="144 words"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/secondary_text_default_material_light"
+        tools:text="144 words"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/prayer_word_count"
+        android:layout_toStartOf="@id/prayer_word_count"
         android:id="@+id/title_author_container">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lines="1"
             android:id="@+id/prayer_summary"
-            android:textSize="@dimen/abc_text_size_body_2_material"
-            android:textColor="@color/black_87"
-            android:gravity="left"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/primary_text_default_material_light"
             android:ellipsize="end"
-            android:text="O Thou kind Lord!" />
+            tools:text="O Thou kind Lord!" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/prayer_author"
-            android:textSize="@dimen/abc_text_size_caption_material"
-            android:textColor="@color/black_54"
-            android:text="'Abdu'l-Bahá"/>
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="@color/secondary_text_default_material_light"
+            tools:text="'Abdu'l-Bahá"/>
     </LinearLayout>
 </RelativeLayout>

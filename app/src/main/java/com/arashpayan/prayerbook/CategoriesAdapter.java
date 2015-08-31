@@ -1,10 +1,15 @@
 package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
+import android.os.Build;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by arash on 7/4/15.
@@ -31,12 +36,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> 
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         mCategoriesCursor.moveToPosition(position);
 
+        if (Build.VERSION.SDK_INT >= 17) {
+            holder.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+        }
+
         int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
         String category = mCategoriesCursor.getString(categoryColIdx);
         holder.category.setText(category);
 
         int prayerCount = Database.getInstance().getPrayerCountForCategory(category, mLanguage.code);
-        holder.prayerCount.setText(Integer.toString(prayerCount));
+        holder.prayerCount.setText(String.format(mLanguage.locale, "%d", prayerCount));
     }
 
     @Override

@@ -5,8 +5,13 @@
  */
 package com.arashpayan.prayerbook;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.arashpayan.util.L;
+
+import java.util.Locale;
 
 /**
  *
@@ -26,11 +31,31 @@ public enum Language implements Parcelable {
     public final String code;
     public final int humanName;
     public final boolean rightToLeft;
+    public final Locale locale;
 
     Language(String code, int humanName, boolean rightToLeft) {
         this.code = code;
         this.humanName = humanName;
         this.rightToLeft = rightToLeft;
+
+        final Locale[] availableLocales = Locale.getAvailableLocales();
+        Locale matchingLocale = null;
+        if (Build.VERSION.SDK_INT >= 21) {
+            matchingLocale = Locale.forLanguageTag(code);
+        } else {
+            for (Locale l : availableLocales) {
+                if (l.getLanguage().equals(code)) {
+                    matchingLocale = l;
+                    break;
+                }
+            }
+        }
+
+        if (matchingLocale != null) {
+            this.locale = matchingLocale;
+        } else {
+            this.locale = Locale.US;
+        }
     }
 
     public static Language get(String code) {

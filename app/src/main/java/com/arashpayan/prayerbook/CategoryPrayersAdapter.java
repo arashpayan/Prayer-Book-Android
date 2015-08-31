@@ -1,6 +1,7 @@
 package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +13,20 @@ import android.view.ViewGroup;
 public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private final Cursor mCursor;
+    private final Language mLanguage;
 
     public CategoryPrayersAdapter(String category, Language language) {
         this.mCursor = Database.getInstance().getPrayers(category, language);
+        this.mLanguage = language;
         setHasStableIds(true);
     }
 
     @Override
     public PrayerSummaryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.prayer_summary, parent, false);
+        if (Build.VERSION.SDK_INT >= 17) {
+            itemView.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+        }
 
         return new PrayerSummaryViewHolder(itemView);
     }
@@ -33,10 +39,18 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
         int authorColIdx = mCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
-        holder.detail.setText(mCursor.getString(authorColIdx));
+        String author = mCursor.getString(authorColIdx);
+        holder.detail.setText(author);
+        if (author == null || author.isEmpty()) {
+            holder.detail.setVisibility(View.GONE);
+        } else {
+            holder.detail.setVisibility(View.VISIBLE);
+        }
+//        holder.detail.setText(mCursor.getString(authorColIdx));
 
-        int wrdCntColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
-        holder.wordCount.setText(mCursor.getString(wrdCntColIdx) + " " + holder.wordCount.getContext().getString(R.string.words));
+        int wordCountColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
+        int wordCount = mCursor.getInt(wordCountColIdx);
+        holder.wordCount.setText(String.format(mLanguage.locale, "%d", wordCount) + " " + holder.wordCount.getContext().getString(R.string.words));
     }
 
     @Override
