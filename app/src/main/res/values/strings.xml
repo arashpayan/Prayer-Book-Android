@@ -19,9 +19,10 @@
     <string name="slovak">Slovenčina</string>
     <string name="czech">Čeština</string>
     <string name="fijian">Vakaviti</string>
+    <string name="icelandic">íslenska</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="print_ellipsis">Print...</string>
+    <string name="print_ellipsis">Print…</string>
     <string name="document">Document</string>
     <string name="classic_theme">Classic theme</string>
     <string name="search_prayers">Search prayers</string>

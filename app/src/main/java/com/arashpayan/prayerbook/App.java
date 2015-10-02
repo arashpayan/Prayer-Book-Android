@@ -15,9 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * Created by arash on 6/16/13.
- */
 public class App extends Application {
 
     private Bus mBus;
@@ -26,7 +23,7 @@ public class App extends Application {
     private Handler mBackgroundHandler;
 
     private static volatile App mApp;
-    private static final int LatestDatabaseVersion = 5;
+    private static final int LatestDatabaseVersion = 6;
 
     public static App getApp() {
         return mApp;

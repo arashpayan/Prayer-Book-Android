@@ -155,13 +155,13 @@ public class PrayerFragment extends Fragment {
     }
 
     public String getPrayerHTML() {
-        float pFontWidth = (float)1.1 * mScale;
-        float pFontHeight = (float)1.575 * mScale;
-        float pComment = (float)0.8 * mScale;
-        float authorWidth = (float)1.03 * mScale;
-        float authorHeight = (float)1.825 * mScale;
-        float versalWidth = (float)3.5 * mScale;
-        float versalHeight = (float)0.75 * mScale;
+        float pFontWidth = 1.1f * mScale;
+        float pFontHeight = 1.575f * mScale;
+        float pComment = 0.8f * mScale;
+        float authorWidth = 1.03f * mScale;
+        float authorHeight = 1.825f * mScale;
+        float versalWidth = 3.5f * mScale;
+        float versalHeight = 0.75f * mScale;
 
         HashMap<String, String> args = new HashMap<>();
         args.put("fontWidth", String.format(Locale.US, "%f", pFontWidth));
@@ -203,7 +203,6 @@ public class PrayerFragment extends Fragment {
         int citationIndex = prayerCursor.getColumnIndexOrThrow(Database.CITATION_COLUMN);
         String citationText = prayerCursor.getString(citationIndex);
         if (citationText.isEmpty()) {
-            L.i("no citation");
             args.put("citation", "");
         } else {
             String citationHTML = String.format("<p class=\"comment\"><br/><br/>%s</p>", citationText);

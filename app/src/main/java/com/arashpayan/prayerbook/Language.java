@@ -9,8 +9,6 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.arashpayan.util.L;
-
 import java.util.Locale;
 
 /**
@@ -25,6 +23,7 @@ public enum Language implements Parcelable {
     Persian("fa", R.string.persian, true),
     Fijian("fj", R.string.fijian, false),
     French("fr", R.string.french, false),
+    Icelandic("is", R.string.icelandic, false),
     Dutch("nl", R.string.dutch, false),
     Slovak("sk", R.string.slovak, false);
 

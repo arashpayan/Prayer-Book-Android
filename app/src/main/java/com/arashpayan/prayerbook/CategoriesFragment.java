@@ -141,7 +141,6 @@ public class CategoriesFragment extends Fragment {
 
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
-        String category = mAdapter.getCategory(position);
         args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, mAdapter.getCategory(position));
         args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, mAdapter.getLanguage(position));
         fragment.setArguments(args);
