@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.arashpayan.prayerbook;
 
 import android.annotation.TargetApi;
@@ -24,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.arashpayan.util.L;
 import com.samskivert.mustache.Mustache;
 
 import java.io.InputStream;

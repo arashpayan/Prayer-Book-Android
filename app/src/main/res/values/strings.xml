@@ -10,20 +10,25 @@
     <string name="search">Search</string>
     <string name="languages">Languages</string>
     <string name="share">Share</string>
-    <string name="english">English</string>
-    <string name="spanish">Español</string>
-    <string name="persian">فارسی</string>
-    <string name="french">Français</string>
-    <string name="dutch">Nederlands</string>
+    <string name="english" translatable="false">English</string>
+    <string name="spanish" translatable="false">Español</string>
+    <string name="persian" translatable="false">فارسی</string>
+    <string name="french" translatable="false">Français</string>
+    <string name="dutch" translatable="false">Nederlands</string>
     <string name="favorites">Favorites</string>
-    <string name="slovak">Slovenčina</string>
-    <string name="czech">Čeština</string>
-    <string name="fijian">Vakaviti</string>
-    <string name="icelandic">íslenska</string>
+    <string name="slovak" translatable="false">Slovenčina</string>
+    <string name="czech" translatable="false">Čeština</string>
+    <string name="fijian" translatable="false">Vakaviti</string>
+    <string name="icelandic" translatable="false">íslenska</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="print_ellipsis">Print…</string>
     <string name="document">Document</string>
     <string name="classic_theme">Classic theme</string>
     <string name="search_prayers">Search prayers</string>
+
+    <plurals name="number_of_words">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
 </resources>

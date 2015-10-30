@@ -19,14 +19,10 @@ import android.widget.SearchView;
 
 import com.arashpayan.util.DividerItemDecoration;
 
-/**
- * Created by arash on 12/22/14.
- */
 public class SearchFragment extends Fragment {
 
     public static String SEARCHPRAYERS_TAG = "SearchPrayers";
 
-    private RecyclerView mRecyclerView;
     private SearchAdapter mSearchAdapter;
     private CharSequence mQuery = null;
 
@@ -98,22 +94,22 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         installSearchView();
 
-        mRecyclerView = new RecyclerView(getActivity());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        RecyclerView recyclerView = new RecyclerView(getActivity());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
         mSearchAdapter = new SearchAdapter();
-        mRecyclerView.setAdapter(mSearchAdapter);
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+        recyclerView.setAdapter(mSearchAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 onPrayerClicked(position);
             }
         }));
 
-        return mRecyclerView;
+        return recyclerView;
     }
 
     @Override
@@ -125,6 +121,7 @@ public class SearchFragment extends Fragment {
             ab.setDisplayShowTitleEnabled(false);
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
+            ab.setDisplayShowCustomEnabled(true);
 
             // if there's no query saved, then show the keyboard
             if (mQuery == null) {
@@ -139,8 +136,8 @@ public class SearchFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setDisplayShowCustomEnabled(false);
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ab.setDisplayShowCustomEnabled(false);
     }
 
     @Override

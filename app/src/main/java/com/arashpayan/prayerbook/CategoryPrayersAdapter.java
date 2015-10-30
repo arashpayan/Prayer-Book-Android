@@ -7,9 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by arash on 7/5/15.
- */
 public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private final Cursor mCursor;

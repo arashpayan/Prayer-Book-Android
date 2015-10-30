@@ -78,6 +78,7 @@ public class Database {
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             int count = cursor.getInt(0);
+            cursor.close();
             prayerCountCache.put(language+category, count);
             return count;
         }

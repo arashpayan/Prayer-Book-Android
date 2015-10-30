@@ -2,18 +2,11 @@ package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
 import android.os.Build;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashMap;
-import java.util.Locale;
-
-/**
- * Created by arash on 7/4/15.
- */
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     private final Cursor mCategoriesCursor;

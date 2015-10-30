@@ -1,14 +1,12 @@
 package com.arashpayan.prayerbook;
 
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by arash on 1/20/15.
- */
 public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private Cursor mCursor = null;
@@ -35,7 +33,10 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
         holder.detail.setText(mCursor.getString(ctgryColIdx));
 
         int wrdCntColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
-        holder.wordCount.setText(mCursor.getString(wrdCntColIdx) + " " + holder.wordCount.getContext().getString(R.string.words));
+        int numWords = mCursor.getInt(wrdCntColIdx);
+        final Resources resources = holder.detail.getContext().getResources();
+        String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
+        holder.wordCount.setText(wordCount);
     }
 
     @Override

@@ -11,9 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-/**
- * Created by arash on 7/6/15.
- */
 public class PrayerActivity extends AppCompatActivity {
 
     @Override
