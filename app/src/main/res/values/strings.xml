@@ -20,6 +20,7 @@
     <string name="czech" translatable="false">Čeština</string>
     <string name="fijian" translatable="false">Vakaviti</string>
     <string name="icelandic" translatable="false">íslenska</string>
+    <string name="german" translatable="false">Deutsch</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="print_ellipsis">Print…</string>

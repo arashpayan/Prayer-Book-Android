@@ -18,6 +18,7 @@ import java.util.Locale;
 public enum Language implements Parcelable {
 
     Czech("cs", R.string.czech, false),
+    German("de", R.string.german, false),
     English("en", R.string.english, false),
     Spanish("es", R.string.spanish, false),
     Persian("fa", R.string.persian, true),
