@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.arashpayan.util.DividerItemDecoration;
-import com.arashpayan.util.L;
 
 /**
  *
@@ -67,7 +66,6 @@ public class CategoryPrayersFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            L.i("onback");
             getActivity().onBackPressed();
             return true;
         }
