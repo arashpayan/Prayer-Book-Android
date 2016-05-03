@@ -7,18 +7,10 @@
   <string name="search">Suche</string>
   <string name="languages">Sprachen</string>
   <string name="share">Anderen schicken</string>
-  <string name="english">English</string>
-  <string name="spanish">Español</string>
-  <string name="persian">فارسی</string>
-  <string name="french">Français</string>
-  <string name="dutch">Nederlands</string>
   <string name="favorites">Favoriten</string>
-  <string name="slovak">Slovenčina</string>
-  <string name="czech">Čeština</string>
-  <string name="fijian">Vakaviti</string>
   <string name="ok">OK</string>
   <string name="cancel">Abbrechen</string>
-  <string name="print_ellipsis">Drucken</string>
+  <string name="print_ellipsis">Drucken…</string>
   <string name="document">Dokument</string>
   <string name="classic_theme">Vorherige Version</string>
 </resources>

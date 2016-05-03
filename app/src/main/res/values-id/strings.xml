@@ -7,18 +7,9 @@
   <string name="search">Cari</string>
   <string name="languages">Bahasa</string>
   <string name="share">Berikan</string>
-  <string name="english">English</string>
-  <string name="spanish">Español</string>
-  <string name="persian">فارسی</string>
-  <string name="french">Français</string>
-  <string name="dutch">Nederlands</string>
   <string name="favorites">Favorit</string>
-  <string name="slovak">Slovenčina</string>
-  <string name="czech">Čeština</string>
-  <string name="fijian">Vakaviti</string>
   <string name="ok">OK</string>
   <string name="cancel">Batal</string>
-  <string name="print_ellipsis">Cetak</string>
   <string name="document">Dokumen</string>
   <string name="classic_theme">Tema klasik</string>
 </resources>

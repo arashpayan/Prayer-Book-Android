@@ -5,7 +5,6 @@
     tools:ignore="MissingTranslation">
     <string name="app_name">Prayer Book</string>
     <string name="prayers">Prayers</string>
-    <string name="words">words</string>
     <string name="about">About</string>
     <string name="search">Search</string>
     <string name="languages">Languages</string>

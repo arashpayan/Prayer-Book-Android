@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">كتاب الأدعية</string>
+  <string name="prayers">أدعية</string>
+  <string name="words">كلمات</string>
+  <string name="about">حول</string>
+  <string name="search">بحث</string>
+  <string name="languages">اللغة</string>
+  <string name="share">مشاركة</string>
+  <string name="ok">موافق</string>
+  <string name="cancel">إلغاء</string>
+  <string name="document">المستند</string>
+  <string name="classic_theme">المظهر الكلاسيكي</string>
+  <string name="search_prayers">البحث في الأدعية</string>
+</resources>
