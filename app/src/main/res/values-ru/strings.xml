@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Молитвенник</string>
   <string name="prayers">Молитвы</string>
-  <string name="words">слова</string>
   <string name="about">О программе</string>
   <string name="search">Поиск</string>
   <string name="languages">Языки</string>

@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Livre de Prières</string>
   <string name="prayers">Prières</string>
-  <string name="words">mots</string>
   <string name="about">Informations</string>
   <string name="search">Recherche</string>
   <string name="languages">Languages</string>

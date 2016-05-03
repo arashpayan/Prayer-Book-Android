@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Bænabók</string>
   <string name="prayers">Bænir</string>
-  <string name="words">orð</string>
   <string name="about">Um</string>
   <string name="search">Leit</string>
   <string name="languages">Tungumál</string>

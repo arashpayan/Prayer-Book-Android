@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Oraciones</string>
   <string name="prayers">Oraciones</string>
-  <string name="words">words</string>
   <string name="about">Acerca de</string>
   <string name="search">Buscador</string>
   <string name="languages">Idiomas</string>

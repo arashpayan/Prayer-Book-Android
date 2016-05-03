@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Buku Doa</string>
   <string name="prayers">Doa</string>
-  <string name="words">kata-kata</string>
   <string name="about">Perihal</string>
   <string name="search">Cari</string>
   <string name="languages">Bahasa</string>
