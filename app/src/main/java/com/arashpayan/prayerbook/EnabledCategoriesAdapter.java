@@ -86,52 +86,10 @@ public class EnabledCategoriesAdapter extends RecyclerView.Adapter {
         throw new IllegalArgumentException("Invalid position passed to getItemViewType(" + position + ")");
     }
 
-    public String getCategory(int position) {
-        int previousSum = 0;
-        int sum = 0;
-        for (CategoriesAdapter ca : mAdapters) {
-            if (position == sum) {
-                // this is a header
-                throw new IllegalArgumentException("This position is a header view, not a category (" + position + ")");
-            }
-            sum += ca.getItemCount() + 1;
-            previousSum += 1;
-            if (position < sum) {
-                return ca.getCategory(position - previousSum);
-            }
-            previousSum += ca.getItemCount();
+    public void setListener(CategoriesAdapter.OnCategorySelectedListener l) {
+        for (CategoriesAdapter a : mAdapters) {
+            a.setListener(l);
         }
-
-        // never happens
-        throw new IllegalArgumentException("Invalid position passed to getCategory(" + position + ")");
-    }
-
-    public Language getLanguage(int position) {
-        int sum = 0;
-        for (CategoriesAdapter ca : mAdapters) {
-            if (position == sum) {
-                throw new IllegalArgumentException("This position is a header view, not a category (" + position + ")");
-            }
-            sum += ca.getItemCount() + 1;
-            if (position < sum) {
-                return ca.getLanguage();
-            }
-        }
-
-        // never happens
-        return null;
-    }
-
-    public boolean isHeader(int position) {
-        int sum = 0;
-        for (CategoriesAdapter ca : mAdapters) {
-            if (position == sum) {
-                return true;
-            }
-            sum += ca.getItemCount() + 1;
-        }
-
-        return false;
     }
 
     static class CategoryHeaderHolder extends RecyclerView.ViewHolder {

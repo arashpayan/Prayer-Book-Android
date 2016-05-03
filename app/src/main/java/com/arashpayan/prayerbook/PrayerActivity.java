@@ -1,6 +1,8 @@
 package com.arashpayan.prayerbook;
 
 import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -12,6 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 public class PrayerActivity extends AppCompatActivity {
+
+    private static final String ARG_PRAYER_ID = "prayer_id";
+
+    public static Intent newIntent(Context context, long prayerId) {
+        Intent intent = new Intent(context, PrayerActivity.class);
+        intent.putExtra(ARG_PRAYER_ID, prayerId);
+
+        return intent;
+    }
 
     @Override
     public void onCreate(Bundle state) {
@@ -34,15 +45,12 @@ public class PrayerActivity extends AppCompatActivity {
             if (extras == null) {
                 throw new IllegalArgumentException("You need to provide an 'extra' with the prayer id");
             }
-            long prayerID = extras.getLong(PrayerFragment.PRAYER_ID_ARGUMENT, 0);
-            if (prayerID == 0) {
+            long prayerId = extras.getLong(ARG_PRAYER_ID, 0);
+            if (prayerId == 0) {
                 throw new IllegalArgumentException("You need to provide an 'extra' with the prayer id");
             }
 
-            PrayerFragment fragment = new PrayerFragment();
-            Bundle args = new Bundle();
-            args.putLong(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
-            fragment.setArguments(args);
+            PrayerFragment fragment = PrayerFragment.newInstance(prayerId);
 
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();

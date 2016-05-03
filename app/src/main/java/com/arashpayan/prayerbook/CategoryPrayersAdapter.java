@@ -1,5 +1,6 @@
 package com.arashpayan.prayerbook;
 
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
 
     private final Cursor mCursor;
     private final Language mLanguage;
+    private OnPrayerSelectedListener mListener;
 
     public CategoryPrayersAdapter(String category, Language language) {
         this.mCursor = Database.getInstance().getPrayers(category, language);
@@ -24,8 +26,20 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
         if (Build.VERSION.SDK_INT >= 17) {
             itemView.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         }
+        final PrayerSummaryViewHolder holder = new PrayerSummaryViewHolder(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener == null) {
+                    return;
+                }
 
-        return new PrayerSummaryViewHolder(itemView);
+                int pos = holder.getAdapterPosition();
+                mListener.onPrayerSelected(getItemId(pos));
+            }
+        });
+
+        return holder;
     }
 
     @Override
@@ -43,11 +57,12 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
         } else {
             holder.detail.setVisibility(View.VISIBLE);
         }
-//        holder.detail.setText(mCursor.getString(authorColIdx));
 
         int wordCountColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
-        int wordCount = mCursor.getInt(wordCountColIdx);
-        holder.wordCount.setText(String.format(mLanguage.locale, "%d", wordCount) + " " + holder.wordCount.getContext().getString(R.string.words));
+        int numWords = mCursor.getInt(wordCountColIdx);
+        final Resources resources = holder.wordCount.getResources();
+        String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
+        holder.wordCount.setText(wordCount);
     }
 
     @Override
@@ -62,5 +77,9 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
         mCursor.moveToPosition(position);
         int idColIdx = mCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
         return mCursor.getLong(idColIdx);
+    }
+
+    public void setListener(OnPrayerSelectedListener l) {
+        mListener = l;
     }
 }

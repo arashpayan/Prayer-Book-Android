@@ -5,16 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.arashpayan.util.L;
-
 /**
- * Created by arash on 7/4/15.
+ * PrayerBook
+ * Created by Arash Payan on 7/4/15.
  */
 public class CategoryViewHolder extends RecyclerView.ViewHolder {
 
-    protected TextView category;
-    protected TextView prayerCount;
-    private View mCategoryView;
+    protected final TextView category;
+    protected final TextView prayerCount;
+    private final View mCategoryView;
+    private Language mLanguage;
 
     public CategoryViewHolder(View itemView) {
         super(itemView);
@@ -24,9 +24,14 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder {
         prayerCount = (TextView) itemView.findViewById(R.id.category_prayers_count);
     }
 
-    public void setLayoutDirection(int layoutDirection) {
-        if (Build.VERSION.SDK_INT >= 17) {
-            mCategoryView.setLayoutDirection(layoutDirection);
+    public Language getLanguage() {
+        return mLanguage;
+    }
+
+    public void setLanguage(Language l) {
+        mLanguage = l;
+        if (mLanguage != null && Build.VERSION.SDK_INT >= 17) {
+            mCategoryView.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         }
     }
 }

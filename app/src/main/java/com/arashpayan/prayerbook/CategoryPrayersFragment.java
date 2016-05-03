@@ -25,29 +25,40 @@ import com.arashpayan.util.DividerItemDecoration;
  *
  * @author arash
  */
-public class CategoryPrayersFragment extends Fragment {
+public class CategoryPrayersFragment extends Fragment implements OnPrayerSelectedListener {
     
     public static final String CATEGORYPRAYERS_TAG = "CategoryPrayers";
-    public static final String CATEGORY_ARGUMENT = "Category";
-    public static final String LANGUAGE_ARGUMENT = "Language";
+    private static final String ARG_CATEGORY = "category";
+    private static final String ARG_LANGUAGE = "language";
     private String mCategory;
-    private Language mLanguage;
     private CategoryPrayersAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private Parcelable mRecyclerState;
+
+    public static CategoryPrayersFragment newInstance(String category, Language language) {
+        CategoryPrayersFragment fragment = new CategoryPrayersFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_CATEGORY, category);
+        args.putParcelable(ARG_LANGUAGE, language);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mCategory = getArguments().getString(CATEGORY_ARGUMENT, null);
-        mLanguage = getArguments().getParcelable(LANGUAGE_ARGUMENT);
+        mCategory = getArguments().getString(ARG_CATEGORY, null);
+        Language language = getArguments().getParcelable(ARG_LANGUAGE);
         if (mCategory == null) {
             throw new IllegalArgumentException("You must provide a category");
         }
-        if (mLanguage == null) {
+        if (language == null) {
             throw new IllegalArgumentException("You must provide a language");
         }
+        mAdapter = new CategoryPrayersAdapter(mCategory, language);
+        mAdapter.setListener(this);
         
         setHasOptionsMenu(true);
     }
@@ -89,25 +100,9 @@ public class CategoryPrayersFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
-        mAdapter = new CategoryPrayersAdapter(mCategory, mLanguage);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                onPrayerClicked(position);
-            }
-        }));
         
         return mRecyclerView;
-    }
-
-    private void onPrayerClicked(int position) {
-        Intent intent = new Intent(getActivity(), PrayerActivity.class);
-        long prayerID = mAdapter.getItemId(position);
-        intent.putExtra(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
-        startActivity(intent);
-
-        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
     
     @Override
@@ -132,5 +127,13 @@ public class CategoryPrayersFragment extends Fragment {
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator);
             behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -10000, false);
         }
+    }
+
+    @Override
+    public void onPrayerSelected(long prayerId) {
+        Intent intent = PrayerActivity.newIntent(getContext(), prayerId);
+        startActivity(intent);
+
+        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 }

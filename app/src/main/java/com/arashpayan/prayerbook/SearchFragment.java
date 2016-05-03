@@ -19,12 +19,20 @@ import android.widget.SearchView;
 
 import com.arashpayan.util.DividerItemDecoration;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements OnPrayerSelectedListener {
 
     public static String SEARCHPRAYERS_TAG = "SearchPrayers";
 
     private SearchAdapter mSearchAdapter;
     private CharSequence mQuery = null;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mSearchAdapter = new SearchAdapter();
+        mSearchAdapter.setListener(this);
+    }
 
     public void onStart() {
         super.onStart();
@@ -35,6 +43,9 @@ public class SearchFragment extends Fragment {
     private void installSearchView() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar ab = activity.getSupportActionBar();
+        if (ab == null) {
+            throw new RuntimeException("Where's the action bar?");
+        }
         ab.setDisplayShowCustomEnabled(true);
 
         // let the actionbar inflate the search view first so it can style it appropriately.
@@ -100,14 +111,7 @@ public class SearchFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        mSearchAdapter = new SearchAdapter();
         recyclerView.setAdapter(mSearchAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                onPrayerClicked(position);
-            }
-        }));
 
         return recyclerView;
     }
@@ -125,7 +129,6 @@ public class SearchFragment extends Fragment {
 
             // if there's no query saved, then show the keyboard
             if (mQuery == null) {
-                SearchView sv = (SearchView) ab.getCustomView();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
@@ -137,7 +140,9 @@ public class SearchFragment extends Fragment {
         super.onStop();
 
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayShowCustomEnabled(false);
+        if (ab != null) {
+            ab.setDisplayShowCustomEnabled(false);
+        }
     }
 
     @Override
@@ -150,7 +155,8 @@ public class SearchFragment extends Fragment {
         return false;
     }
 
-    public void onPrayerClicked(int position) {
+    @Override
+    public void onPrayerSelected(long prayerId) {
         // the keyboard might still be present, so dismiss it
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -158,9 +164,7 @@ public class SearchFragment extends Fragment {
         SearchView sv = (SearchView) ab.getCustomView();
         imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
 
-        Intent intent = new Intent(getActivity(), PrayerActivity.class);
-        long prayerID = mSearchAdapter.getItemId(position);
-        intent.putExtra(PrayerFragment.PRAYER_ID_ARGUMENT, prayerID);
+        Intent intent =  PrayerActivity.newIntent(getContext(), prayerId);
         startActivity(intent);
 
         getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);

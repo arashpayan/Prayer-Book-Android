@@ -37,8 +37,16 @@ public class PrayerFragment extends Fragment {
     private Cursor prayerCursor;
     private float mScale = 1.0f;
     
-    public static final String PRAYER_ID_ARGUMENT = "PrayerId";
-    
+    private static final String PRAYER_ID_ARGUMENT = "PrayerId";
+
+    public static PrayerFragment newInstance(long prayerId) {
+        PrayerFragment fragment = new PrayerFragment();
+        Bundle args = new Bundle();
+        args.putLong(PRAYER_ID_ARGUMENT, prayerId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

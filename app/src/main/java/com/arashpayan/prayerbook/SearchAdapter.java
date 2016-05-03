@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private Cursor mCursor = null;
+    private OnPrayerSelectedListener mListener;
 
     public SearchAdapter() {
         setHasStableIds(true);
@@ -18,8 +19,19 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
     @Override
     public PrayerSummaryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.prayer_summary, parent, false);
+        final PrayerSummaryViewHolder holder = new PrayerSummaryViewHolder(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener == null) {
+                    return;
+                }
 
-        return new PrayerSummaryViewHolder(itemView);
+                mListener.onPrayerSelected(getItemId(holder.getAdapterPosition()));
+            }
+        });
+
+        return holder;
     }
 
     @Override
@@ -60,6 +72,10 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
     public void setCursor(Cursor cursor) {
         this.mCursor = cursor;
         notifyDataSetChanged();
+    }
+
+    public void setListener(OnPrayerSelectedListener l) {
+        mListener = l;
     }
 }
 

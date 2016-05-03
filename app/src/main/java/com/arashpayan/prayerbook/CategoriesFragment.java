@@ -31,7 +31,7 @@ import com.squareup.otto.Subscribe;
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment {
+public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener {
     
     public static final String CATEGORIES_TAG = "Categories";
 
@@ -122,28 +122,15 @@ public class CategoriesFragment extends Fragment {
         mRecyclerView.setLayoutManager(llm);
 
         mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                onCategoryClicked(position);
-            }
-        }));
 
         return mRecyclerView;
     }
 
-    private void onCategoryClicked(int position) {
-        // get ouf of here if they tapped the header
-        if (mAdapter.isHeader(position)) {
-            return;
-        }
-
-        CategoryPrayersFragment fragment = new CategoryPrayersFragment();
-        Bundle args = new Bundle();
-        args.putString(CategoryPrayersFragment.CATEGORY_ARGUMENT, mAdapter.getCategory(position));
-        args.putParcelable(CategoryPrayersFragment.LANGUAGE_ARGUMENT, mAdapter.getLanguage(position));
-        fragment.setArguments(args);
+    @Override
+    public void onCategorySelected(String category, Language language) {
+        CategoryPrayersFragment fragment = CategoryPrayersFragment.newInstance(category, language);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
@@ -179,6 +166,7 @@ public class CategoriesFragment extends Fragment {
         }
 
         mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
