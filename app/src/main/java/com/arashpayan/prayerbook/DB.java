@@ -14,9 +14,10 @@ import java.util.HashMap;
  *
  * @author arash
  */
-public class Database {
+@SuppressWarnings("WeakerAccess")
+public class DB {
 
-    private static Database singleton = null;
+    private static DB singleton = null;
     public static File databaseFile;
     
     private final SQLiteDatabase pbDatabase;
@@ -35,15 +36,15 @@ public class Database {
     
     private final HashMap<String, Integer> prayerCountCache;
     
-    private Database() {
+    private DB() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
         
         prayerCountCache = new HashMap<>();
     }
     
-    public synchronized static Database getInstance() {
+    public synchronized static DB get() {
         if (singleton == null) {
-            singleton = new Database();
+            singleton = new DB();
         }
         
         return singleton;

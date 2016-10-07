@@ -15,8 +15,9 @@ import java.util.Locale;
  *
  * @author arash
  */
-public class Preferences {
-    private static volatile Preferences mSingleton = null;
+@SuppressWarnings("WeakerAccess")
+public class Prefs {
+    private static volatile Prefs mSingleton = null;
     private SharedPreferences mPrefs = null;
     
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
@@ -24,15 +25,15 @@ public class Preferences {
     private static final String PREFERENCE_PRAYER_TEXT_SCALAR = "PrayerTextScalar";
     private static final String PREFERENCE_USE_CLASSIC_THEME = "UseClassicTheme";
     
-    private Preferences(Context ctx) {
+    private Prefs(Context ctx) {
         mPrefs = ctx.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
     
-    public static Preferences getInstance(Application app) {
+    public static Prefs get(Application app) {
         if (mSingleton == null) {
-            synchronized (Preferences.class) {
+            synchronized (Prefs.class) {
                 if (mSingleton == null) {
-                    mSingleton = new Preferences(app.getApplicationContext());
+                    mSingleton = new Prefs(app.getApplicationContext());
                 }
             }
         }

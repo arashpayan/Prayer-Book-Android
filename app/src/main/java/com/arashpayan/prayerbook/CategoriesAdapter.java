@@ -6,15 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
+class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     private final Cursor mCategoriesCursor;
     private final Language mLanguage;
     private OnCategorySelectedListener mListener;
 
-    public CategoriesAdapter(Language language) {
+    CategoriesAdapter(Language language) {
         this.mLanguage = language;
-        mCategoriesCursor = Database.getInstance().getCategories(language);
+        mCategoriesCursor = DB.get().getCategories(language);
         setHasStableIds(false);
     }
 
@@ -40,12 +40,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> 
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         mCategoriesCursor.moveToPosition(position);
 
-        int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
+        int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(DB.CATEGORY_COLUMN);
         String category = mCategoriesCursor.getString(categoryColIdx);
         holder.category.setText(category);
         holder.setLanguage(mLanguage);
 
-        int prayerCount = Database.getInstance().getPrayerCountForCategory(category, mLanguage.code);
+        int prayerCount = DB.get().getPrayerCountForCategory(category, mLanguage.code);
         holder.prayerCount.setText(String.format(mLanguage.locale, "%d", prayerCount));
     }
 
@@ -58,11 +58,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> 
         return mLanguage;
     }
 
-    public void setListener(OnCategorySelectedListener l) {
+    void setListener(OnCategorySelectedListener l) {
         mListener = l;
     }
 
-    public interface OnCategorySelectedListener {
+    interface OnCategorySelectedListener {
         void onCategorySelected(String category, Language language);
     }
 }

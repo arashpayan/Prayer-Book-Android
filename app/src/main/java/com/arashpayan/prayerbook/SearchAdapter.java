@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
+class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private Cursor mCursor = null;
     private OnPrayerSelectedListener mListener;
 
-    public SearchAdapter() {
+    SearchAdapter() {
         setHasStableIds(true);
     }
 
@@ -38,13 +38,13 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
     public void onBindViewHolder(PrayerSummaryViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        int wordsColIdx = mCursor.getColumnIndexOrThrow(Database.OPENINGWORDS_COLUMN);
+        int wordsColIdx = mCursor.getColumnIndexOrThrow(DB.OPENINGWORDS_COLUMN);
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
-        int ctgryColIdx = mCursor.getColumnIndexOrThrow(Database.CATEGORY_COLUMN);
+        int ctgryColIdx = mCursor.getColumnIndexOrThrow(DB.CATEGORY_COLUMN);
         holder.detail.setText(mCursor.getString(ctgryColIdx));
 
-        int wrdCntColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
+        int wrdCntColIdx = mCursor.getColumnIndexOrThrow(DB.WORDCOUNT_COLUMN);
         int numWords = mCursor.getInt(wrdCntColIdx);
         final Resources resources = holder.detail.getContext().getResources();
         String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
@@ -65,16 +65,16 @@ public class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder>
             return RecyclerView.NO_ID;
         }
         mCursor.moveToPosition(position);
-        int idColIdx = mCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
+        int idColIdx = mCursor.getColumnIndexOrThrow(DB.ID_COLUMN);
         return mCursor.getLong(idColIdx);
     }
 
-    public void setCursor(Cursor cursor) {
+    void setCursor(Cursor cursor) {
         this.mCursor = cursor;
         notifyDataSetChanged();
     }
 
-    public void setListener(OnPrayerSelectedListener l) {
+    void setListener(OnPrayerSelectedListener l) {
         mListener = l;
     }
 }

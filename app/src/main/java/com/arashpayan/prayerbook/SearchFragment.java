@@ -6,26 +6,27 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.arashpayan.util.DividerItemDecoration;
 
-public class SearchFragment extends Fragment implements OnPrayerSelectedListener {
+public class SearchFragment extends Fragment implements OnPrayerSelectedListener, TextWatcher {
 
     public static String SEARCHPRAYERS_TAG = "SearchPrayers";
 
     private SearchAdapter mSearchAdapter;
+    private View mSearchView;
+    private ImageButton mClearButton;
     private CharSequence mQuery = null;
 
     @Override
@@ -38,8 +39,6 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        installSearchView();
-
         RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -48,64 +47,26 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(mSearchAdapter);
 
-        return recyclerView;
-    }
-
-    private void installSearchView() {
         final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         if (toolbar == null) {
             throw new RuntimeException("Where's the toolbar?");
         }
         toolbar.getMenu().clear();
-        toolbar.inflateMenu(R.menu.search);
-        MenuItem item = toolbar.getMenu().getItem(0);
-        if (item == null) {
-            throw new RuntimeException("Where's the search menu?");
-        }
-        SearchView sv = (SearchView) item.getActionView();
-        sv.setIconifiedByDefault(false);
-        sv.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-        sv.setInputType(EditorInfo.TYPE_CLASS_TEXT);
 
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView = inflater.inflate(R.layout.search_field, toolbar, false);
+        final EditText searchField = (EditText) mSearchView.findViewById(R.id.search_field);
+        searchField.addTextChangedListener(this);
+        mClearButton = (ImageButton) mSearchView.findViewById(R.id.clear_button);
+        mClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mQuery = newText;
-                final String trimmed = newText.trim();
-                if (trimmed.length() < 3) {
-                    mSearchAdapter.setCursor(null);
-                    return true;
-                }
-
-                App.postOnBackgroundThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String[] keywords = trimmed.split(" ");
-                        final Cursor c = Database.getInstance().getPrayersWithKeywords(keywords,
-                                Preferences.getInstance(App.getApp()).getEnabledLanguages());
-                        App.postOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mSearchAdapter.setCursor(c);
-                            }
-                        });
-                    }
-                });
-
-                return true;
+            public void onClick(View v) {
+                searchField.setText("");
             }
         });
-        sv.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                return false;
-            }
-        });
+
+        toolbar.addView(mSearchView);
+
+        return recyclerView;
     }
 
     @Override
@@ -123,17 +84,6 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
                 getFragmentManager().popBackStack();
             }
         });
-        MenuItem item = toolbar.getMenu().getItem(0);
-        if (item == null) {
-            throw new RuntimeException("where's the searchview menu item");
-        }
-        SearchView sv = (SearchView) item.getActionView();
-        if (mQuery != null) {
-            sv.setQuery(mQuery, true);
-        } else {
-            sv.requestFocus();
-        }
-
         // if there's no query saved, then show the keyboard
         if (mQuery == null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -142,13 +92,11 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
+        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.removeView(mSearchView);
 
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayShowCustomEnabled(false);
-        }
+        super.onDestroyView();
     }
 
     @Override
@@ -166,4 +114,41 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
 
         getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        mQuery = s;
+        if (mQuery.length() > 0) {
+            mClearButton.setVisibility(View.VISIBLE);
+        } else {
+            mClearButton.setVisibility(View.INVISIBLE);
+        }
+
+        final String trimmed = s.toString().trim();
+        if (trimmed.length() < 3) {
+            mSearchAdapter.setCursor(null);
+            return;
+        }
+
+        App.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                String[] keywords = trimmed.split(" ");
+                final Cursor c = DB.get().getPrayersWithKeywords(keywords,
+                        Prefs.get(App.getApp()).getEnabledLanguages());
+                App.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSearchAdapter.setCursor(c);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {}
 }

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.arashpayan.util.L;
 import com.squareup.otto.Bus;
@@ -32,6 +33,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         mApp = this;
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate();
 
         copyDatabaseFile();
@@ -44,9 +46,9 @@ public class App extends Application {
     }
 
     private void copyDatabaseFile() {
-        int dbVersion = Preferences.getInstance(this).getDatabaseVersion();
+        int dbVersion = Prefs.get(this).getDatabaseVersion();
         File databaseFile = new File(getFilesDir(), "pbdb.db");
-        Database.databaseFile = databaseFile;
+        DB.databaseFile = databaseFile;
         if (dbVersion != LatestDatabaseVersion) {
             // then we need to copy over the latest database
             L.i("database file: " + databaseFile.getAbsolutePath());
@@ -61,7 +63,7 @@ public class App extends Application {
                 }
                 is.close();
                 os.close();
-                Preferences.getInstance(this).setDatabaseVersion(LatestDatabaseVersion);
+                Prefs.get(this).setDatabaseVersion(LatestDatabaseVersion);
             } catch (IOException ex) {
                 L.w("Error writing prayer database", ex);
             }
@@ -72,7 +74,7 @@ public class App extends Application {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             mApp.mBus.post(event);
         } else {
-            postOnMainThread(new Runnable() {
+            runOnUiThread(new Runnable() {
 
                 public void run() {
                     try {
@@ -85,11 +87,11 @@ public class App extends Application {
         }
     }
 
-    public static void postOnMainThread(Runnable r) {
+    public static void runOnUiThread(Runnable r) {
         mApp.mMainThreadHandler.post(r);
     }
 
-    public static void postOnBackgroundThread(Runnable r) {
+    public static void runInBackground(Runnable r) {
         mApp.mBackgroundHandler.post(r);
     }
 
@@ -100,7 +102,7 @@ public class App extends Application {
             }
             mApp.mBus.register(object);
         } else {
-            postOnMainThread(new Runnable() {
+            runOnUiThread(new Runnable() {
 
                 public void run() {
                     mApp.mBus.register(object);
@@ -113,7 +115,7 @@ public class App extends Application {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             mApp.mBus.unregister(object);
         } else {
-            postOnMainThread(new Runnable() {
+            runOnUiThread(new Runnable() {
 
                 public void run() {
                     mApp.mBus.unregister(object);

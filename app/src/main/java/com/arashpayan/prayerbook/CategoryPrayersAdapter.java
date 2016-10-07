@@ -8,14 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
+class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private final Cursor mCursor;
     private final Language mLanguage;
     private OnPrayerSelectedListener mListener;
 
-    public CategoryPrayersAdapter(String category, Language language) {
-        this.mCursor = Database.getInstance().getPrayers(category, language);
+    CategoryPrayersAdapter(String category, Language language) {
+        this.mCursor = DB.get().getPrayers(category, language);
         this.mLanguage = language;
         setHasStableIds(true);
     }
@@ -46,10 +46,10 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
     public void onBindViewHolder(PrayerSummaryViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        int wordsColIdx = mCursor.getColumnIndexOrThrow(Database.OPENINGWORDS_COLUMN);
+        int wordsColIdx = mCursor.getColumnIndexOrThrow(DB.OPENINGWORDS_COLUMN);
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
-        int authorColIdx = mCursor.getColumnIndexOrThrow(Database.AUTHOR_COLUMN);
+        int authorColIdx = mCursor.getColumnIndexOrThrow(DB.AUTHOR_COLUMN);
         String author = mCursor.getString(authorColIdx);
         holder.detail.setText(author);
         if (author == null || author.isEmpty()) {
@@ -58,7 +58,7 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
             holder.detail.setVisibility(View.VISIBLE);
         }
 
-        int wordCountColIdx = mCursor.getColumnIndexOrThrow(Database.WORDCOUNT_COLUMN);
+        int wordCountColIdx = mCursor.getColumnIndexOrThrow(DB.WORDCOUNT_COLUMN);
         int numWords = mCursor.getInt(wordCountColIdx);
         final Resources resources = holder.wordCount.getResources();
         String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
@@ -75,11 +75,11 @@ public class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryVi
             return RecyclerView.NO_ID;
         }
         mCursor.moveToPosition(position);
-        int idColIdx = mCursor.getColumnIndexOrThrow(Database.ID_COLUMN);
+        int idColIdx = mCursor.getColumnIndexOrThrow(DB.ID_COLUMN);
         return mCursor.getLong(idColIdx);
     }
 
-    public void setListener(OnPrayerSelectedListener l) {
+    void setListener(OnPrayerSelectedListener l) {
         mListener = l;
     }
 }

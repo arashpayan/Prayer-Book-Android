@@ -2,5 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="prayers">Gebeden</string>
   <string name="search">Zoek</string>
+  <string name="search_ellipsis">Zoek…</string>
   <string name="cancel">Annuleer</string>
 </resources>

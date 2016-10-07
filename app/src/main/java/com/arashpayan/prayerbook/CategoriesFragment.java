@@ -56,7 +56,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get(App.getApp()).getEnabledLanguages());
         mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -161,13 +161,13 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
             return;
         }
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get(App.getApp()).getEnabledLanguages());
         mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private void showLanguageDialog() {
-        Preferences prefs = Preferences.getInstance(App.getApp());
+        Prefs prefs = Prefs.get(App.getApp());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.languages);
         final Language[] langs = Language.values();
@@ -181,7 +181,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        Preferences.getInstance(App.getApp()).setLanguageEnabled(langs[which], isChecked);
+                        Prefs.get(App.getApp()).setLanguageEnabled(langs[which], isChecked);
                     }
                 });
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

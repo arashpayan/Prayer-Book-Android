@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <EditText
+        android:id="@+id/search_field"
+        android:lines="1"
+        android:hint="@string/search_ellipsis"
+        android:background="@null"
+        android:textColor="@android:color/white"
+        android:textColorHint="#FF999999"
+        android:inputType="textAutoComplete"
+        android:imeOptions="actionSearch"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+    <ImageButton
+        android:id="@+id/clear_button"
+        android:background="?attr/selectableItemBackground"
+        app:srcCompat="@drawable/ic_close_24dp"
+        android:visibility="invisible"
+        android:contentDescription="@null"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+</LinearLayout>
