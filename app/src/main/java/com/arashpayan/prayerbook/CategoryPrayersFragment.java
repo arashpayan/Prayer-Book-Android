@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.arashpayan.prayerbook;
 
 import android.content.Intent;
@@ -10,12 +6,10 @@ import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -59,8 +53,6 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         }
         mAdapter = new CategoryPrayersAdapter(mCategory, language);
         mAdapter.setListener(this);
-        
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -72,16 +64,6 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         if (mRecyclerView != null) {
             mRecyclerState = mRecyclerView.getLayoutManager().onSaveInstanceState();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getActivity().onBackPressed();
-            return true;
-        }
-
-        return false;
     }
 
     public void onViewStateRestored(Bundle savedInstanceState) {
@@ -109,11 +91,17 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     public void onResume() {
         super.onResume();
 
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle(mCategory);
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setHomeButtonEnabled(true);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.getMenu().clear();
+            toolbar.setTitle(mCategory);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getFragmentManager().popBackStack();
+                }
+            });
         }
         expandToolbar();
     }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.arashpayan.prayerbook;
 
 import android.content.DialogInterface;
@@ -11,11 +7,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +26,7 @@ import com.squareup.otto.Subscribe;
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener {
+public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener {
     
     public static final String CATEGORIES_TAG = "Categories";
 
@@ -53,6 +48,22 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(llm);
+
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
+        mAdapter.setListener(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return mRecyclerView;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -70,8 +81,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_languages:
                 showLanguageDialog();
@@ -94,12 +104,14 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     public void onResume() {
         super.onResume();
 
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle(getString(R.string.app_name));
-            ab.setDisplayHomeAsUpEnabled(false);
-            ab.setHomeButtonEnabled(false);
-            ab.setDisplayShowTitleEnabled(true);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.categories);
+            toolbar.setOnMenuItemClickListener(this);
+            toolbar.setTitle(R.string.app_name);
+            toolbar.setNavigationIcon(null);
+
         }
         expandToolbar();
     }
@@ -110,22 +122,6 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         if (mRecyclerState != null) {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerState);
         }
-    }
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecyclerView = new RecyclerView(getActivity());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(llm);
-
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Preferences.getInstance(App.getApp()).getEnabledLanguages());
-        mAdapter.setListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-
-        return mRecyclerView;
     }
 
     @Override
