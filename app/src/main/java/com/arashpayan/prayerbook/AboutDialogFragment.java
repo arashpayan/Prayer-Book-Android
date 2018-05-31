@@ -7,7 +7,9 @@ package com.arashpayan.prayerbook;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -41,9 +43,9 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     @Override
-    @android.support.annotation.NonNull
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstance) {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(requireContext());
         alertBuilder.setTitle(R.string.about);
         String html = "";
         try {
@@ -51,16 +53,21 @@ public class AboutDialogFragment extends DialogFragment {
         } catch (IOException ex) {
             L.e("Unable to open 'about' HTML", ex);
         }
-        TextView tv = new TextView(getActivity());
-        int pad = Graphics.pixels(getActivity(), 24);
+        TextView tv = new TextView(requireContext());
+        int pad = Graphics.pixels(requireContext(), 24);
         tv.setPadding(pad, pad, pad, pad);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
+        if (Build.VERSION.SDK_INT >= 24) {
+            Html.fromHtml(html, 0);
+        } else {
+            Html.fromHtml(html);
+        }
         tv.setText(Html.fromHtml(html));
         alertBuilder.setView(tv);
         alertBuilder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
             public void onClick(DialogInterface arg0, int arg1) {
-                getFragmentManager().popBackStack();
+                requireFragmentManager().popBackStack();
             }
         });
         
