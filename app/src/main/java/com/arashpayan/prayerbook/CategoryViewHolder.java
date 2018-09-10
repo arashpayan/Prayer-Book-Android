@@ -1,6 +1,5 @@
 package com.arashpayan.prayerbook;
 
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -12,16 +11,16 @@ import android.widget.TextView;
 public class CategoryViewHolder extends RecyclerView.ViewHolder {
 
     protected final TextView category;
-    protected final TextView prayerCount;
+    final TextView prayerCount;
     private final View mCategoryView;
     private Language mLanguage;
 
-    public CategoryViewHolder(View itemView) {
+    CategoryViewHolder(View itemView) {
         super(itemView);
 
         mCategoryView = itemView;
-        category = (TextView) itemView.findViewById(R.id.category_title);
-        prayerCount = (TextView) itemView.findViewById(R.id.category_prayers_count);
+        category = itemView.findViewById(R.id.category_title);
+        prayerCount = itemView.findViewById(R.id.category_prayers_count);
     }
 
     public Language getLanguage() {
@@ -30,8 +29,6 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder {
 
     public void setLanguage(Language l) {
         mLanguage = l;
-        if (mLanguage != null && Build.VERSION.SDK_INT >= 17) {
-            mCategoryView.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
-        }
+        mCategoryView.setLayoutDirection(mLanguage.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
     }
 }

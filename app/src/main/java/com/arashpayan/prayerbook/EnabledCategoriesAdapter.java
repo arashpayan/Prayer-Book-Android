@@ -1,6 +1,7 @@
 package com.arashpayan.prayerbook;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,22 +16,21 @@ import java.util.ArrayList;
 public class EnabledCategoriesAdapter extends RecyclerView.Adapter {
 
     private ArrayList<CategoriesAdapter> mAdapters;
-    private Language[] languages;
     private Context mContext;
 
-    public EnabledCategoriesAdapter(Context context, Language[] languages) {
+    EnabledCategoriesAdapter(Context context, Language[] languages) {
         this.mContext = context;
-        this.languages = languages;
-        this.mAdapters = new ArrayList<>(this.languages.length);
+        this.mAdapters = new ArrayList<>(languages.length);
 
-        for (Language l : this.languages) {
+        for (Language l : languages) {
             CategoriesAdapter ca = new CategoriesAdapter(l);
             this.mAdapters.add(ca);
         }
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == R.layout.list_header) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_header, parent, false);
             return new CategoryHeaderHolder(itemView);
@@ -40,7 +40,7 @@ public class EnabledCategoriesAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int previousSum = 0;
         int sum = 0;
         for (CategoriesAdapter ca : this.mAdapters) {
@@ -86,7 +86,7 @@ public class EnabledCategoriesAdapter extends RecyclerView.Adapter {
         throw new IllegalArgumentException("Invalid position passed to getItemViewType(" + position + ")");
     }
 
-    public void setListener(CategoriesAdapter.OnCategorySelectedListener l) {
+    void setListener(CategoriesAdapter.OnCategorySelectedListener l) {
         for (CategoriesAdapter a : mAdapters) {
             a.setListener(l);
         }
@@ -95,10 +95,10 @@ public class EnabledCategoriesAdapter extends RecyclerView.Adapter {
     static class CategoryHeaderHolder extends RecyclerView.ViewHolder {
         protected TextView language;
 
-        public CategoryHeaderHolder(View itemView) {
+        CategoryHeaderHolder(View itemView) {
             super(itemView);
 
-            language = (TextView) itemView.findViewById(R.id.header_language);
+            language = itemView.findViewById(R.id.header_language);
         }
     }
 }

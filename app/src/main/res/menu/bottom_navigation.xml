@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/prayers"
+        android:title="@string/prayers"
+        android:icon="@drawable/ic_baseline_toc_24px" />
+    <item
+        android:id="@+id/bookmarks"
+        android:title="@string/bookmarks"
+        android:icon="@drawable/ic_outline_collections_bookmark_24px" />
+    <item
+        android:id="@+id/recents"
+        android:title="@string/recents"
+        android:icon="@drawable/ic_baseline_history_24px" />
+    <item
+        android:id="@+id/languages"
+        android:title="@string/languages"
+        android:icon="@drawable/ic_language_white_24dp" />
+    <item
+        android:id="@+id/about"
+        android:title="@string/about"
+        android:icon="@drawable/ic_outline_info_24px" />
+</menu>

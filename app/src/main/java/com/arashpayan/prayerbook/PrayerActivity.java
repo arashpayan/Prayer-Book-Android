@@ -29,7 +29,7 @@ public class PrayerActivity extends AppCompatActivity {
         super.onCreate(state);
 
         setContentView(R.layout.prayer_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.prayer_toolbar);
+        Toolbar toolbar = findViewById(R.id.prayer_toolbar);
 
         if (Build.VERSION.SDK_INT >= 21) {
             String appName = getString(R.string.app_name);

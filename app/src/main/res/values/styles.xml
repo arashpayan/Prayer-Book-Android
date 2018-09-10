@@ -14,6 +14,9 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <!--This changes the overflow button color (and probably other stuff too)-->
+        <!--<item name="android:textColorSecondary">@android:color/white</item>-->
     </style>
 
 </resources>

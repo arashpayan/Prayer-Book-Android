@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +53,9 @@ public class PrayerFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Bundle arguments = getArguments();
+        if (arguments == null) {
+            throw new RuntimeException("Fragment should be created via newInstance");
+        }
         long prayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
         if (prayerId == -1) {
             throw new IllegalArgumentException("You must provide a prayer id to this fragment");
@@ -64,10 +68,8 @@ public class PrayerFragment extends Fragment {
     }
     
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         
         mWebView = new WebView(this.getActivity());
         mWebView.getSettings().setSupportZoom(true);
@@ -86,7 +88,7 @@ public class PrayerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     @Override
@@ -95,11 +97,6 @@ public class PrayerFragment extends Fragment {
 
         // set the current value for classic theme
         menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get(App.getApp()).useClassicTheme());
-
-        // hide the print option on older devices
-        if (Build.VERSION.SDK_INT < 19) {
-            menu.findItem(R.id.action_print_prayer).setVisible(false);
-        }
     }
     
     @Override
@@ -107,7 +104,7 @@ public class PrayerFragment extends Fragment {
         // .75 to 1.60
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().onBackPressed();
+                requireActivity().onBackPressed();
                 break;
             case R.id.action_increase_text_size:
                 if (mScale < 1.6f) {
@@ -149,7 +146,7 @@ public class PrayerFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar ab = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (ab != null) {
             ab.setTitle(null);
             ab.setDisplayHomeAsUpEnabled(true);
@@ -233,14 +230,17 @@ public class PrayerFragment extends Fragment {
         return prayerCursor.getString(searchTextIndex);
     }
 
-    @TargetApi(19) @SuppressWarnings("deprecation")
+    @TargetApi(19)
     private void printPrayer() {
         if (mWebView == null) {
             // shouldn't happen, but just in case
             return;
         }
         
-        PrintManager manager = (PrintManager)getActivity().getSystemService(Context.PRINT_SERVICE);
+        PrintManager manager = (PrintManager)requireContext().getSystemService(Context.PRINT_SERVICE);
+        if (manager == null) {
+            throw new RuntimeException("Where's the print manager?");
+        }
         PrintDocumentAdapter adapter;
         if (Build.VERSION.SDK_INT >= 21) {
             adapter = mWebView.createPrintDocumentAdapter("Prayer");

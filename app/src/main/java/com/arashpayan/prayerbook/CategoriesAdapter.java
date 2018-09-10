@@ -1,6 +1,7 @@
 package com.arashpayan.prayerbook;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +10,18 @@ import android.view.ViewGroup;
 class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     private final Cursor mCategoriesCursor;
-    private final Language mLanguage;
+    @NonNull private final Language mLanguage;
     private OnCategorySelectedListener mListener;
 
-    CategoriesAdapter(Language language) {
+    CategoriesAdapter(@NonNull Language language) {
         this.mLanguage = language;
         mCategoriesCursor = DB.get().getCategories(language);
         setHasStableIds(false);
     }
 
     @Override
-    public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.category, parent, false);
         final CategoryViewHolder holder = new CategoryViewHolder(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -37,7 +39,7 @@ class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(CategoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         mCategoriesCursor.moveToPosition(position);
 
         int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(DB.CATEGORY_COLUMN);

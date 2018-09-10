@@ -2,6 +2,7 @@ package com.arashpayan.prayerbook;
 
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,8 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
     }
 
     @Override
-    public PrayerSummaryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public PrayerSummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.prayer_summary, parent, false);
         final PrayerSummaryViewHolder holder = new PrayerSummaryViewHolder(itemView);
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +37,7 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(PrayerSummaryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PrayerSummaryViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
         int wordsColIdx = mCursor.getColumnIndexOrThrow(DB.OPENINGWORDS_COLUMN);

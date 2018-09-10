@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,7 +39,7 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -47,16 +48,16 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(mSearchAdapter);
 
-        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar == null) {
             throw new RuntimeException("Where's the toolbar?");
         }
         toolbar.getMenu().clear();
 
         mSearchView = inflater.inflate(R.layout.search_field, toolbar, false);
-        final EditText searchField = (EditText) mSearchView.findViewById(R.id.search_field);
+        final EditText searchField = mSearchView.findViewById(R.id.search_field);
         searchField.addTextChangedListener(this);
-        mClearButton = (ImageButton) mSearchView.findViewById(R.id.clear_button);
+        mClearButton = mSearchView.findViewById(R.id.clear_button);
         mClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,27 +74,35 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     public void onResume() {
         super.onResume();
 
-        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setTitle(null);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm == null) {
+                    // should never happen
+                    return;
+                }
                 imm.hideSoftInputFromWindow(toolbar.getWindowToken(), 0);
-                getFragmentManager().popBackStack();
+                requireFragmentManager().popBackStack();
             }
         });
         // if there's no query saved, then show the keyboard
         if (mQuery == null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm == null) {
+                // should never happen
+                return;
+            }
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 
     @Override
     public void onDestroyView() {
-        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.removeView(mSearchView);
 
         super.onDestroyView();
@@ -102,8 +111,12 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     @Override
     public void onPrayerSelected(long prayerId) {
         // the keyboard might still be present, so dismiss it
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            // should never happen
+            return;
+        }
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar == null) {
             throw new RuntimeException("where's the toolbar?");
         }
@@ -112,7 +125,7 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         Intent intent =  PrayerActivity.newIntent(getContext(), prayerId);
         startActivity(intent);
 
-        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
+        requireActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 
     @Override

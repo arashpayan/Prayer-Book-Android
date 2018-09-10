@@ -3,8 +3,7 @@ package com.arashpayan.prayerbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,8 +41,12 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        mCategory = getArguments().getString(ARG_CATEGORY, null);
+
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            throw new RuntimeException("Fragment should be started via newInstance");
+        }
+        mCategory = bundle.getString(ARG_CATEGORY, null);
         Language language = getArguments().getParcelable(ARG_LANGUAGE);
         if (mCategory == null) {
             throw new IllegalArgumentException("You must provide a category");
@@ -75,7 +78,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRecyclerView = new RecyclerView(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -91,7 +94,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     public void onResume() {
         super.onResume();
 
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.getMenu().clear();
             toolbar.setTitle(mCategory);
@@ -99,21 +102,9 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getFragmentManager().popBackStack();
+                    requireFragmentManager().popBackStack();
                 }
             });
-        }
-        expandToolbar();
-    }
-
-    public void expandToolbar() {
-        AppBarLayout appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.appbar);
-
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        if(behavior!=null) {
-            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator);
-            behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -10000, false);
         }
     }
 
@@ -122,6 +113,6 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         Intent intent = PrayerActivity.newIntent(getContext(), prayerId);
         startActivity(intent);
 
-        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
+        requireActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 }

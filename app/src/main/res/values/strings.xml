@@ -27,6 +27,8 @@
     <string name="document">Document</string>
     <string name="classic_theme">Classic theme</string>
     <string name="search_prayers">Search prayers</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="recents">Recents</string>
 
     <plurals name="number_of_words">
         <item quantity="one">%d word</item>

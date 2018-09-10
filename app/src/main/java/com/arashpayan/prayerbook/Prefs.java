@@ -7,6 +7,7 @@ package com.arashpayan.prayerbook;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 import java.util.LinkedList;
 import java.util.Locale;
@@ -18,18 +19,19 @@ import java.util.Locale;
 @SuppressWarnings("WeakerAccess")
 public class Prefs {
     private static volatile Prefs mSingleton = null;
-    private SharedPreferences mPrefs = null;
+    private SharedPreferences mPrefs;
     
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
     private static final String PREFERENCE_DATABASE_VERSION = "DatabaseVersion";
     private static final String PREFERENCE_PRAYER_TEXT_SCALAR = "PrayerTextScalar";
     private static final String PREFERENCE_USE_CLASSIC_THEME = "UseClassicTheme";
     
-    private Prefs(Context ctx) {
+    private Prefs(@NonNull Context ctx) {
         mPrefs = ctx.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
-    
-    public static Prefs get(Application app) {
+
+    @NonNull
+    public static Prefs get(@NonNull Application app) {
         if (mSingleton == null) {
             synchronized (Prefs.class) {
                 if (mSingleton == null) {
@@ -45,6 +47,7 @@ public class Prefs {
         return mPrefs.getInt(PREFERENCE_DATABASE_VERSION, 0);
     }
 
+    @NonNull
     public Language[] getEnabledLanguages() {
         LinkedList<Language> langs = new LinkedList<>();
         for (Language l : Language.values()) {
@@ -69,7 +72,7 @@ public class Prefs {
             langs.add(Language.English);
         }
 
-        return langs.toArray(new Language[langs.size()]);
+        return langs.toArray(new Language[0]);
     }
     
     public void setDatabaseVersion(int version) {

@@ -1,20 +1,21 @@
 package com.arashpayan.prayerbook;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-public class PrayerSummaryViewHolder extends RecyclerView.ViewHolder {
+class PrayerSummaryViewHolder extends RecyclerView.ViewHolder {
 
-    protected TextView openingWords;
-    protected TextView detail;
-    protected TextView wordCount;
+    final TextView openingWords;
+    final TextView detail;
+    final TextView wordCount;
 
-    public PrayerSummaryViewHolder(View v) {
+    PrayerSummaryViewHolder(@NonNull View v) {
         super(v);
 
-        openingWords = (TextView) v.findViewById(R.id.prayer_summary);
-        detail = (TextView) v.findViewById(R.id.prayer_author);
-        wordCount = (TextView) v.findViewById(R.id.prayer_word_count);
+        openingWords = v.findViewById(R.id.prayer_summary);
+        detail = v.findViewById(R.id.prayer_author);
+        wordCount = v.findViewById(R.id.prayer_word_count);
     }
 }

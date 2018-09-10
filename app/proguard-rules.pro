@@ -20,3 +20,7 @@
     @com.squareup.otto.Subscribe public *;
     @com.squareup.otto.Produce public *;
 }
+
+-keepclassmembers class android.support.design.internal.BottomNavigationMenuView {
+    boolean mShiftingMode;
+}

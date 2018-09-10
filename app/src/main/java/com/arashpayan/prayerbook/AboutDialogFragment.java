@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -31,7 +33,7 @@ import java.io.StringWriter;
 public class AboutDialogFragment extends DialogFragment {
 
     private String getStringFromInputStream(InputStream inputStream) throws IOException {
-        InputStreamReader reader = new InputStreamReader(inputStream, "utf-8");
+        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         char[] buffer = new char[8];
         StringWriter sw = new StringWriter();
         int numRead;
@@ -57,12 +59,13 @@ public class AboutDialogFragment extends DialogFragment {
         int pad = Graphics.pixels(requireContext(), 24);
         tv.setPadding(pad, pad, pad, pad);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
+        Spanned spanned;
         if (Build.VERSION.SDK_INT >= 24) {
-            Html.fromHtml(html, 0);
+            spanned = Html.fromHtml(html, 0);
         } else {
-            Html.fromHtml(html);
+            spanned = Html.fromHtml(html);
         }
-        tv.setText(Html.fromHtml(html));
+        tv.setText(spanned);
         alertBuilder.setView(tv);
         alertBuilder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
