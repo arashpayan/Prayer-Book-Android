@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,7 +40,7 @@ public class PrayerFragment extends Fragment {
     
     private static final String PRAYER_ID_ARGUMENT = "PrayerId";
 
-    public static PrayerFragment newInstance(long prayerId) {
+    static PrayerFragment newInstance(long prayerId) {
         PrayerFragment fragment = new PrayerFragment();
         Bundle args = new Bundle();
         args.putLong(PRAYER_ID_ARGUMENT, prayerId);
@@ -154,7 +154,7 @@ public class PrayerFragment extends Fragment {
         }
     }
 
-    public String getPrayerHTML() {
+    private String getPrayerHTML() {
         float pFontWidth = 1.1f * mScale;
         float pFontHeight = 1.575f * mScale;
         float pComment = 0.8f * mScale;

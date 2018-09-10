@@ -1,24 +1,20 @@
 package com.arashpayan.prayerbook;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.arashpayan.util.L;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.lang.reflect.Field;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,12 +24,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main_activity);
         BottomNavigationView bar = findViewById(R.id.bottom_bar);
-        disableShiftMode(bar);
         bar.setOnNavigationItemSelectedListener(barItemListener);
         bar.setOnNavigationItemReselectedListener(reselectListener);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            String appName = getString(R.string.app_name);
+        String appName = getString(R.string.app_name);
+        if (Build.VERSION.SDK_INT > 27) {
+            setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, R.color.task_header));
+        } else if (Build.VERSION.SDK_INT > 20) {
             Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             int headerColor = ContextCompat.getColor(this, R.color.task_header);
             setTaskDescription(new ActivityManager.TaskDescription(appName, appIcon, headerColor));
@@ -46,25 +43,6 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.main_container, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
             ft.commit();
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    private void disableShiftMode(BottomNavigationView bar) {
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bar.getChildAt(0);
-        try {
-            Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
-            shiftingMode.setAccessible(true);
-            shiftingMode.setBoolean(menuView, false);
-            for (int i=0; i<menuView.getChildCount(); i++) {
-                BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
-                item.setShiftingMode(false);
-                item.setChecked(item.getItemData().isChecked());
-            }
-        } catch (NoSuchFieldException nsfe) {
-            L.e("Unable to get mShiftingMode field", nsfe);
-        } catch (IllegalAccessException iae) {
-            L.w("Unable to disable shifting mode", iae);
         }
     }
 

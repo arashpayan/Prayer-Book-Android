@@ -4,7 +4,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.arashpayan.util.L;
 import com.squareup.otto.Bus;

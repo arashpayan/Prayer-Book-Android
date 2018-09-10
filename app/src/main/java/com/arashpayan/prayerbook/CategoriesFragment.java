@@ -3,13 +3,13 @@ package com.arashpayan.prayerbook;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +27,7 @@ import com.squareup.otto.Subscribe;
  */
 public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener {
     
-    public static final String CATEGORIES_TAG = "Categories";
+    static final String CATEGORIES_TAG = "Categories";
 
     private Parcelable mRecyclerState;
     private RecyclerView mRecyclerView;
@@ -48,11 +48,11 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView = new RecyclerView(requireContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setOrientation(RecyclerView.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
         mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get(App.getApp()).getEnabledLanguages());
@@ -76,7 +76,10 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
         // when your Fragments are just getting swapped within the same Activity.
         if (mRecyclerView != null) {
-            mRecyclerState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            if (lm != null) {
+                mRecyclerState = lm.onSaveInstanceState();
+            }
         }
     }
 
@@ -118,7 +121,10 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         super.onViewStateRestored(savedInstanceState);
 
         if (mRecyclerState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerState);
+            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            if (lm != null) {
+                lm.onRestoreInstanceState(mRecyclerState);
+            }
         }
     }
 

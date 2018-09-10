@@ -3,11 +3,11 @@ package com.arashpayan.prayerbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,7 @@ import com.arashpayan.util.DividerItemDecoration;
  */
 public class CategoryPrayersFragment extends Fragment implements OnPrayerSelectedListener {
     
-    public static final String CATEGORYPRAYERS_TAG = "CategoryPrayers";
+    static final String CATEGORYPRAYERS_TAG = "CategoryPrayers";
     private static final String ARG_CATEGORY = "category";
     private static final String ARG_LANGUAGE = "language";
     private String mCategory;
@@ -28,7 +28,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     private RecyclerView mRecyclerView;
     private Parcelable mRecyclerState;
 
-    public static CategoryPrayersFragment newInstance(String category, Language language) {
+    static CategoryPrayersFragment newInstance(String category, Language language) {
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
         args.putString(ARG_CATEGORY, category);
@@ -65,7 +65,10 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
         // when your Fragments are just getting swapped within the same Activity.
         if (mRecyclerView != null) {
-            mRecyclerState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            if (lm != null) {
+                mRecyclerState = lm.onSaveInstanceState();
+            }
         }
     }
 
@@ -73,17 +76,20 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         super.onViewStateRestored(savedInstanceState);
 
         if (mRecyclerState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerState);
+            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            if (lm != null) {
+                lm.onRestoreInstanceState(mRecyclerState);
+            }
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecyclerView = new RecyclerView(getActivity());
+        mRecyclerView = new RecyclerView(requireContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setOrientation(RecyclerView.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setAdapter(mAdapter);
         

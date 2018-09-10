@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.io.File;
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
+
 /**
  *
  * @author arash
@@ -65,10 +67,12 @@ public class DB {
                 null);
     }
     
-    public int getPrayerCountForCategory(String category, String language) {
+    public int getPrayerCountForCategory(@NonNull String category, @NonNull String language) {
         // check the cache first
-        if (prayerCountCache.containsKey(language + category)) {
-            return prayerCountCache.get(language + category);
+        String key = language + category;
+        Integer cachedCount = prayerCountCache.get(key);
+        if (cachedCount != null) {
+            return cachedCount;
         }
         
         String[] selectionArgs = {category, language};
