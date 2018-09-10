@@ -17,9 +17,9 @@ import androidx.annotation.NonNull;
  * @author arash
  */
 @SuppressWarnings("WeakerAccess")
-public class DB {
+public class PrayersDB {
 
-    private static DB singleton = null;
+    private static PrayersDB singleton = null;
     public static File databaseFile;
     
     private final SQLiteDatabase pbDatabase;
@@ -38,15 +38,15 @@ public class DB {
     
     private final HashMap<String, Integer> prayerCountCache;
     
-    private DB() {
+    private PrayersDB() {
         pbDatabase = SQLiteDatabase.openDatabase(databaseFile.toString(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
         
         prayerCountCache = new HashMap<>();
     }
     
-    public synchronized static DB get() {
+    public synchronized static PrayersDB get() {
         if (singleton == null) {
-            singleton = new DB();
+            singleton = new PrayersDB();
         }
         
         return singleton;

@@ -15,7 +15,7 @@ class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
     CategoriesAdapter(@NonNull Language language) {
         this.mLanguage = language;
-        mCategoriesCursor = DB.get().getCategories(language);
+        mCategoriesCursor = PrayersDB.get().getCategories(language);
         setHasStableIds(false);
     }
 
@@ -42,12 +42,12 @@ class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         mCategoriesCursor.moveToPosition(position);
 
-        int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(DB.CATEGORY_COLUMN);
+        int categoryColIdx = mCategoriesCursor.getColumnIndexOrThrow(PrayersDB.CATEGORY_COLUMN);
         String category = mCategoriesCursor.getString(categoryColIdx);
         holder.category.setText(category);
         holder.setLanguage(mLanguage);
 
-        int prayerCount = DB.get().getPrayerCountForCategory(category, mLanguage.code);
+        int prayerCount = PrayersDB.get().getPrayerCountForCategory(category, mLanguage.code);
         holder.prayerCount.setText(String.format(mLanguage.locale, "%d", prayerCount));
     }
 

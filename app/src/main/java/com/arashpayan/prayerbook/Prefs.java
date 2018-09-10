@@ -7,10 +7,16 @@ package com.arashpayan.prayerbook;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.annotation.NonNull;
 
+import com.arashpayan.util.L;
+
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 
 /**
  *
@@ -18,8 +24,9 @@ import java.util.Locale;
  */
 @SuppressWarnings("WeakerAccess")
 public class Prefs {
-    private static volatile Prefs mSingleton = null;
+    private static volatile Prefs singleton = null;
     private SharedPreferences mPrefs;
+    private Set<Listener> listeners = new HashSet<>();
     
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
     private static final String PREFERENCE_DATABASE_VERSION = "DatabaseVersion";
@@ -30,17 +37,13 @@ public class Prefs {
         mPrefs = ctx.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
 
+    public static void init(@NonNull Application app) {
+        singleton = new Prefs(app);
+    }
+
     @NonNull
-    public static Prefs get(@NonNull Application app) {
-        if (mSingleton == null) {
-            synchronized (Prefs.class) {
-                if (mSingleton == null) {
-                    mSingleton = new Prefs(app.getApplicationContext());
-                }
-            }
-        }
-        
-        return mSingleton;
+    public static Prefs get() {
+        return singleton;
     }
 
     public int getDatabaseVersion() {
@@ -82,9 +85,12 @@ public class Prefs {
     public boolean isLanguageEnabled(Language lang) {
         return mPrefs.getBoolean(lang.code + "_enabled", false);
     }
-    
+
+    @UiThread
     public void setLanguageEnabled(Language lang, boolean shouldEnable) {
         mPrefs.edit().putBoolean(lang.code + "_enabled", shouldEnable).apply();
+
+        notifyEnabledLanguagesChanged();
     }
     
     public float getPrayerTextScalar() {
@@ -102,4 +108,34 @@ public class Prefs {
     public void setUseClassicTheme(boolean useClassicTheme) {
         mPrefs.edit().putBoolean(PREFERENCE_USE_CLASSIC_THEME, useClassicTheme).apply();
     }
+
+    //region Listener
+
+    interface Listener {
+        @UiThread
+        void onEnabledLanguagesChanged();
+    }
+
+    @UiThread
+    void addListener(@NonNull Listener l) {
+        listeners.add(l);
+    }
+
+    @UiThread
+    private void notifyEnabledLanguagesChanged() {
+        for (Listener l : listeners) {
+            try {
+                l.onEnabledLanguagesChanged();
+            } catch (Throwable t) {
+                L.w("Error notifying listener", t);
+            }
+        }
+    }
+
+    @UiThread
+    void removeListener(@NonNull Listener l) {
+        listeners.remove(l);
+    }
+
+    //endregion
 }

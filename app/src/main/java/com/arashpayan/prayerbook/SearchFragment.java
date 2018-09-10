@@ -146,12 +146,12 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
             return;
         }
 
+        final Prefs prefs = Prefs.get();
         App.runInBackground(new Runnable() {
             @Override
             public void run() {
                 String[] keywords = trimmed.split(" ");
-                final Cursor c = DB.get().getPrayersWithKeywords(keywords,
-                        Prefs.get(App.getApp()).getEnabledLanguages());
+                final Cursor c = PrayersDB.get().getPrayersWithKeywords(keywords, prefs.getEnabledLanguages());
                 App.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

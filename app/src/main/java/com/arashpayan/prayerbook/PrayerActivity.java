@@ -31,8 +31,10 @@ public class PrayerActivity extends AppCompatActivity {
         setContentView(R.layout.prayer_activity);
         Toolbar toolbar = findViewById(R.id.prayer_toolbar);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            String appName = getString(R.string.app_name);
+        String appName = getString(R.string.app_name);
+        if (Build.VERSION.SDK_INT > 27) {
+            setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, R.color.task_header));
+        } else if (Build.VERSION.SDK_INT > 20) {
             Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             int headerColor = ContextCompat.getColor(this, R.color.task_header);
             setTaskDescription(new ActivityManager.TaskDescription(appName, appIcon, headerColor));

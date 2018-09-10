@@ -4,10 +4,8 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.arashpayan.util.L;
-import com.squareup.otto.Bus;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,11 +14,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 public class App extends Application {
 
-    private Bus mBus;
     private Handler mMainThreadHandler;
-
     private Handler mBackgroundHandler;
 
     private static volatile App mApp;
@@ -36,8 +34,8 @@ public class App extends Application {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate();
 
+        Prefs.init(this);
         copyDatabaseFile();
-        mBus = new Bus();
         mMainThreadHandler = new Handler(Looper.getMainLooper());
 
         HandlerThread bgThread = new HandlerThread("Prayer Book Background");
@@ -46,9 +44,9 @@ public class App extends Application {
     }
 
     private void copyDatabaseFile() {
-        int dbVersion = Prefs.get(this).getDatabaseVersion();
+        int dbVersion = Prefs.get().getDatabaseVersion();
         File databaseFile = new File(getFilesDir(), "pbdb.db");
-        DB.databaseFile = databaseFile;
+        PrayersDB.databaseFile = databaseFile;
         if (dbVersion != LatestDatabaseVersion) {
             // then we need to copy over the latest database
             L.i("database file: " + databaseFile.getAbsolutePath());
@@ -63,27 +61,10 @@ public class App extends Application {
                 }
                 is.close();
                 os.close();
-                Prefs.get(this).setDatabaseVersion(LatestDatabaseVersion);
+                Prefs.get().setDatabaseVersion(LatestDatabaseVersion);
             } catch (IOException ex) {
                 L.w("Error writing prayer database", ex);
             }
-        }
-    }
-
-    public static void postOnBus(final Object event) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            mApp.mBus.post(event);
-        } else {
-            runOnUiThread(new Runnable() {
-
-                public void run() {
-                    try {
-                        mApp.mBus.post(event);
-                    } catch (Throwable t) {
-                        L.e("Unexpected throwable encountered while dispatching event", t);
-                    }
-                }
-            });
         }
     }
 
@@ -95,32 +76,4 @@ public class App extends Application {
         mApp.mBackgroundHandler.post(r);
     }
 
-    public static void registerOnBus(final Object object) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            if (mApp == null) {
-                L.w("THE APP IS NULL!!! YOU'RE GONNA CRASH");
-            }
-            mApp.mBus.register(object);
-        } else {
-            runOnUiThread(new Runnable() {
-
-                public void run() {
-                    mApp.mBus.register(object);
-                }
-            });
-        }
-    }
-
-    public static void unregisterFromBus(final Object object) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            mApp.mBus.unregister(object);
-        } else {
-            runOnUiThread(new Runnable() {
-
-                public void run() {
-                    mApp.mBus.unregister(object);
-                }
-            });
-        }
-    }
 }

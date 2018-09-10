@@ -3,13 +3,6 @@ package com.arashpayan.prayerbook;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,15 +10,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arashpayan.prayerbook.event.LanguagesChangedEvent;
 import com.arashpayan.util.DividerItemDecoration;
-import com.squareup.otto.Subscribe;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener {
+public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener, Prefs.Listener {
     
     static final String CATEGORIES_TAG = "Categories";
 
@@ -38,7 +38,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-        App.registerOnBus(this);
+        Prefs.get().addListener(this);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         llm.setOrientation(RecyclerView.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get().getEnabledLanguages());
         mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -66,7 +66,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     public void onDestroy() {
         super.onDestroy();
 
-        App.unregisterFromBus(this);
+        Prefs.get().removeListener(this);
     }
 
     @Override
@@ -148,19 +148,19 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         ft.commit();
     }
 
-    @Subscribe @SuppressWarnings("unused")
-    public void onLanguagesChanged(LanguagesChangedEvent event) {
+    @UiThread
+    public void onEnabledLanguagesChanged() {
         if (mRecyclerView == null) {
             return;
         }
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get(App.getApp()).getEnabledLanguages());
+        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get().getEnabledLanguages());
         mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private void showLanguageDialog() {
-        Prefs prefs = Prefs.get(App.getApp());
+        Prefs prefs = Prefs.get();
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.languages);
         final Language[] langs = Language.values();
@@ -174,15 +174,10 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        Prefs.get(App.getApp()).setLanguageEnabled(langs[which], isChecked);
+                        Prefs.get().setLanguageEnabled(langs[which], isChecked);
                     }
                 });
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                App.postOnBus(new LanguagesChangedEvent());
-            }
-        });
+        builder.setPositiveButton(R.string.ok, null);
         builder.show();
     }
 }

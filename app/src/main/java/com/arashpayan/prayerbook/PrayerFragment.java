@@ -60,9 +60,9 @@ public class PrayerFragment extends Fragment {
         if (prayerId == -1) {
             throw new IllegalArgumentException("You must provide a prayer id to this fragment");
         }
-        prayerCursor = DB.get().getPrayer(prayerId);
+        prayerCursor = PrayersDB.get().getPrayer(prayerId);
         prayerCursor.moveToFirst();
-        mScale = Prefs.get(App.getApp()).getPrayerTextScalar();
+        mScale = Prefs.get().getPrayerTextScalar();
         
         setHasOptionsMenu(true);
     }
@@ -96,11 +96,12 @@ public class PrayerFragment extends Fragment {
         inflater.inflate(R.menu.prayer, menu);
 
         // set the current value for classic theme
-        menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get(App.getApp()).useClassicTheme());
+        menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get().useClassicTheme());
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Prefs prefs = Prefs.get();
         // .75 to 1.60
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -109,21 +110,21 @@ public class PrayerFragment extends Fragment {
             case R.id.action_increase_text_size:
                 if (mScale < 1.6f) {
                     mScale += 0.05f;
-                    Prefs.get(App.getApp()).setPrayerTextScalar(mScale);
+                    prefs.setPrayerTextScalar(mScale);
                     reloadPrayer();
                 }
                 break;
             case R.id.action_decrease_text_size:
                 if (mScale > .75) {
                     mScale -= 0.05f;
-                    Prefs.get(App.getApp()).setPrayerTextScalar(mScale);
+                    prefs.setPrayerTextScalar(mScale);
                     reloadPrayer();
                 }
                 break;
             case R.id.action_classic_theme:
                 boolean useClassic = !item.isChecked(); // toggle the value
                 item.setChecked(useClassic);
-                Prefs.get(App.getApp()).setUseClassicTheme(useClassic);
+                prefs.setUseClassicTheme(useClassic);
                 reloadPrayer();
                 break;
             case R.id.action_share_prayer:
@@ -171,7 +172,7 @@ public class PrayerFragment extends Fragment {
         args.put("authorHeight", String.format(Locale.US, "%f", authorHeight));
         args.put("versalWidth", String.format(Locale.US, "%f", versalWidth));
         args.put("versalHeight", String.format(Locale.US, "%f", versalHeight));
-        boolean useClassicTheme = Prefs.get(App.getApp()).useClassicTheme();
+        boolean useClassicTheme = Prefs.get().useClassicTheme();
         String bgColor;
         String versalAndAuthorColor;
         String font;
@@ -192,15 +193,15 @@ public class PrayerFragment extends Fragment {
         args.put("font", font);
         args.put("italicOrNothing", italicOrNothing);
 
-        int textIndex = prayerCursor.getColumnIndexOrThrow(DB.PRAYERTEXT_COLUMN);
+        int textIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.PRAYERTEXT_COLUMN);
         String prayerText = prayerCursor.getString(textIndex);
         args.put("prayer", prayerText);
 
-        int authorIndex = prayerCursor.getColumnIndexOrThrow(DB.AUTHOR_COLUMN);
+        int authorIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.AUTHOR_COLUMN);
         String authorText = prayerCursor.getString(authorIndex);
         args.put("author", authorText);
 
-        int citationIndex = prayerCursor.getColumnIndexOrThrow(DB.CITATION_COLUMN);
+        int citationIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.CITATION_COLUMN);
         String citationText = prayerCursor.getString(citationIndex);
         if (citationText.isEmpty()) {
             args.put("citation", "");
@@ -209,7 +210,7 @@ public class PrayerFragment extends Fragment {
             args.put("citation", citationHTML);
         }
 
-        int langIndex = prayerCursor.getColumnIndexOrThrow(DB.LANGUAGE_COLUMN);
+        int langIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.LANGUAGE_COLUMN);
         String langCode = prayerCursor.getString(langIndex);
         Language lang = Language.get(langCode);
         if (lang.rightToLeft) {
@@ -225,7 +226,7 @@ public class PrayerFragment extends Fragment {
     }
     
     private String getPrayerText() {
-        int searchTextIndex = prayerCursor.getColumnIndexOrThrow(DB.SEARCHTEXT_COLUMN);
+        int searchTextIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.SEARCHTEXT_COLUMN);
         
         return prayerCursor.getString(searchTextIndex);
     }

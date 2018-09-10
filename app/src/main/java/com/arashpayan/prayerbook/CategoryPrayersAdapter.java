@@ -15,7 +15,7 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
     private OnPrayerSelectedListener mListener;
 
     CategoryPrayersAdapter(String category, Language language) {
-        this.mCursor = DB.get().getPrayers(category, language);
+        this.mCursor = PrayersDB.get().getPrayers(category, language);
         this.mLanguage = language;
         setHasStableIds(true);
     }
@@ -45,10 +45,10 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
     public void onBindViewHolder(@NonNull PrayerSummaryViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        int wordsColIdx = mCursor.getColumnIndexOrThrow(DB.OPENINGWORDS_COLUMN);
+        int wordsColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.OPENINGWORDS_COLUMN);
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
-        int authorColIdx = mCursor.getColumnIndexOrThrow(DB.AUTHOR_COLUMN);
+        int authorColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.AUTHOR_COLUMN);
         String author = mCursor.getString(authorColIdx);
         holder.detail.setText(author);
         if (author == null || author.isEmpty()) {
@@ -57,7 +57,7 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
             holder.detail.setVisibility(View.VISIBLE);
         }
 
-        int wordCountColIdx = mCursor.getColumnIndexOrThrow(DB.WORDCOUNT_COLUMN);
+        int wordCountColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.WORDCOUNT_COLUMN);
         int numWords = mCursor.getInt(wordCountColIdx);
         final Resources resources = holder.wordCount.getResources();
         String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
@@ -74,7 +74,7 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
             return RecyclerView.NO_ID;
         }
         mCursor.moveToPosition(position);
-        int idColIdx = mCursor.getColumnIndexOrThrow(DB.ID_COLUMN);
+        int idColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.ID_COLUMN);
         return mCursor.getLong(idColIdx);
     }
 

@@ -40,13 +40,13 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
     public void onBindViewHolder(@NonNull PrayerSummaryViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
-        int wordsColIdx = mCursor.getColumnIndexOrThrow(DB.OPENINGWORDS_COLUMN);
+        int wordsColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.OPENINGWORDS_COLUMN);
         holder.openingWords.setText(mCursor.getString(wordsColIdx));
 
-        int ctgryColIdx = mCursor.getColumnIndexOrThrow(DB.CATEGORY_COLUMN);
+        int ctgryColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.CATEGORY_COLUMN);
         holder.detail.setText(mCursor.getString(ctgryColIdx));
 
-        int wrdCntColIdx = mCursor.getColumnIndexOrThrow(DB.WORDCOUNT_COLUMN);
+        int wrdCntColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.WORDCOUNT_COLUMN);
         int numWords = mCursor.getInt(wrdCntColIdx);
         final Resources resources = holder.detail.getContext().getResources();
         String wordCount = resources.getQuantityString(R.plurals.number_of_words, numWords, numWords);
@@ -67,7 +67,7 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
             return RecyclerView.NO_ID;
         }
         mCursor.moveToPosition(position);
-        int idColIdx = mCursor.getColumnIndexOrThrow(DB.ID_COLUMN);
+        int idColIdx = mCursor.getColumnIndexOrThrow(PrayersDB.ID_COLUMN);
         return mCursor.getLong(idColIdx);
     }
 
