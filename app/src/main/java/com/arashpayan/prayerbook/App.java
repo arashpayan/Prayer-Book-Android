@@ -21,16 +21,12 @@ public class App extends Application {
     private Handler mMainThreadHandler;
     private Handler mBackgroundHandler;
 
-    private static volatile App mApp;
+    private static volatile App app;
     private static final int LatestDatabaseVersion = 17;
-
-    public static App getApp() {
-        return mApp;
-    }
 
     @Override
     public void onCreate() {
-        mApp = this;
+        app = this;
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate();
 
@@ -69,11 +65,11 @@ public class App extends Application {
     }
 
     public static void runOnUiThread(Runnable r) {
-        mApp.mMainThreadHandler.post(r);
+        app.mMainThreadHandler.post(r);
     }
 
     public static void runInBackground(Runnable r) {
-        mApp.mBackgroundHandler.post(r);
+        app.mBackgroundHandler.post(r);
     }
 
 }
