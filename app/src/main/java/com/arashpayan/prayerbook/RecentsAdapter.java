@@ -78,6 +78,21 @@ public class RecentsAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder
         return holder;
     }
 
+    void onPrayerAccessed(long prayerId) {
+        // check if we already have this id
+        int idx = recentIds.indexOf(prayerId);
+        if (idx == -1) {
+            recentIds.add(0, prayerId);
+            notifyItemInserted(0);
+            return;
+        }
+
+        recentIds.remove(idx);
+        notifyItemRemoved(idx);
+        recentIds.add(0, prayerId);
+        notifyItemInserted(0);
+    }
+
     @UiThread
     void setRecentIds(@NonNull ArrayList<Long> recentIds) {
         this.recentIds = recentIds;

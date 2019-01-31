@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecentsFragment extends Fragment {
+public class RecentsFragment extends Fragment implements UserDB.Listener {
 
     static final String TAG = "recents";
 
@@ -48,6 +48,8 @@ public class RecentsFragment extends Fragment {
                 });
             }
         });
+
+        UserDB.get().addListener(this);
     }
 
     @Nullable
@@ -59,6 +61,13 @@ public class RecentsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return recyclerView;
+    }
+
+    @Override
+    public void onDestroy() {
+        UserDB.get().removeListener(this);
+
+        super.onDestroy();
     }
 
     @Override
@@ -80,4 +89,13 @@ public class RecentsFragment extends Fragment {
             startActivity(intent);
         }
     };
+
+    //region Recents listener
+
+    @Override
+    public void onPrayerAccessed(long prayerId) {
+        adapter.onPrayerAccessed(prayerId);
+    }
+
+    //endregion
 }

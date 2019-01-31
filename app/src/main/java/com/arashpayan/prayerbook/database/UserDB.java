@@ -6,11 +6,17 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.arashpayan.prayerbook.App;
+import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.util.L;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
 public class UserDB {
@@ -25,6 +31,7 @@ public class UserDB {
 
     private static UserDB singleton;
     @NonNull private final Helper helper;
+    @NonNull private final CopyOnWriteArrayList<WeakReference<Listener>> listeners = new CopyOnWriteArrayList<>();
 
     public UserDB(@NonNull Context ctx, boolean inMemory) {
         helper = new Helper(ctx, inMemory);
@@ -110,6 +117,8 @@ public class UserDB {
             return false;
         }
 
+        notifyPrayerAccessed(prayerId);
+
         return true;
     }
 
@@ -128,7 +137,7 @@ public class UserDB {
     public ArrayList<Long> getRecents() {
         ArrayList<Long> recents = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
-        try (Cursor cursor = db.query(RECENTS_TABLE, new String[]{RECENTS_COL_PRAYER_ID}, null, null, null, null, RECENTS_COL_ACCESS_TIME+" DESC", null)) {
+        try (Cursor cursor = db.query(RECENTS_TABLE, new String[]{RECENTS_COL_PRAYER_ID}, null, null, null, null, RECENTS_COL_ACCESS_TIME+" DESC", "50")) {
             while (cursor.moveToNext()) {
                 long id = cursor.getLong(cursor.getColumnIndexOrThrow(RECENTS_COL_PRAYER_ID));
                 recents.add(id);
@@ -159,4 +168,49 @@ public class UserDB {
             L.i("onUpgrade - old: " + oldVersion + ", new: " + newVersion);
         }
     }
+
+    // region Listener management
+
+    public interface Listener {
+        @UiThread
+        default void onPrayerAccessed(long prayerId) {}
+    }
+
+    @AnyThread
+    public void addListener(@NonNull Listener listener) {
+        WeakReference<Listener> ref = new WeakReference<>(listener);
+        listeners.add(ref);
+    }
+
+    @AnyThread
+    private void notifyPrayerAccessed(long prayerId) {
+        App.runOnUiThread(new UiRunnable() {
+            @Override
+            public void run() {
+                for (WeakReference<Listener> ref : listeners) {
+                    Listener l = ref.get();
+                    if (l == null) {
+                        continue;
+                    }
+                    l.onPrayerAccessed(prayerId);
+                }
+            }
+        });
+    }
+
+    @AnyThread
+    public void removeListener(@NonNull Listener listener) {
+        int i=0;
+        while (i<listeners.size()) {
+            WeakReference<Listener> ref = listeners.get(i);
+            Listener l = ref.get();
+            if (l == null || l == listener) {
+                listeners.remove(i);
+                continue;
+            }
+            i++;
+        }
+    }
+
+    //endregion
 }
