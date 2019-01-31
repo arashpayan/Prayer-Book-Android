@@ -115,19 +115,12 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     }
 
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_about:
-                AboutDialogFragment adf = new AboutDialogFragment();
-                adf.show(requireFragmentManager(), "dialog");
-                break;
-            case R.id.search_prayers:
-                onSearch();
-                break;
-            default:
-                return false;
+        if (item.getItemId() == R.id.search_prayers) {
+            onSearch();
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override

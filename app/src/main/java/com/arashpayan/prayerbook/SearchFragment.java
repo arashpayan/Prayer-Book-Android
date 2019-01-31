@@ -4,12 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,6 +13,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.arashpayan.prayerbook.database.PrayersDB;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
@@ -26,7 +27,7 @@ import com.arashpayan.util.DividerItemDecoration;
 
 public class SearchFragment extends Fragment implements OnPrayerSelectedListener, TextWatcher {
 
-    static String SEARCHPRAYERS_TAG = "SearchPrayers";
+    static String SEARCHPRAYERS_TAG = "search_prayers";
 
     private SearchAdapter mSearchAdapter;
     private View mSearchView;
@@ -74,6 +75,14 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     }
 
     @Override
+    public void onDestroyView() {
+        final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+        toolbar.removeView(mSearchView);
+
+        super.onDestroyView();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -104,11 +113,37 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     }
 
     @Override
-    public void onDestroyView() {
-        final Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
-        toolbar.removeView(mSearchView);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putCharSequence("query", mQuery);
+    }
 
-        super.onDestroyView();
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mQuery = savedInstanceState.getCharSequence("query", null);
+        }
+
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        View bottomBar = requireActivity().findViewById(R.id.bottom_bar);
+        if (bottomBar != null) {
+            bottomBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        View bottomBar = requireActivity().findViewById(R.id.bottom_bar);
+        if (bottomBar != null) {
+            bottomBar.setVisibility(View.VISIBLE);
+        }
+
+        super.onStop();
     }
 
     @Override

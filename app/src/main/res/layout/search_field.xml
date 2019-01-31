@@ -1,6 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -9,13 +10,16 @@
         android:lines="1"
         android:hint="@string/search_ellipsis"
         android:background="@null"
+        tools:background="@color/prayer_book_primary"
         android:textColor="@android:color/white"
-        android:textColorHint="#FF999999"
+        android:textColorHint="#FFDDDDDD"
         android:inputType="textAutoComplete"
         android:imeOptions="actionSearch"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:autofillHints="0"
+        tools:ignore="UnusedAttribute" />
     <ImageButton
         android:id="@+id/clear_button"
         android:background="?attr/selectableItemBackground"
