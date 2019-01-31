@@ -12,7 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arashpayan.prayerbook.database.PrayersDB;
+import com.arashpayan.prayerbook.thread.UiRunnable;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.arashpayan.util.DividerItemDecoration;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -20,15 +25,15 @@ import com.arashpayan.util.DividerItemDecoration;
  */
 public class CategoryPrayersFragment extends Fragment implements OnPrayerSelectedListener {
     
-    static final String CATEGORYPRAYERS_TAG = "CategoryPrayers";
+    static final String TAG = "CategoryPrayers";
     private static final String ARG_CATEGORY = "category";
     private static final String ARG_LANGUAGE = "language";
-    private String mCategory;
-    private CategoryPrayersAdapter mAdapter;
-    private RecyclerView mRecyclerView;
-    private Parcelable mRecyclerState;
+    private String category;
+    private CategoryPrayersAdapter adapter;
+    private RecyclerView recyclerView;
+    private Parcelable recyclerState;
 
-    static CategoryPrayersFragment newInstance(String category, Language language) {
+    static CategoryPrayersFragment newInstance(@NonNull String category, @NonNull Language language) {
         CategoryPrayersFragment fragment = new CategoryPrayersFragment();
         Bundle args = new Bundle();
         args.putString(ARG_CATEGORY, category);
@@ -46,16 +51,27 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         if (bundle == null) {
             throw new RuntimeException("Fragment should be started via newInstance");
         }
-        mCategory = bundle.getString(ARG_CATEGORY, null);
+        category = bundle.getString(ARG_CATEGORY, null);
         Language language = getArguments().getParcelable(ARG_LANGUAGE);
-        if (mCategory == null) {
+        if (category == null) {
             throw new IllegalArgumentException("You must provide a category");
         }
         if (language == null) {
             throw new IllegalArgumentException("You must provide a language");
         }
-        mAdapter = new CategoryPrayersAdapter(mCategory, language);
-        mAdapter.setListener(this);
+        adapter = new CategoryPrayersAdapter(language, this);
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                ArrayList<Long> ids = PrayersDB.get().getPrayerIds(category, language);
+                App.runOnUiThread(new UiRunnable() {
+                    @Override
+                    public void run() {
+                        adapter.setPrayerIds(ids);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -64,10 +80,10 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
 
         // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
         // when your Fragments are just getting swapped within the same Activity.
-        if (mRecyclerView != null) {
-            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+        if (recyclerView != null) {
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
             if (lm != null) {
-                mRecyclerState = lm.onSaveInstanceState();
+                recyclerState = lm.onSaveInstanceState();
             }
         }
     }
@@ -75,25 +91,22 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        if (mRecyclerState != null) {
-            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+        if (recyclerState != null) {
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
             if (lm != null) {
-                lm.onRestoreInstanceState(mRecyclerState);
+                lm.onRestoreInstanceState(recyclerState);
             }
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecyclerView = new RecyclerView(requireContext());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(RecyclerView.VERTICAL);
-        mRecyclerView.setLayoutManager(llm);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
         
-        return mRecyclerView;
+        return recyclerView;
     }
     
     @Override
@@ -103,7 +116,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.getMenu().clear();
-            toolbar.setTitle(mCategory);
+            toolbar.setTitle(category);
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,9 +129,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
 
     @Override
     public void onPrayerSelected(long prayerId) {
-        Intent intent = PrayerActivity.newIntent(getContext(), prayerId);
+        Intent intent = PrayerActivity.newIntent(requireContext(), prayerId);
         startActivity(intent);
-
-        requireActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 }

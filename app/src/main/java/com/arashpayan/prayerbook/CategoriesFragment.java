@@ -1,6 +1,5 @@
 package com.arashpayan.prayerbook;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -10,16 +9,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arashpayan.util.DividerItemDecoration;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.arashpayan.prayerbook.thread.UiRunnable;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
+import com.arashpayan.util.DividerItemDecoration;
+import com.arashpayan.util.L;
 
 /**
  *
@@ -27,15 +27,41 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener, Prefs.Listener {
     
-    static final String CATEGORIES_TAG = "Categories";
+    static final String TAG = "prayers";
 
     private Parcelable mRecyclerState;
-    private RecyclerView mRecyclerView;
-    private EnabledCategoriesAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private CategoriesAdapter adapter;
+
+    @NonNull
+    static CategoriesFragment newInstance() {
+        return new CategoriesFragment();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mRecyclerState = savedInstanceState.getParcelable("recycler_state");
+            L.i("found a recycler state? " + mRecyclerState);
+        }
+
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                CategoriesAdapter a = new CategoriesAdapter(Prefs.get().getEnabledLanguages(), CategoriesFragment.this);
+                App.runOnUiThread(new UiRunnable() {
+                    @Override
+                    public void run() {
+                        adapter = a;
+                        if (recyclerView != null) {
+                            recyclerView.setAdapter(adapter);
+                        }
+                    }
+                });
+            }
+        });
 
         setHasOptionsMenu(true);
         Prefs.get().addListener(this);
@@ -48,18 +74,12 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRecyclerView = new RecyclerView(requireContext());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(RecyclerView.VERTICAL);
-        mRecyclerView.setLayoutManager(llm);
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get().getEnabledLanguages());
-        mAdapter.setListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-
-        return mRecyclerView;
+        return recyclerView;
     }
 
     @Override
@@ -75,19 +95,27 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
 
         // We save our RecyclerView's state here, because onSaveInstanceState() doesn't get called
         // when your Fragments are just getting swapped within the same Activity.
-        if (mRecyclerView != null) {
-            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+        if (recyclerView != null) {
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
             if (lm != null) {
                 mRecyclerState = lm.onSaveInstanceState();
             }
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (recyclerView != null) {
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+            if (lm != null) {
+                Parcelable state = lm.onSaveInstanceState();
+                outState.putParcelable("recycler_state", state);
+            }
+        }
+    }
+
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_languages:
-                showLanguageDialog();
-                break;
             case R.id.action_about:
                 AboutDialogFragment adf = new AboutDialogFragment();
                 adf.show(requireFragmentManager(), "dialog");
@@ -113,7 +141,6 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
             toolbar.setOnMenuItemClickListener(this);
             toolbar.setTitle(R.string.app_name);
             toolbar.setNavigationIcon(null);
-
         }
     }
 
@@ -121,7 +148,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         super.onViewStateRestored(savedInstanceState);
 
         if (mRecyclerState != null) {
-            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
             if (lm != null) {
                 lm.onRestoreInstanceState(mRecyclerState);
             }
@@ -129,12 +156,11 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     }
 
     @Override
-    public void onCategorySelected(String category, Language language) {
+    public void onCategorySelected(@NonNull String category, @NonNull Language language) {
         CategoryPrayersFragment fragment = CategoryPrayersFragment.newInstance(category, language);
 
         FragmentTransaction ft = requireFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        ft.replace(R.id.main_container, fragment, CategoryPrayersFragment.CATEGORYPRAYERS_TAG);
+        ft.replace(R.id.main_container, fragment, CategoryPrayersFragment.TAG);
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -148,36 +174,25 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         ft.commit();
     }
 
-    @UiThread
     public void onEnabledLanguagesChanged() {
-        if (mRecyclerView == null) {
+        if (recyclerView == null) {
             return;
         }
 
-        mAdapter = new EnabledCategoriesAdapter(getActivity(), Prefs.get().getEnabledLanguages());
-        mAdapter.setListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void showLanguageDialog() {
-        Prefs prefs = Prefs.get();
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(R.string.languages);
-        final Language[] langs = Language.values();
-        CharSequence[] langSequences = new CharSequence[langs.length];
-        boolean[] langEnabled = new boolean[langs.length];
-        for (int i=0; i<langs.length; i++) {
-            langSequences[i] = getString(langs[i].humanName);
-            langEnabled[i] = prefs.isLanguageEnabled(langs[i]);
-        }
-        builder.setMultiChoiceItems(langSequences, langEnabled,
-                new DialogInterface.OnMultiChoiceClickListener() {
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                CategoriesAdapter a = new CategoriesAdapter(Prefs.get().getEnabledLanguages(), CategoriesFragment.this);
+                App.runOnUiThread(new UiRunnable() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        Prefs.get().setLanguageEnabled(langs[which], isChecked);
+                    public void run() {
+                        adapter = a;
+                        if (recyclerView != null) {
+                            recyclerView.setAdapter(adapter);
+                        }
                     }
                 });
-        builder.setPositiveButton(R.string.ok, null);
-        builder.show();
+            }
+        });
     }
 }

@@ -3,16 +3,11 @@ package com.arashpayan.prayerbook;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,12 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.arashpayan.prayerbook.database.Prayer;
+import com.arashpayan.prayerbook.database.PrayersDB;
+import com.arashpayan.prayerbook.thread.UiRunnable;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.samskivert.mustache.Mustache;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 /**
  *
@@ -35,11 +39,12 @@ import java.util.Locale;
 public class PrayerFragment extends Fragment {
     
     private WebView mWebView = null;
-    private Cursor prayerCursor;
+    private Prayer prayer;
     private float mScale = 1.0f;
     
     private static final String PRAYER_ID_ARGUMENT = "PrayerId";
 
+    @NonNull
     static PrayerFragment newInstance(long prayerId) {
         PrayerFragment fragment = new PrayerFragment();
         Bundle args = new Bundle();
@@ -60,8 +65,19 @@ public class PrayerFragment extends Fragment {
         if (prayerId == -1) {
             throw new IllegalArgumentException("You must provide a prayer id to this fragment");
         }
-        prayerCursor = PrayersDB.get().getPrayer(prayerId);
-        prayerCursor.moveToFirst();
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                Prayer p = PrayersDB.get().getPrayer(prayerId);
+                App.runOnUiThread(new UiRunnable() {
+                    @Override
+                    public void run() {
+                        prayer = p;
+                        reloadPrayer();
+                    }
+                });
+            }
+        });
         mScale = Prefs.get().getPrayerTextScalar();
         
         setHasOptionsMenu(true);
@@ -81,6 +97,12 @@ public class PrayerFragment extends Fragment {
     }
 
     private void reloadPrayer() {
+        if (prayer == null) {
+            return;
+        }
+        if (mWebView == null) {
+            return;
+        }
         mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
     }
 
@@ -130,7 +152,7 @@ public class PrayerFragment extends Fragment {
             case R.id.action_share_prayer:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, prayer.searchText);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 break;
             case R.id.action_print_prayer:
@@ -192,28 +214,17 @@ public class PrayerFragment extends Fragment {
         args.put("versalAndAuthorColor", versalAndAuthorColor);
         args.put("font", font);
         args.put("italicOrNothing", italicOrNothing);
+        args.put("prayer", prayer.text);
+        args.put("author", prayer.author);
 
-        int textIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.PRAYERTEXT_COLUMN);
-        String prayerText = prayerCursor.getString(textIndex);
-        args.put("prayer", prayerText);
-
-        int authorIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.AUTHOR_COLUMN);
-        String authorText = prayerCursor.getString(authorIndex);
-        args.put("author", authorText);
-
-        int citationIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.CITATION_COLUMN);
-        String citationText = prayerCursor.getString(citationIndex);
-        if (citationText.isEmpty()) {
+        if (prayer.citation.isEmpty()) {
             args.put("citation", "");
         } else {
-            String citationHTML = String.format("<p class=\"comment\"><br/><br/>%s</p>", citationText);
+            String citationHTML = String.format("<p class=\"comment\"><br/><br/>%s</p>", prayer.citation);
             args.put("citation", citationHTML);
         }
 
-        int langIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.LANGUAGE_COLUMN);
-        String langCode = prayerCursor.getString(langIndex);
-        Language lang = Language.get(langCode);
-        if (lang.rightToLeft) {
+        if (prayer.language.rightToLeft) {
             args.put("layoutDirection", "rtl");
         } else {
             args.put("layoutDirection", "ltr");
@@ -223,12 +234,6 @@ public class PrayerFragment extends Fragment {
         InputStreamReader isr = new InputStreamReader(is);
 
         return Mustache.compiler().escapeHTML(false).compile(isr).execute(args);
-    }
-    
-    private String getPrayerText() {
-        int searchTextIndex = prayerCursor.getColumnIndexOrThrow(PrayersDB.SEARCHTEXT_COLUMN);
-        
-        return prayerCursor.getString(searchTextIndex);
     }
 
     @TargetApi(19)

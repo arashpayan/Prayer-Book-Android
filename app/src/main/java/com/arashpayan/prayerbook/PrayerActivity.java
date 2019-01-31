@@ -7,6 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+
+import com.arashpayan.prayerbook.database.UserDB;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
@@ -17,7 +22,13 @@ public class PrayerActivity extends AppCompatActivity {
 
     private static final String ARG_PRAYER_ID = "prayer_id";
 
-    public static Intent newIntent(Context context, long prayerId) {
+    public static Intent newIntent(@NonNull Context context, long prayerId) {
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                UserDB.get().accessedPrayer(prayerId);
+            }
+        });
         Intent intent = new Intent(context, PrayerActivity.class);
         intent.putExtra(ARG_PRAYER_ID, prayerId);
 
@@ -58,15 +69,6 @@ public class PrayerActivity extends AppCompatActivity {
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.prayer_container, fragment);
             ft.commit();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (isFinishing()) {
-            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
         }
     }
 

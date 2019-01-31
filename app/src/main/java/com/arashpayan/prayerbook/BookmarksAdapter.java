@@ -1,10 +1,5 @@
 package com.arashpayan.prayerbook;
 
-import android.content.res.Resources;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,51 +11,37 @@ import com.arashpayan.prayerbook.thread.WorkerRunnable;
 
 import java.util.ArrayList;
 
-class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
 
-    @NonNull private ArrayList<Long> prayerIds = new ArrayList<>();
-    @NonNull private final Language language;
-    @NonNull final private OnPrayerSelectedListener listener;
+public class BookmarksAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
-    CategoryPrayersAdapter(@NonNull Language language, @NonNull OnPrayerSelectedListener listener) {
-        this.language = language;
-        this.listener = listener;
+    @NonNull private final OnPrayerSelectedListener listener;
+    @NonNull private ArrayList<Long> bookmarks = new ArrayList<>();
+
+    BookmarksAdapter(@NonNull OnPrayerSelectedListener l) {
+        this.listener = l;
         setHasStableIds(true);
     }
 
     @Override
     public int getItemCount() {
-        return prayerIds.size();
-    }
-
-    public long getItemId(int position) {
-        return prayerIds.get(position);
+        return bookmarks.size();
     }
 
     @Override
-    @NonNull
-    public PrayerSummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.prayer_summary, parent, false);
-        itemView.setLayoutDirection(language.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
-        final PrayerSummaryViewHolder holder = new PrayerSummaryViewHolder(itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int pos = holder.getAdapterPosition();
-                listener.onPrayerSelected(getItemId(pos));
-            }
-        });
-
-        return holder;
+    public long getItemId(int position) {
+        return bookmarks.get(position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PrayerSummaryViewHolder holder, int position) {
+        long id = bookmarks.get(position);
         holder.detail.setText(null);
         holder.openingWords.setText(null);
         holder.wordCount.setText(null);
 
-        long id = prayerIds.get(position);
         App.runInBackground(new WorkerRunnable() {
             @Override
             public void run() {
@@ -82,9 +63,25 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
         });
     }
 
+    @NonNull
+    @Override
+    public PrayerSummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.prayer_summary, parent, false);
+        final PrayerSummaryViewHolder holder = new PrayerSummaryViewHolder(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = holder.getAdapterPosition();
+                listener.onPrayerSelected(bookmarks.get(pos));
+            }
+        });
+        return holder;
+    }
+
     @UiThread
-    void setPrayerIds(@NonNull ArrayList<Long> prayerIds) {
-        this.prayerIds = prayerIds;
+    void setBookmarks(@NonNull ArrayList<Long> bookmarks) {
+        this.bookmarks = bookmarks;
+
         notifyDataSetChanged();
     }
 }

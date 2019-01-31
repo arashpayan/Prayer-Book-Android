@@ -8,12 +8,12 @@
         android:orderInCategory="1"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_languages"
-        android:title="@string/languages"
-        android:icon="@drawable/ic_language_white_24dp"
-        android:orderInCategory="2"
-        app:showAsAction="always" />
+    <!--<item-->
+        <!--android:id="@+id/action_languages"-->
+        <!--android:title="@string/languages"-->
+        <!--android:icon="@drawable/ic_language_white_24dp"-->
+        <!--android:orderInCategory="2"-->
+        <!--app:showAsAction="always" />-->
     <item
         android:id="@+id/action_about"
         android:title="@string/about"

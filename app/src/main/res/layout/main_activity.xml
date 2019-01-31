@@ -27,8 +27,8 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_bar"
         app:itemBackground="@color/prayer_book_primary"
-        app:itemIconTint="@color/prayer_book_accent"
-        app:itemTextColor="@android:color/white"
+        app:itemIconTint="@color/bottom_bar_icon"
+        app:itemTextColor="@color/bottom_bar_icon"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation"
         app:layout_constraintBottom_toBottomOf="parent"

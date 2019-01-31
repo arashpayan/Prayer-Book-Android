@@ -2,9 +2,12 @@ package com.arashpayan.prayerbook;
 
 import android.app.Application;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 
+import com.arashpayan.prayerbook.database.PrayersDB;
+import com.arashpayan.prayerbook.database.UserDB;
+import com.arashpayan.prayerbook.thread.UiRunnable;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.arashpayan.util.L;
 
 import java.io.BufferedInputStream;
@@ -13,13 +16,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import androidx.annotation.AnyThread;
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class App extends Application {
 
     private Handler mMainThreadHandler;
-    private Handler mBackgroundHandler;
+//    private Handler mBackgroundHandler;
+    private ExecutorService mExecutor;
 
     private static volatile App app;
     private static final int LatestDatabaseVersion = 17;
@@ -32,11 +39,14 @@ public class App extends Application {
 
         Prefs.init(this);
         copyDatabaseFile();
+        UserDB.set(new UserDB(this, false));
         mMainThreadHandler = new Handler(Looper.getMainLooper());
 
-        HandlerThread bgThread = new HandlerThread("Prayer Book Background");
-        bgThread.start();
-        mBackgroundHandler = new Handler(bgThread.getLooper());
+        L.i("availableProcessors: " + Runtime.getRuntime().availableProcessors());
+        mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//        HandlerThread bgThread = new HandlerThread("Prayer Book Background");
+//        bgThread.start();
+//        mBackgroundHandler = new Handler(bgThread.getLooper());
     }
 
     private void copyDatabaseFile() {
@@ -64,12 +74,14 @@ public class App extends Application {
         }
     }
 
-    public static void runOnUiThread(Runnable r) {
+    @AnyThread
+    public static void runOnUiThread(UiRunnable r) {
         app.mMainThreadHandler.post(r);
     }
 
-    public static void runInBackground(Runnable r) {
-        app.mBackgroundHandler.post(r);
+    @AnyThread
+    public static void runInBackground(WorkerRunnable r) {
+        app.mExecutor.submit(r);
     }
 
 }

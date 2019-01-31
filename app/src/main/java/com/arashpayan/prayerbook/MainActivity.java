@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -37,35 +38,77 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
-            CategoriesFragment categoriesFragment = new CategoriesFragment();
+            CategoriesFragment fragment = CategoriesFragment.newInstance();
 
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.main_container, categoriesFragment, CategoriesFragment.CATEGORIES_TAG);
-            ft.commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_container, fragment, CategoriesFragment.TAG)
+                    .setPrimaryNavigationFragment(fragment)
+                    .commit();
         }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener barItemListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.popBackStackImmediate();
+            Fragment toShow;
+            String tag = "";
             switch (item.getItemId()) {
                 case R.id.prayers:
-                    L.i("PRAYERS");
+                    tag = CategoriesFragment.TAG;
                     break;
                 case R.id.bookmarks:
-                    L.i("BOOKMARKS");
+                    tag = BookmarksFragment.TAG;
                     break;
                 case R.id.recents:
-                    L.i("RECENTS");
+                    tag = RecentsFragment.TAG;
                     break;
                 case R.id.languages:
-                    L.i("LANGUAGES");
+                    tag = LanguagesFragment.TAG;
                     break;
                 case R.id.about:
-                    L.i("ABOUT");
+                    tag = AboutFragment.TAG;
                     break;
             }
+            toShow = fm.findFragmentByTag(tag);
+            if (toShow != null) {
+                L.i("showing " + tag);
+                FragmentTransaction ft = fm.beginTransaction().attach(toShow).setPrimaryNavigationFragment(toShow);
+                if (fm.getPrimaryNavigationFragment() != null) {
+                    ft.detach(fm.getPrimaryNavigationFragment());
+                }
+                ft.commit();
+                return true;
+            }
+
+            switch (item.getItemId()) {
+                case R.id.prayers:
+                    toShow = CategoriesFragment.newInstance();
+                    break;
+                case R.id.bookmarks:
+                    toShow = BookmarksFragment.newInstance();
+                    break;
+                case R.id.recents:
+                    toShow = RecentsFragment.newInstance();
+                    break;
+                case R.id.languages:
+                    toShow = LanguagesFragment.newInstance();
+                    break;
+                case R.id.about:
+                    toShow = AboutFragment.newInstance();
+                    break;
+                default:
+                    throw new RuntimeException("Unknown bottom bar item id");
+            }
+
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.main_container, toShow, tag);
+            ft.setPrimaryNavigationFragment(toShow);
+            if (fm.getPrimaryNavigationFragment() != null) {
+                ft.detach(fm.getPrimaryNavigationFragment());
+            }
+            ft.commit();
             return true;
         }
     };
@@ -75,19 +118,16 @@ public class MainActivity extends AppCompatActivity {
         public void onNavigationItemReselected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.prayers:
-                    L.i("reselected PRAYERS");
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     break;
                 case R.id.bookmarks:
-                    L.i("reselected BOOKMARKS");
                     break;
                 case R.id.recents:
-                    L.i("reselected RECENTS");
                     break;
                 case R.id.languages:
-                    L.i("reselected LANGUAGES");
                     break;
                 case R.id.about:
-                    L.i("reselected ABOUT");
                     break;
             }
         }

@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arashpayan.prayerbook.database.PrayersDB;
+
 class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     private Cursor mCursor = null;

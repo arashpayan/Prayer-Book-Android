@@ -19,6 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.arashpayan.prayerbook.database.PrayersDB;
+import com.arashpayan.prayerbook.thread.UiRunnable;
+import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.arashpayan.util.DividerItemDecoration;
 
 public class SearchFragment extends Fragment implements OnPrayerSelectedListener, TextWatcher {
@@ -122,10 +125,8 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         }
         imm.hideSoftInputFromWindow(toolbar.getWindowToken(), 0);
 
-        Intent intent =  PrayerActivity.newIntent(getContext(), prayerId);
+        Intent intent =  PrayerActivity.newIntent(requireContext(), prayerId);
         startActivity(intent);
-
-        requireActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 
     @Override
@@ -147,12 +148,12 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         }
 
         final Prefs prefs = Prefs.get();
-        App.runInBackground(new Runnable() {
+        App.runInBackground(new WorkerRunnable() {
             @Override
             public void run() {
                 String[] keywords = trimmed.split(" ");
                 final Cursor c = PrayersDB.get().getPrayersWithKeywords(keywords, prefs.getEnabledLanguages());
-                App.runOnUiThread(new Runnable() {
+                App.runOnUiThread(new UiRunnable() {
                     @Override
                     public void run() {
                         mSearchAdapter.setCursor(c);
