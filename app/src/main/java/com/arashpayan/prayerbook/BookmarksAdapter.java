@@ -25,6 +25,21 @@ public class BookmarksAdapter extends RecyclerView.Adapter<PrayerSummaryViewHold
         setHasStableIds(true);
     }
 
+    @UiThread
+    void bookmarkAdded(long prayerId) {
+        bookmarks.add(prayerId);
+        notifyItemInserted(bookmarks.size()-1);
+    }
+
+    @UiThread
+    void bookmarkDeleted(long prayerId) {
+        int idx = bookmarks.indexOf(prayerId);
+        if (idx != -1) {
+            bookmarks.remove(idx);
+            notifyItemRemoved(idx);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return bookmarks.size();

@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class BookmarksFragment extends Fragment {
+public class BookmarksFragment extends Fragment implements UserDB.Listener {
 
     static final String TAG = "bookmarks";
 
@@ -36,6 +36,9 @@ public class BookmarksFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         adapter = new BookmarksAdapter(prayerSelectedListener);
+
+        UserDB.get().addListener(this);
+
         App.runInBackground(new WorkerRunnable() {
             @Override
             public void run() {
@@ -62,6 +65,13 @@ public class BookmarksFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        UserDB.get().removeListener(this);
+
+        super.onDestroy();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -72,6 +82,20 @@ public class BookmarksFragment extends Fragment {
             toolbar.setNavigationIcon(null);
         }
     }
+
+    //region UserDB.Listener
+
+    @Override
+    public void onBookmarkAdded(long prayerId) {
+        adapter.bookmarkAdded(prayerId);
+    }
+
+    @Override
+    public void onBookmarkDeleted(long prayerId) {
+        adapter.bookmarkDeleted(prayerId);
+    }
+
+    //endregion
 
     private OnPrayerSelectedListener prayerSelectedListener = new OnPrayerSelectedListener() {
         @Override

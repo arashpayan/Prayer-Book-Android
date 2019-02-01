@@ -3,6 +3,7 @@ package com.arashpayan.prayerbook;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.webkit.WebSettings;
 
 import com.arashpayan.prayerbook.database.PrayersDB;
 import com.arashpayan.prayerbook.database.UserDB;
@@ -25,7 +26,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 public class App extends Application {
 
     private Handler mMainThreadHandler;
-//    private Handler mBackgroundHandler;
     private ExecutorService mExecutor;
 
     private static volatile App app;
@@ -41,12 +41,16 @@ public class App extends Application {
         copyDatabaseFile();
         UserDB.set(new UserDB(this, false));
         mMainThreadHandler = new Handler(Looper.getMainLooper());
-
-        L.i("availableProcessors: " + Runtime.getRuntime().availableProcessors());
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-//        HandlerThread bgThread = new HandlerThread("Prayer Book Background");
-//        bgThread.start();
-//        mBackgroundHandler = new Handler(bgThread.getLooper());
+
+        // Load as much of the webview libraries as much as possible in the background
+        // https://groups.google.com/a/chromium.org/d/msg/android-webview-dev/hjn1h7dBlH8/Iv0j08O6AQAJ
+        runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                WebSettings.getDefaultUserAgent(App.this);
+            }
+        });
     }
 
     private void copyDatabaseFile() {
