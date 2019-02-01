@@ -5,7 +5,7 @@
     <color name="prayer_book_primary_alpha33">#55003d6b</color>
     <color name="prayer_book_primary_dark">#001840</color>
     <color name="prayer_book_accent">#ffc325</color>
-    <color name="task_header">#0097A7</color>
+    <color name="task_header">@color/prayer_book_primary</color>
     <color name="black_87">#DD000000</color>
     <color name="black_54">#89000000</color>
     <color name="black">#FF000000</color>
