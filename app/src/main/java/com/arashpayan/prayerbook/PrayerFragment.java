@@ -186,7 +186,6 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
 
     @Override
     public void onResume() {
-        L.i("PF.onResume");
         super.onResume();
 
         ActionBar ab = ((AppCompatActivity) requireActivity()).getSupportActionBar();
