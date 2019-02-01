@@ -133,6 +133,8 @@ public class UserDB {
         } catch (SQLException ex) {
             L.w("Error deleting recent records", ex);
         }
+
+        notifyRecentsCleared();
     }
 
     @WorkerThread
@@ -181,6 +183,8 @@ public class UserDB {
         default void onBookmarkDeleted(long prayerId) {}
         @UiThread
         default void onPrayerAccessed(long prayerId) {}
+        @UiThread
+        default void onRecentsCleared() {}
     }
 
     @AnyThread
@@ -232,6 +236,22 @@ public class UserDB {
                         continue;
                     }
                     l.onPrayerAccessed(prayerId);
+                }
+            }
+        });
+    }
+
+    @AnyThread
+    private void notifyRecentsCleared() {
+        App.runOnUiThread(new UiRunnable() {
+            @Override
+            public void run() {
+                for (WeakReference<Listener> ref : listeners) {
+                    Listener l = ref.get();
+                    if (l == null) {
+                        continue;
+                    }
+                    l.onRecentsCleared();
                 }
             }
         });

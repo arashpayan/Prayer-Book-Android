@@ -15,7 +15,7 @@
     <item
         android:id="@+id/languages"
         android:title="@string/languages"
-        android:icon="@drawable/ic_language_white_24dp" />
+        android:icon="@drawable/ic_language_24dp" />
     <item
         android:id="@+id/about"
         android:title="@string/about"

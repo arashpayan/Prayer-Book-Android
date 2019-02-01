@@ -128,7 +128,6 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
 
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-        L.i("PF.onCreateOptionsMenu");
         inflater.inflate(R.menu.prayer, menu);
 
         // set the current value for classic theme

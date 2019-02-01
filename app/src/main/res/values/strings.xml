@@ -30,6 +30,9 @@
     <string name="bookmarks">Bookmarks</string>
     <string name="recents">Recents</string>
     <string name="bookmark">Bookmark</string>
+    <string name="clear">Clear</string>
+    <string name="clear_recents_interrogative">Clear recents?</string>
+    <string name="no">No</string>
 
     <plurals name="number_of_words">
         <item quantity="one">%d word</item>

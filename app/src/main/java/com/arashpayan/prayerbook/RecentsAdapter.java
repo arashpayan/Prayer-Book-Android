@@ -25,6 +25,12 @@ public class RecentsAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder
         setHasStableIds(true);
     }
 
+    void clearAll() {
+        int size = recentIds.size();
+        recentIds.clear();
+        notifyItemRangeRemoved(0, size);
+    }
+
     @Override
     public int getItemCount() {
         return recentIds.size();
