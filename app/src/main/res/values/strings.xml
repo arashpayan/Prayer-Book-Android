@@ -29,6 +29,7 @@
     <string name="search_prayers">Search prayers</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="recents">Recents</string>
+    <string name="bookmark">Bookmark</string>
 
     <plurals name="number_of_words">
         <item quantity="one">%d word</item>

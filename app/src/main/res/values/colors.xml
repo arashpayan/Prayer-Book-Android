@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--W00t! These colors were generated at material.io/tools/color with an initial color of #003d6b-->
     <color name="prayer_book_primary">#003d6b</color>
     <color name="prayer_book_primary_alpha33">#55003d6b</color>
     <color name="prayer_book_primary_dark">#001840</color>

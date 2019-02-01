@@ -3,6 +3,8 @@ package com.arashpayan.prayerbook;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
@@ -16,10 +18,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
+
 import com.arashpayan.prayerbook.database.Prayer;
 import com.arashpayan.prayerbook.database.PrayersDB;
+import com.arashpayan.prayerbook.database.UserDB;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
+import com.arashpayan.util.L;
 import com.samskivert.mustache.Mustache;
 
 import java.io.InputStream;
@@ -27,20 +40,18 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 /**
  *
  * @author arash
  */
-public class PrayerFragment extends Fragment {
+public class PrayerFragment extends Fragment implements UserDB.Listener {
     
     private WebView mWebView = null;
     private Prayer prayer;
     private float mScale = 1.0f;
+    private long prayerId;
+    @Nullable private MenuItem bookmarkMenuItem;
+    private boolean bookmarked = false;
     
     private static final String PRAYER_ID_ARGUMENT = "PrayerId";
 
@@ -61,9 +72,9 @@ public class PrayerFragment extends Fragment {
         if (arguments == null) {
             throw new RuntimeException("Fragment should be created via newInstance");
         }
-        long prayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
+        prayerId = arguments.getLong(PRAYER_ID_ARGUMENT, -1);
         if (prayerId == -1) {
-            throw new IllegalArgumentException("You must provide a prayer id to this fragment");
+            throw new RuntimeException("You must provide a prayer id to this fragment");
         }
         App.runInBackground(new WorkerRunnable() {
             @Override
@@ -111,14 +122,20 @@ public class PrayerFragment extends Fragment {
         super.onPause();
         
         requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+        UserDB.get().removeListener(this);
     }
 
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+        L.i("PF.onCreateOptionsMenu");
         inflater.inflate(R.menu.prayer, menu);
 
         // set the current value for classic theme
         menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get().useClassicTheme());
+
+        bookmarkMenuItem = menu.findItem(R.id.action_toggle_bookmark);
+        updateBookmarkIconColor();
     }
     
     @Override
@@ -158,6 +175,9 @@ public class PrayerFragment extends Fragment {
             case R.id.action_print_prayer:
                 printPrayer();
                 break;
+            case R.id.action_toggle_bookmark:
+                toggleBookmark();
+                break;
             default:
                 return false;
         }
@@ -167,6 +187,7 @@ public class PrayerFragment extends Fragment {
 
     @Override
     public void onResume() {
+        L.i("PF.onResume");
         super.onResume();
 
         ActionBar ab = ((AppCompatActivity) requireActivity()).getSupportActionBar();
@@ -175,6 +196,22 @@ public class PrayerFragment extends Fragment {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
         }
+
+        UserDB.get().addListener(this);
+        // check if this prayer is bookmarked, and if so, change the icon color
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                // It's bookmarked, so we need to change the color
+                bookmarked = UserDB.get().isBookmarked(prayerId);
+                App.runOnUiThread(new UiRunnable() {
+                    @Override
+                    public void run() {
+                        updateBookmarkIconColor();
+                    }
+                });
+            }
+        });
     }
 
     private String getPrayerHTML() {
@@ -257,4 +294,58 @@ public class PrayerFragment extends Fragment {
         String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
         manager.print(jobName, adapter, new PrintAttributes.Builder().build());
     }
+
+    @UiThread
+    private void updateBookmarkIconColor() {
+        if (bookmarkMenuItem == null) {
+            return;
+        }
+        @ColorInt int color;
+        if (bookmarked) {
+            color = requireContext().getResources().getColor(R.color.prayer_book_accent);
+        } else {
+            color = Color.WHITE;
+        }
+        Drawable icon = bookmarkMenuItem.getIcon();
+        DrawableCompat.setTint(icon, color);
+    }
+
+    @UiThread
+    private void toggleBookmark() {
+        L.i("toggleBookmark");
+        App.runInBackground(new WorkerRunnable() {
+            @Override
+            public void run() {
+                UserDB db = UserDB.get();
+                boolean isBookmarked = db.isBookmarked(prayerId);
+                if (isBookmarked) {
+                    db.deleteBookmark(prayerId);
+                } else {
+                    db.addBookmark(prayerId);
+                }
+            }
+        });
+    }
+
+    //region UserDB.Listener
+
+    @Override
+    public void onBookmarkAdded(long bookmarkPrayerId) {
+        if (bookmarkPrayerId != prayerId) {
+            return;
+        }
+        bookmarked = true;
+        updateBookmarkIconColor();
+    }
+
+    @Override
+    public void onBookmarkDeleted(long bookmarkPrayerId) {
+        if (bookmarkPrayerId != prayerId) {
+            return;
+        }
+        bookmarked = false;
+        updateBookmarkIconColor();
+    }
+
+    //endregion
 }

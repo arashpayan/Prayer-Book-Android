@@ -6,6 +6,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
+
 import com.arashpayan.prayerbook.App;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.util.L;
@@ -13,11 +18,6 @@ import com.arashpayan.util.L;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import androidx.annotation.AnyThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 
 public class UserDB {
 
@@ -66,6 +66,8 @@ public class UserDB {
             return false;
         }
 
+        notifyBookmarkAdded(prayerId);
+
         return true;
     }
 
@@ -73,6 +75,7 @@ public class UserDB {
     public void deleteBookmark(long prayerId) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(BOOKMARKS_TABLE, "prayer_id=?", new String[]{""+prayerId});
+        notifyBookmarkDeleted(prayerId);
     }
 
     @WorkerThread
@@ -173,6 +176,10 @@ public class UserDB {
 
     public interface Listener {
         @UiThread
+        default void onBookmarkAdded(long prayerId) {}
+        @UiThread
+        default void onBookmarkDeleted(long prayerId) {}
+        @UiThread
         default void onPrayerAccessed(long prayerId) {}
     }
 
@@ -180,6 +187,38 @@ public class UserDB {
     public void addListener(@NonNull Listener listener) {
         WeakReference<Listener> ref = new WeakReference<>(listener);
         listeners.add(ref);
+    }
+
+    @AnyThread
+    private void notifyBookmarkAdded(long prayerId) {
+        App.runOnUiThread(new UiRunnable() {
+            @Override
+            public void run() {
+                for (WeakReference<Listener> ref : listeners) {
+                    Listener l = ref.get();
+                    if (l == null) {
+                        continue;
+                    }
+                    l.onBookmarkAdded(prayerId);
+                }
+            }
+        });
+    }
+
+    @AnyThread
+    private void notifyBookmarkDeleted(long prayerId) {
+        App.runOnUiThread(new UiRunnable() {
+            @Override
+            public void run() {
+                for (WeakReference<Listener> ref : listeners) {
+                    Listener l = ref.get();
+                    if (l == null) {
+                        continue;
+                    }
+                    l.onBookmarkDeleted(prayerId);
+                }
+            }
+        });
     }
 
     @AnyThread
