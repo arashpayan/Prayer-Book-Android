@@ -43,11 +43,11 @@ public class PrayerActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.prayer_toolbar);
 
         String appName = getString(R.string.app_name);
+        int headerColor = ContextCompat.getColor(this, R.color.task_header);
         if (Build.VERSION.SDK_INT > 27) {
-            setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, R.color.task_header));
+            setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, headerColor));
         } else if (Build.VERSION.SDK_INT > 20) {
             Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            int headerColor = ContextCompat.getColor(this, R.color.task_header);
             setTaskDescription(new ActivityManager.TaskDescription(appName, appIcon, headerColor));
         }
 
