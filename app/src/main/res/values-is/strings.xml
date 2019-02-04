@@ -4,7 +4,6 @@
   <string name="prayers">Bænir</string>
   <string name="about">Um</string>
   <string name="search">Leit</string>
-  <string name="search_ellipsis">Leit…</string>
   <string name="languages">Tungumál</string>
   <string name="share">Deila</string>
   <string name="ok">Í lagi</string>
@@ -12,5 +11,8 @@
   <string name="print_ellipsis">Prenta…</string>
   <string name="document">Skjöl</string>
   <string name="classic_theme">Sígilt þema</string>
-  <string name="search_prayers">Leita að bæn</string>
+  <string name="bookmarks">Bókamerki</string>
+  <string name="recents">Nýleg</string>
+  <string name="clear">Hreinsa</string>
+  <string name="no">Nr</string>
 </resources>

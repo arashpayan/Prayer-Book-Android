@@ -1,7 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+  <string name="app_name">Liturgieboek</string>
   <string name="prayers">Gebeden</string>
-  <string name="search">Zoek</string>
-  <string name="search_ellipsis">Zoek…</string>
-  <string name="cancel">Annuleer</string>
+  <string name="about">Over</string>
+  <string name="search">Zoeken</string>
+  <string name="search_ellipsis">Zoeken…</string>
+  <string name="languages">Talen</string>
+  <string name="share">Delen</string>
+  <string name="ok">Oké</string>
+  <string name="cancel">Annuleren</string>
+  <string name="print_ellipsis">Afdrukken...</string>
+  <string name="document">Document</string>
+  <string name="classic_theme">Klassiek thema</string>
+  <string name="bookmarks">Bladwijzers</string>
+  <string name="recents">Recent</string>
+  <string name="bookmark">Bladwijzer</string>
+  <string name="clear">Wis</string>
+  <string name="clear_recents_interrogative">Recent wissen?</string>
+  <string name="no">Nee</string>
+  <plurals name="number_of_words">
+    <item quantity="one">%d woord</item>
+    <item quantity="other">%d woorden</item>
+  </plurals>
 </resources>

@@ -10,5 +10,7 @@
   <string name="cancel">إلغاء</string>
   <string name="document">المستند</string>
   <string name="classic_theme">المظهر الكلاسيكي</string>
-  <string name="search_prayers">البحث في الأدعية</string>
+  <string name="bookmarks">االمرجعية</string>
+  <string name="recents">الأدعية الأخيرة</string>
+  <string name="clear">مسح</string>
 </resources>

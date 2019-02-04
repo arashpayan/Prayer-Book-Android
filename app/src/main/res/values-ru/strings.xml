@@ -4,7 +4,6 @@
   <string name="prayers">Молитвы</string>
   <string name="about">О программе</string>
   <string name="search">Поиск</string>
-  <string name="search_ellipsis">Поиск…</string>
   <string name="languages">Языки</string>
   <string name="share">Поделиться</string>
   <string name="ok">Ок</string>
@@ -12,4 +11,7 @@
   <string name="print_ellipsis">Печать…</string>
   <string name="document">Документ</string>
   <string name="classic_theme">Классическая тема</string>
+  <string name="bookmarks">Избранное</string>
+  <string name="recents">Последние</string>
+  <string name="clear">Очистить</string>
 </resources>

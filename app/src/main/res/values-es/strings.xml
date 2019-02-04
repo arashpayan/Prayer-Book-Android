@@ -4,8 +4,12 @@
   <string name="prayers">Oraciones</string>
   <string name="about">Acerca de</string>
   <string name="search">Buscador</string>
-  <string name="search_ellipsis">Buscador…</string>
   <string name="languages">Idiomas</string>
+  <string name="cancel">Cancelar</string>
+  <string name="bookmarks">Favoritos</string>
+  <string name="recents">Recientes</string>
+  <string name="clear">Borrar</string>
+  <string name="no">No</string>
   <plurals name="number_of_words">
     <item quantity="one">%d palabra</item>
     <item quantity="other">%d palabras</item>

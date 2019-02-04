@@ -4,7 +4,6 @@
   <string name="prayers">Preghiere</string>
   <string name="about">Informazioni su</string>
   <string name="search">Ricerca</string>
-  <string name="search_ellipsis">Ricerca…</string>
   <string name="languages">Lingue</string>
   <string name="share">Condividi</string>
   <string name="ok">OK</string>
@@ -12,4 +11,7 @@
   <string name="print_ellipsis">Stampa…</string>
   <string name="document">Documento</string>
   <string name="classic_theme">Tema classico</string>
+  <string name="bookmarks">Segnalibri</string>
+  <string name="recents">Cronologia</string>
+  <string name="clear">Cancella</string>
 </resources>

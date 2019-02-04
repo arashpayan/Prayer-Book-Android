@@ -4,11 +4,13 @@
   <string name="prayers">Doa</string>
   <string name="about">Perihal</string>
   <string name="search">Cari</string>
-  <string name="search_ellipsis">Cari…</string>
   <string name="languages">Bahasa</string>
   <string name="share">Berikan</string>
   <string name="ok">OK</string>
   <string name="cancel">Batal</string>
   <string name="document">Dokumen</string>
   <string name="classic_theme">Tema klasik</string>
+  <string name="bookmarks">Tandaan</string>
+  <string name="recents">Hal-Hal Baru</string>
+  <string name="clear">Hapus</string>
 </resources>

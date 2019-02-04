@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">禱文本</string>
+  <string name="prayers">禱文</string>
+  <string name="about">關於</string>
+  <string name="search">搜尋</string>
+  <string name="languages">語言</string>
+  <string name="share">分享</string>
+  <string name="ok">OK</string>
+  <string name="cancel">取消</string>
+  <string name="print_ellipsis">列印...</string>
+  <string name="document">文件</string>
+  <string name="classic_theme">傳統主題</string>
+  <string name="bookmarks">書籤</string>
+  <string name="recents">最近項目</string>
+  <string name="clear">清除</string>
+  <plurals name="number_of_words">
+    <item quantity="other">%d 字數</item>
+  </plurals>
+</resources>

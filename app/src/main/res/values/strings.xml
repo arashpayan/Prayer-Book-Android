@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
@@ -25,7 +24,6 @@
     <string name="print_ellipsis">Print…</string>
     <string name="document">Document</string>
     <string name="classic_theme">Classic theme</string>
-    <string name="search_prayers">Search prayers</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="recents">Recents</string>
     <string name="bookmark">Bookmark</string>

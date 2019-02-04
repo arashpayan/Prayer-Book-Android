@@ -5,8 +5,17 @@
   <string name="about">Informations</string>
   <string name="search">Recherche</string>
   <string name="search_ellipsis">Recherche…</string>
-  <string name="languages">Languages</string>
+  <string name="languages">Langages</string>
   <string name="share">Share</string>
   <string name="ok">OK</string>
   <string name="cancel">Cancel</string>
+  <string name="bookmarks">Signets</string>
+  <string name="recents">Historique</string>
+  <string name="bookmark">Ajouter un signet</string>
+  <string name="clear">Effacer</string>
+  <string name="no">Non</string>
+  <plurals name="number_of_words">
+    <item quantity="one">%d mot</item>
+    <item quantity="other">%d mots</item>
+  </plurals>
 </resources>
