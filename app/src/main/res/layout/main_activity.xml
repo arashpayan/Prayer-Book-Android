@@ -29,7 +29,7 @@
         app:itemBackground="@color/prayer_book_primary"
         app:itemIconTint="@color/bottom_bar_icon"
         app:itemTextColor="@color/bottom_bar_icon"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="selected"
         app:menu="@menu/bottom_navigation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -12,17 +12,17 @@ class CategoryViewHolder extends RecyclerView.ViewHolder {
 
     final TextView category;
     final TextView prayerCount;
-    private final View mCategoryView;
+    private final View categoryView;
 
     CategoryViewHolder(View itemView) {
         super(itemView);
 
-        mCategoryView = itemView;
+        categoryView = itemView;
         category = itemView.findViewById(R.id.category_title);
         prayerCount = itemView.findViewById(R.id.category_prayers_count);
     }
 
     public void setLanguage(Language l) {
-        mCategoryView.setLayoutDirection(l.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
+        categoryView.setLayoutDirection(l.rightToLeft ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
     }
 }
