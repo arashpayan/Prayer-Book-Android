@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:minHeight="48dp"
     android:clickable="true"
+    android:focusable="true"
     android:background="@drawable/item_view_background">
 
     <TextView

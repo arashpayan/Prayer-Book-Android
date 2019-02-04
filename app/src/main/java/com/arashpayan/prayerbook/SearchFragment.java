@@ -27,7 +27,7 @@ import com.arashpayan.util.DividerItemDecoration;
 
 public class SearchFragment extends Fragment implements OnPrayerSelectedListener, TextWatcher {
 
-    static String SEARCHPRAYERS_TAG = "search_prayers";
+    static final String SEARCHPRAYERS_TAG = "search_prayers";
 
     private SearchAdapter mSearchAdapter;
     private View mSearchView;
@@ -46,8 +46,8 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         RecyclerView recyclerView = new RecyclerView(requireContext());
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
+        LinearLayoutManager llm = new LinearLayoutManager(requireContext());
         llm.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(mSearchAdapter);

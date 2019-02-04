@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecentsAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
+class RecentsAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
     @NonNull private final OnPrayerSelectedListener listener;
     @NonNull private ArrayList<Long> recentIds = new ArrayList<>();

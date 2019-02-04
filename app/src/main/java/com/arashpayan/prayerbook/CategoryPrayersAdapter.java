@@ -1,13 +1,12 @@
 package com.arashpayan.prayerbook;
 
-import android.content.res.Resources;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.arashpayan.prayerbook.database.PrayerSummary;
 import com.arashpayan.prayerbook.database.PrayersDB;

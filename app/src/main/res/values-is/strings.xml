@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Bænabók</string>
   <string name="prayers">Bænir</string>
   <string name="about">Um</string>
@@ -7,7 +7,6 @@
   <string name="search_ellipsis">Leit…</string>
   <string name="languages">Tungumál</string>
   <string name="share">Deila</string>
-  <string name="favorites">Uppáhalds</string>
   <string name="ok">Í lagi</string>
   <string name="cancel">Hætta við</string>
   <string name="print_ellipsis">Prenta…</string>

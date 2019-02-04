@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener barItemListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private final BottomNavigationView.OnNavigationItemSelectedListener barItemListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentManager fm = getSupportFragmentManager();
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private BottomNavigationView.OnNavigationItemReselectedListener reselectListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
+    private final BottomNavigationView.OnNavigationItemReselectedListener reselectListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
         @Override
         public void onNavigationItemReselected(@NonNull MenuItem item) {
             switch (item.getItemId()) {

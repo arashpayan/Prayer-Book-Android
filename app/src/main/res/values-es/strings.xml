@@ -1,12 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Oraciones</string>
   <string name="prayers">Oraciones</string>
   <string name="about">Acerca de</string>
   <string name="search">Buscador</string>
   <string name="search_ellipsis">Buscador…</string>
   <string name="languages">Idiomas</string>
-  <string name="favorites">Favorites</string>
   <plurals name="number_of_words">
     <item quantity="one">%d palabra</item>
     <item quantity="other">%d palabras</item>

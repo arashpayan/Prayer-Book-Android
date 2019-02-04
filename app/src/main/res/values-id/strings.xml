@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Buku Doa</string>
   <string name="prayers">Doa</string>
   <string name="about">Perihal</string>
@@ -7,7 +7,6 @@
   <string name="search_ellipsis">Cari…</string>
   <string name="languages">Bahasa</string>
   <string name="share">Berikan</string>
-  <string name="favorites">Favorit</string>
   <string name="ok">OK</string>
   <string name="cancel">Batal</string>
   <string name="document">Dokumen</string>

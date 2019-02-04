@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Gebetsbuch</string>
   <string name="prayers">Gebete</string>
   <string name="about">über</string>
@@ -7,7 +7,6 @@
   <string name="search_ellipsis">Suche…</string>
   <string name="languages">Sprachen</string>
   <string name="share">Anderen schicken</string>
-  <string name="favorites">Favoriten</string>
   <string name="ok">OK</string>
   <string name="cancel">Abbrechen</string>
   <string name="print_ellipsis">Drucken…</string>

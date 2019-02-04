@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesFragment.LanguageViewHolder> {
+class LanguagesAdapter extends RecyclerView.Adapter<LanguagesFragment.LanguageViewHolder> {
 
-    private Language[] languages;
+    private final Language[] languages;
     final private Prefs prefs;
 
     LanguagesAdapter() {

@@ -25,8 +25,8 @@ import androidx.annotation.UiThread;
 @SuppressWarnings("WeakerAccess")
 public class Prefs {
     private static volatile Prefs singleton = null;
-    private SharedPreferences mPrefs;
-    private Set<Listener> listeners = new HashSet<>();
+    private final SharedPreferences mPrefs;
+    private final Set<Listener> listeners = new HashSet<>();
     
     private static final String PREFERENCES_FILE_NAME = "PrayerBookPreferences";
     private static final String PREFERENCE_DATABASE_VERSION = "DatabaseVersion";

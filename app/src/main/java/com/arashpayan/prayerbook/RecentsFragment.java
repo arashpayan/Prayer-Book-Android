@@ -119,7 +119,7 @@ public class RecentsFragment extends Fragment implements UserDB.Listener {
 
     //endregion
 
-    private OnPrayerSelectedListener prayerSelectionListener = new OnPrayerSelectedListener() {
+    private final OnPrayerSelectedListener prayerSelectionListener = new OnPrayerSelectedListener() {
         @Override
         public void onPrayerSelected(long prayerId) {
             Intent intent = PrayerActivity.newIntent(requireContext(), prayerId);

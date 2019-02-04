@@ -97,7 +97,7 @@ public class BookmarksFragment extends Fragment implements UserDB.Listener {
 
     //endregion
 
-    private OnPrayerSelectedListener prayerSelectedListener = new OnPrayerSelectedListener() {
+    private final OnPrayerSelectedListener prayerSelectedListener = new OnPrayerSelectedListener() {
         @Override
         public void onPrayerSelected(long prayerId) {
             Intent intent = PrayerActivity.newIntent(requireContext(), prayerId);

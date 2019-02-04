@@ -76,7 +76,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
 
         return recyclerView;

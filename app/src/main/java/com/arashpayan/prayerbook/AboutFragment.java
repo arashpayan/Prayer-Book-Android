@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
-public class AboutFragment extends Fragment {
+class AboutFragment extends Fragment {
 
     static final String TAG = "about";
 

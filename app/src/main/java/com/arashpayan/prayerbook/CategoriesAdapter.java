@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by arash on 7/5/15.
  */
-public class CategoriesAdapter extends RecyclerView.Adapter {
+class CategoriesAdapter extends RecyclerView.Adapter {
 
     @NonNull private final ArrayList<CategoryItem> items = new ArrayList<>();
     @NonNull private final OnCategorySelectedListener listener;
@@ -100,7 +100,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter {
     }
 
     static class CategoryHeaderHolder extends RecyclerView.ViewHolder {
-        protected TextView language;
+        final TextView language;
 
         CategoryHeaderHolder(View itemView) {
             super(itemView);
@@ -110,9 +110,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter {
     }
 
     static class CategoryItem {
-        @LayoutRes int viewType;
-        @NonNull Language language;
-        String text;
+        @LayoutRes
+        final int viewType;
+        @NonNull
+        final Language language;
+        final String text;
 
         CategoryItem(@LayoutRes int viewType, @NonNull Language lang, @Nullable String text) {
             this.viewType = viewType;
