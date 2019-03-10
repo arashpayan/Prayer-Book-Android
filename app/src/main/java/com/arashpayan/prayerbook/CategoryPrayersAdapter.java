@@ -71,7 +71,7 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
                     @Override
                     public void run() {
                         holder.openingWords.setText(summary.openingWords);
-                        holder.detail.setText(summary.category);
+                        holder.detail.setText(summary.author);
                         String wordCount = holder.openingWords.getContext().getResources().
                                 getQuantityString(R.plurals.number_of_words, summary.wordCount, summary.wordCount);
                         holder.wordCount.setText(wordCount);
