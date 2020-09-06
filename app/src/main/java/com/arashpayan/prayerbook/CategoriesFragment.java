@@ -68,7 +68,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.categories, menu);
     }
 

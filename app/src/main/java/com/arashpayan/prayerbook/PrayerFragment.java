@@ -99,7 +99,7 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         
-        mWebView = new WebView(this.getActivity());
+        mWebView = new WebView(requireContext());
         mWebView.getSettings().setSupportZoom(true);
         mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mWebView.setKeepScreenOn(true);

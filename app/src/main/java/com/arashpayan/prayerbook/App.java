@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.webkit.WebSettings;
 
+import com.arashpayan.prayerbook.database.Prayer;
 import com.arashpayan.prayerbook.database.PrayersDB;
 import com.arashpayan.prayerbook.database.UserDB;
 import com.arashpayan.prayerbook.thread.UiRunnable;
@@ -17,10 +18,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class App extends Application {
@@ -29,7 +32,7 @@ public class App extends Application {
     private ExecutorService mExecutor;
 
     private static volatile App app;
-    private static final int LatestDatabaseVersion = 20;
+    private static final int LatestDatabaseVersion = 21;
 
     @Override
     public void onCreate() {
@@ -37,11 +40,13 @@ public class App extends Application {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate();
 
-        Prefs.init(this);
-        copyDatabaseFile();
-        UserDB.set(new UserDB(this, false));
         mMainThreadHandler = new Handler(Looper.getMainLooper());
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        Prefs.init(this);
+        UserDB.set(new UserDB(this, false));
+        UserDB.get().addBookmark(44);
+        copyDatabaseFile();
 
         // Load as much of the webview libraries as much as possible in the background
         // https://groups.google.com/a/chromium.org/d/msg/android-webview-dev/hjn1h7dBlH8/Iv0j08O6AQAJ
@@ -72,10 +77,23 @@ public class App extends Application {
                 is.close();
                 os.close();
                 Prefs.get().setDatabaseVersion(LatestDatabaseVersion);
+                filterBrokenPrayerIds(PrayersDB.get(), UserDB.get());
             } catch (IOException ex) {
                 L.w("Error writing prayer database", ex);
             }
         }
+    }
+
+    private void filterBrokenPrayerIds(@NonNull PrayersDB db, UserDB userDB) {
+        ArrayList<Long> bookmarks = userDB.getBookmarks();
+        for (Long id : bookmarks) {
+            Prayer prayer = db.getPrayer(id);
+            if (prayer == null) {
+                userDB.deleteBookmark(id);
+            }
+        }
+
+        userDB.clearRecents();
     }
 
     @AnyThread

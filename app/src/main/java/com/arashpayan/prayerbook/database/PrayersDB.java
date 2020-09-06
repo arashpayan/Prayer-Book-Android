@@ -160,7 +160,7 @@ public class PrayersDB {
     }
 
     @WorkerThread
-    @NonNull
+    @Nullable
     public Prayer getPrayer(long prayerId) {
         String[] cols = {PRAYERTEXT_COLUMN, AUTHOR_COLUMN, CITATION_COLUMN, SEARCHTEXT_COLUMN, LANGUAGE_COLUMN};
         String selectionClause = ID_COLUMN + "=?";
@@ -168,7 +168,7 @@ public class PrayersDB {
 
         try (Cursor c = pbDatabase.query(PRAYERS_TABLE, cols, selectionClause, selectionArgs, null, null, null)) {
             if (!c.moveToFirst()) {
-                throw new RuntimeException("Invalid prayer id: " + prayerId);
+                return null;
             }
 
             Prayer p = new Prayer();
