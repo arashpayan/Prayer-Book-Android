@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
@@ -127,7 +128,7 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
     }
 
     @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.prayer, menu);
 
         // set the current value for classic theme
@@ -300,7 +301,7 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         }
         @ColorInt int color;
         if (bookmarked) {
-            color = requireContext().getResources().getColor(R.color.prayer_book_accent);
+            color = ContextCompat.getColor(requireContext(), R.color.prayer_book_accent);
         } else {
             color = Color.WHITE;
         }
