@@ -8,8 +8,8 @@ android {
         applicationId 'com.arashpayan.prayerbook'
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 18
-        versionName '2.1.1'
+        versionCode 20
+        versionName '2.1.2'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -44,7 +44,6 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
 
         if (savedInstanceState != null) {
             mRecyclerState = savedInstanceState.getParcelable("recycler_state");
-            L.i("found a recycler state? " + mRecyclerState);
         }
 
         App.runInBackground(new WorkerRunnable() {

@@ -32,7 +32,7 @@ public class App extends Application {
     private ExecutorService mExecutor;
 
     private static volatile App app;
-    private static final int LatestDatabaseVersion = 21;
+    private static final int LatestDatabaseVersion = 22;
 
     @Override
     public void onCreate() {
