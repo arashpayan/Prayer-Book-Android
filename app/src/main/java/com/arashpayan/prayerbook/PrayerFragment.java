@@ -169,7 +169,7 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
             case R.id.action_share_prayer:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, prayer.searchText);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 break;
             case R.id.action_print_prayer:
@@ -270,6 +270,10 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         InputStreamReader isr = new InputStreamReader(is);
 
         return Mustache.compiler().escapeHTML(false).compile(isr).execute(args);
+    }
+
+    private String getPrayerText() {
+        return prayer.searchText + "\n\n" + prayer.author;
     }
 
     @TargetApi(19)
