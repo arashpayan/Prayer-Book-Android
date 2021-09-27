@@ -1,5 +1,6 @@
 package com.arashpayan.prayerbook;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
@@ -73,6 +74,7 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
         return mCursor.getLong(idColIdx);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     void setCursor(Cursor cursor) {
         this.mCursor = cursor;
         notifyDataSetChanged();

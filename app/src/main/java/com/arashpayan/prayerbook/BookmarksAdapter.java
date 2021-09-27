@@ -1,8 +1,13 @@
 package com.arashpayan.prayerbook;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.arashpayan.prayerbook.database.PrayerSummary;
 import com.arashpayan.prayerbook.database.PrayersDB;
@@ -10,10 +15,6 @@ import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 
 class BookmarksAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
 
@@ -93,6 +94,7 @@ class BookmarksAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
         return holder;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @UiThread
     void setBookmarks(@NonNull ArrayList<Long> bookmarks) {
         this.bookmarks = bookmarks;

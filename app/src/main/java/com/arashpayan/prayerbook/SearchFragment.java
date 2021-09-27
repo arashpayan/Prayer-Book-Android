@@ -98,7 +98,7 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
                     return;
                 }
                 imm.hideSoftInputFromWindow(toolbar.getWindowToken(), 0);
-                requireFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         });
         // if there's no query saved, then show the keyboard

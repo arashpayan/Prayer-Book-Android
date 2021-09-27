@@ -1,5 +1,6 @@
 package com.arashpayan.prayerbook;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ class RecentsAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
         notifyItemInserted(0);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @UiThread
     void setRecentIds(@NonNull ArrayList<Long> recentIds) {
         this.recentIds = recentIds;

@@ -142,44 +142,38 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
     public boolean onOptionsItemSelected(MenuItem item) {
         Prefs prefs = Prefs.get();
         // .75 to 1.60
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                requireActivity().onBackPressed();
-                break;
-            case R.id.action_increase_text_size:
-                if (mScale < 1.6f) {
-                    mScale += 0.05f;
-                    prefs.setPrayerTextScalar(mScale);
-                    reloadPrayer();
-                }
-                break;
-            case R.id.action_decrease_text_size:
-                if (mScale > .75) {
-                    mScale -= 0.05f;
-                    prefs.setPrayerTextScalar(mScale);
-                    reloadPrayer();
-                }
-                break;
-            case R.id.action_classic_theme:
-                boolean useClassic = !item.isChecked(); // toggle the value
-                item.setChecked(useClassic);
-                prefs.setUseClassicTheme(useClassic);
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            requireActivity().onBackPressed();
+        } else if (itemId == R.id.action_increase_text_size) {
+            if (mScale < 1.6f) {
+                mScale += 0.05f;
+                prefs.setPrayerTextScalar(mScale);
                 reloadPrayer();
-                break;
-            case R.id.action_share_prayer:
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                break;
-            case R.id.action_print_prayer:
-                printPrayer();
-                break;
-            case R.id.action_toggle_bookmark:
-                toggleBookmark();
-                break;
-            default:
-                return false;
+            }
+        } else if (itemId == R.id.action_decrease_text_size) {
+            if (mScale > .75) {
+                mScale -= 0.05f;
+                prefs.setPrayerTextScalar(mScale);
+                reloadPrayer();
+            }
+        } else if (itemId == R.id.action_classic_theme) {
+            boolean useClassic = !item.isChecked(); // toggle the value
+            item.setChecked(useClassic);
+            prefs.setUseClassicTheme(useClassic);
+            reloadPrayer();
+        } else if (itemId == R.id.action_share_prayer) {
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        } else if (itemId == R.id.action_print_prayer) {
+            printPrayer();
+        } else if (itemId == R.id.action_toggle_bookmark) {
+            toggleBookmark();
+        } else {
+            // unexpected id
+            return false;
         }
         
         return true;
@@ -315,7 +309,6 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
 
     @UiThread
     private void toggleBookmark() {
-        L.i("toggleBookmark");
         App.runInBackground(new WorkerRunnable() {
             @Override
             public void run() {

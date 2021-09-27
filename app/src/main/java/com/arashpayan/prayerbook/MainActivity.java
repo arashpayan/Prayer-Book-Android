@@ -54,22 +54,17 @@ public class MainActivity extends AppCompatActivity {
             fm.popBackStackImmediate();
             Fragment toShow;
             String tag = "";
-            switch (item.getItemId()) {
-                case R.id.prayers:
-                    tag = CategoriesFragment.TAG;
-                    break;
-                case R.id.bookmarks:
-                    tag = BookmarksFragment.TAG;
-                    break;
-                case R.id.recents:
-                    tag = RecentsFragment.TAG;
-                    break;
-                case R.id.languages:
-                    tag = LanguagesFragment.TAG;
-                    break;
-                case R.id.about:
-                    tag = AboutFragment.TAG;
-                    break;
+            int itemId = item.getItemId();
+            if (itemId == R.id.prayers) {
+                tag = CategoriesFragment.TAG;
+            } else if (itemId == R.id.bookmarks) {
+                tag = BookmarksFragment.TAG;
+            } else if (itemId == R.id.recents) {
+                tag = RecentsFragment.TAG;
+            } else if (itemId == R.id.languages) {
+                tag = LanguagesFragment.TAG;
+            } else if (itemId == R.id.about) {
+                tag = AboutFragment.TAG;
             }
             toShow = fm.findFragmentByTag(tag);
             if (toShow != null) {
@@ -82,24 +77,19 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-            switch (item.getItemId()) {
-                case R.id.prayers:
-                    toShow = CategoriesFragment.newInstance();
-                    break;
-                case R.id.bookmarks:
-                    toShow = BookmarksFragment.newInstance();
-                    break;
-                case R.id.recents:
-                    toShow = RecentsFragment.newInstance();
-                    break;
-                case R.id.languages:
-                    toShow = LanguagesFragment.newInstance();
-                    break;
-                case R.id.about:
-                    toShow = AboutFragment.newInstance();
-                    break;
-                default:
-                    throw new RuntimeException("Unknown bottom bar item id");
+            itemId = item.getItemId();
+            if (itemId == R.id.prayers) {
+                toShow = CategoriesFragment.newInstance();
+            } else if (itemId == R.id.bookmarks) {
+                toShow = BookmarksFragment.newInstance();
+            } else if (itemId == R.id.recents) {
+                toShow = RecentsFragment.newInstance();
+            } else if (itemId == R.id.languages) {
+                toShow = LanguagesFragment.newInstance();
+            } else if (itemId == R.id.about) {
+                toShow = AboutFragment.newInstance();
+            } else {
+                throw new RuntimeException("Unknown bottom bar item id");
             }
 
             FragmentTransaction ft = fm.beginTransaction();
@@ -116,19 +106,9 @@ public class MainActivity extends AppCompatActivity {
     private final BottomNavigationView.OnNavigationItemReselectedListener reselectListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
         @Override
         public void onNavigationItemReselected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.prayers:
-                    FragmentManager fm = getSupportFragmentManager();
-                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    break;
-                case R.id.bookmarks:
-                    break;
-                case R.id.recents:
-                    break;
-                case R.id.languages:
-                    break;
-                case R.id.about:
-                    break;
+            if (item.getItemId() == R.id.prayers) {
+                FragmentManager fm = getSupportFragmentManager();
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
     };

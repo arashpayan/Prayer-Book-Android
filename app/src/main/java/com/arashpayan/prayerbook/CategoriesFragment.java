@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.arashpayan.util.DividerItemDecoration;
-import com.arashpayan.util.L;
 
 /**
  *
@@ -151,7 +150,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
     public void onCategorySelected(@NonNull String category, @NonNull Language language) {
         CategoryPrayersFragment fragment = CategoryPrayersFragment.newInstance(category, language);
 
-        FragmentTransaction ft = requireFragmentManager().beginTransaction();
+        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
         ft.replace(R.id.main_container, fragment, CategoryPrayersFragment.TAG);
         ft.addToBackStack(null);
         ft.commit();
@@ -159,7 +158,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
 
     private void onSearch() {
         SearchFragment sf = new SearchFragment();
-        FragmentTransaction ft = requireFragmentManager().beginTransaction();
+        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         ft.replace(R.id.main_container, sf, SearchFragment.SEARCHPRAYERS_TAG);
         ft.addToBackStack(null);

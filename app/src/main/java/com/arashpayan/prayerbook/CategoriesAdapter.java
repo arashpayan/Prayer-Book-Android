@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by arash on 7/5/15.
  */
-class CategoriesAdapter extends RecyclerView.Adapter {
+class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @NonNull private final ArrayList<CategoryItem> items = new ArrayList<>();
     @NonNull private final OnCategorySelectedListener listener;

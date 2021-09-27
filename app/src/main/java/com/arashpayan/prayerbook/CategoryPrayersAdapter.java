@@ -1,5 +1,6 @@
 package com.arashpayan.prayerbook;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,9 +82,11 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @UiThread
     void setPrayerIds(@NonNull ArrayList<Long> prayerIds) {
         this.prayerIds = prayerIds;
+        //notifyItemRangeInserted() doesn't work - no idea why
         notifyDataSetChanged();
     }
 }

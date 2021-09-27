@@ -121,7 +121,7 @@ public class CategoryPrayersFragment extends Fragment implements OnPrayerSelecte
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    requireFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
             });
         }
