@@ -32,7 +32,7 @@ class SearchAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolder> {
                     return;
                 }
 
-                mListener.onPrayerSelected(getItemId(holder.getAdapterPosition()));
+                mListener.onPrayerSelected(getItemId(holder.getAbsoluteAdapterPosition()));
             }
         });
 

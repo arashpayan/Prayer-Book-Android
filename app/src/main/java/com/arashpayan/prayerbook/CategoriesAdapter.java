@@ -51,7 +51,7 @@ class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos = holder.getAdapterPosition();
+                    int pos = holder.getAbsoluteAdapterPosition();
                     CategoryItem item = items.get(pos);
                     listener.onCategorySelected(item.text, item.language);
                 }
@@ -77,6 +77,13 @@ class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             App.runInBackground(new WorkerRunnable() {
                 @Override
                 public void run() {
+                    // This only executes for actual category view holders, but because the headers
+                    // are also represented by CategoryItems, the 'text' property can be null.
+                    // To keep the linter quiet, we'll check that the 'text' property is not null.
+                    // When we eventually switch to Jetpack Compose, this problem should disappear.
+                    if (item.text == null) {
+                        return;
+                    }
                     int count = PrayersDB.get().getPrayerCountForCategory(item.text, item.language.code);
                     App.runOnUiThread(new UiRunnable() {
                         @Override

@@ -1,15 +1,17 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildFeatures.dataBinding = true
 
     defaultConfig {
         applicationId 'com.arashpayan.prayerbook'
-        minSdkVersion 19
-        targetSdkVersion 30
-        versionCode 21
-        versionName '2.1.2'
+        minSdkVersion 23
+        targetSdkVersion 32
+        versionCode 22
+        versionName '2.2.0'
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,27 +26,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-        options.deprecation = true
-    }
-}
-
-repositories {
-    mavenCentral()
+    namespace 'com.arashpayan.prayerbook'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.samskivert:jmustache:1.14'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test:rules:1.4.0'
 }

@@ -46,7 +46,7 @@ class CategoryPrayersAdapter extends RecyclerView.Adapter<PrayerSummaryViewHolde
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int pos = holder.getAdapterPosition();
+                int pos = holder.getAbsoluteAdapterPosition();
                 listener.onPrayerSelected(getItemId(pos));
             }
         });

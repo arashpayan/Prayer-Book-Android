@@ -1,11 +1,9 @@
 package com.arashpayan.prayerbook;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
@@ -33,7 +31,6 @@ import com.arashpayan.prayerbook.database.PrayersDB;
 import com.arashpayan.prayerbook.database.UserDB;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
-import com.arashpayan.util.L;
 import com.samskivert.mustache.Mustache;
 
 import java.io.InputStream;
@@ -270,7 +267,6 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         return prayer.searchText + "\n\n" + prayer.author;
     }
 
-    @TargetApi(19)
     private void printPrayer() {
         if (mWebView == null) {
             // shouldn't happen, but just in case
@@ -281,12 +277,7 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         if (manager == null) {
             throw new RuntimeException("Where's the print manager?");
         }
-        PrintDocumentAdapter adapter;
-        if (Build.VERSION.SDK_INT >= 21) {
-            adapter = mWebView.createPrintDocumentAdapter("Prayer");
-        } else {
-            adapter = mWebView.createPrintDocumentAdapter();
-        }
+        PrintDocumentAdapter adapter = mWebView.createPrintDocumentAdapter("Prayer");
         
         String jobName = getString(R.string.app_name) + " " + getString(R.string.document);
         manager.print(jobName, adapter, new PrintAttributes.Builder().build());

@@ -32,7 +32,7 @@ public class App extends Application {
     private ExecutorService mExecutor;
 
     private static volatile App app;
-    private static final int LatestDatabaseVersion = 22;
+    private static final int LatestDatabaseVersion = 23;
 
     @Override
     public void onCreate() {
@@ -45,7 +45,6 @@ public class App extends Application {
 
         Prefs.init(this);
         UserDB.set(new UserDB(this, false));
-        UserDB.get().addBookmark(44);
         copyDatabaseFile();
 
         // Load as much of the webview libraries as much as possible in the background
