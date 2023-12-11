@@ -102,7 +102,7 @@ public class RecentsFragment extends Fragment implements UserDB.Listener {
     //region Business logic
 
     private void clearRecentsAction() {
-        AlertDialog.Builder bldr = new AlertDialog.Builder(requireContext(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        AlertDialog.Builder bldr = new AlertDialog.Builder(requireContext(), com.google.android.material.R.style.Theme_MaterialComponents_Light_Dialog_Alert);
         bldr.setMessage(getString(R.string.clear_recents_interrogative));
         bldr.setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
             @Override
