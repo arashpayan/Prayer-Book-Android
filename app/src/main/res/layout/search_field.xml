@@ -9,7 +9,6 @@
         android:id="@+id/search_field"
         android:lines="1"
         android:hint="@string/search_ellipsis"
-        android:background="@null"
         tools:background="@color/prayer_book_primary"
         android:textColor="@android:color/white"
         android:textColorHint="#FFDDDDDD"

@@ -51,7 +51,7 @@ public class PrayerActivity extends AppCompatActivity {
             setTaskDescription(new ActivityManager.TaskDescription(appName, appIcon, headerColor));
         }
 
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
         if (state == null) {
             Bundle extras = getIntent().getExtras();

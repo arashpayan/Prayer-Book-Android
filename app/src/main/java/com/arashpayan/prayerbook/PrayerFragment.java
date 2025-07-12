@@ -2,6 +2,7 @@ package com.arashpayan.prayerbook;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,10 +21,9 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 
 import com.arashpayan.prayerbook.database.Prayer;
@@ -31,6 +31,7 @@ import com.arashpayan.prayerbook.database.PrayersDB;
 import com.arashpayan.prayerbook.database.UserDB;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.samskivert.mustache.Mustache;
 
 import java.io.InputStream;
@@ -42,7 +43,7 @@ import java.util.Locale;
  *
  * @author arash
  */
-public class PrayerFragment extends Fragment implements UserDB.Listener {
+public class PrayerFragment extends Fragment implements UserDB.Listener, MenuProvider {
     
     private WebView mWebView = null;
     private Prayer prayer;
@@ -88,8 +89,6 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
             }
         });
         mScale = Prefs.get().getPrayerTextScalar();
-        
-        setHasOptionsMenu(true);
     }
     
     @Override
@@ -125,67 +124,8 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.prayer, menu);
-
-        // set the current value for classic theme
-        menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get().useClassicTheme());
-
-        bookmarkMenuItem = menu.findItem(R.id.action_toggle_bookmark);
-        updateBookmarkIconColor();
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Prefs prefs = Prefs.get();
-        // .75 to 1.60
-        int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            requireActivity().onBackPressed();
-        } else if (itemId == R.id.action_increase_text_size) {
-            if (mScale < 1.6f) {
-                mScale += 0.05f;
-                prefs.setPrayerTextScalar(mScale);
-                reloadPrayer();
-            }
-        } else if (itemId == R.id.action_decrease_text_size) {
-            if (mScale > .75) {
-                mScale -= 0.05f;
-                prefs.setPrayerTextScalar(mScale);
-                reloadPrayer();
-            }
-        } else if (itemId == R.id.action_classic_theme) {
-            boolean useClassic = !item.isChecked(); // toggle the value
-            item.setChecked(useClassic);
-            prefs.setUseClassicTheme(useClassic);
-            reloadPrayer();
-        } else if (itemId == R.id.action_share_prayer) {
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
-        } else if (itemId == R.id.action_print_prayer) {
-            printPrayer();
-        } else if (itemId == R.id.action_toggle_bookmark) {
-            toggleBookmark();
-        } else {
-            // unexpected id
-            return false;
-        }
-        
-        return true;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-
-        ActionBar ab = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle(null);
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setHomeButtonEnabled(true);
-        }
 
         UserDB.get().addListener(this);
         // check if this prayer is bookmarked, and if so, change the icon color
@@ -202,6 +142,18 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
                 });
             }
         });
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        MaterialToolbar toolbar = requireActivity().findViewById(R.id.prayer_toolbar);
+        toolbar.setTitle("");
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
+        toolbar.addMenuProvider(this);
+        // add a listener so we can go back when tapped
+        toolbar.setNavigationOnClickListener(view1 -> requireActivity().getOnBackPressedDispatcher().onBackPressed());
     }
 
     private String getPrayerHTML() {
@@ -223,21 +175,36 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         args.put("versalHeight", String.format(Locale.US, "%f", versalHeight));
         boolean useClassicTheme = Prefs.get().useClassicTheme();
         String bgColor;
+        String textColor;
+        String commentColor;
         String versalAndAuthorColor;
         String font;
         String italicOrNothing;
         if (useClassicTheme) {
             bgColor = "#D6D2C9";
+            textColor = "#333333";
+            commentColor = "#444433";
             versalAndAuthorColor = "#992222";
             font = "Georgia";
             italicOrNothing = "italic";
         } else {
-            bgColor = "#ffffff";
+            boolean isDark = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+            if (isDark) {
+                bgColor = "#000000";
+                textColor = "#cccccc";
+                commentColor = "#ddddcc";
+            } else {
+                bgColor = "#ffffff";
+                textColor = "#333333";
+                commentColor = "#444433";
+            }
             versalAndAuthorColor = "#33b5e5";
             font = "sans-serif";
             italicOrNothing = "";
         }
         args.put("backgroundColor", bgColor);
+        args.put("textColor", textColor);
+        args.put("commentColor", commentColor);
         args.put("versalAndAuthorColor", versalAndAuthorColor);
         args.put("font", font);
         args.put("italicOrNothing", italicOrNothing);
@@ -295,7 +262,9 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
             color = Color.WHITE;
         }
         Drawable icon = bookmarkMenuItem.getIcon();
-        DrawableCompat.setTint(icon, color);
+        if (icon != null) { // it should never be null
+            DrawableCompat.setTint(icon, color);
+        }
     }
 
     @UiThread
@@ -332,6 +301,58 @@ public class PrayerFragment extends Fragment implements UserDB.Listener {
         }
         bookmarked = false;
         updateBookmarkIconColor();
+    }
+
+    //region MenuProvider
+
+    @Override
+    public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.prayer, menu);
+
+        // set the current value for classic theme
+        menu.findItem(R.id.action_classic_theme).setChecked(Prefs.get().useClassicTheme());
+
+        bookmarkMenuItem = menu.findItem(R.id.action_toggle_bookmark);
+        updateBookmarkIconColor();
+    }
+
+    @Override
+    public boolean onMenuItemSelected(@NonNull MenuItem item) {
+        Prefs prefs = Prefs.get();
+        // .75 to 1.60
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_increase_text_size) {
+            if (mScale < 1.6f) {
+                mScale += 0.05f;
+                prefs.setPrayerTextScalar(mScale);
+                reloadPrayer();
+            }
+        } else if (itemId == R.id.action_decrease_text_size) {
+            if (mScale > .75) {
+                mScale -= 0.05f;
+                prefs.setPrayerTextScalar(mScale);
+                reloadPrayer();
+            }
+        } else if (itemId == R.id.action_classic_theme) {
+            boolean useClassic = !item.isChecked(); // toggle the value
+            item.setChecked(useClassic);
+            prefs.setUseClassicTheme(useClassic);
+            reloadPrayer();
+        } else if (itemId == R.id.action_share_prayer) {
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        } else if (itemId == R.id.action_print_prayer) {
+            printPrayer();
+        } else if (itemId == R.id.action_toggle_bookmark) {
+            toggleBookmark();
+        } else {
+            // unexpected id
+            return false;
+        }
+
+        return true;
     }
 
     //endregion

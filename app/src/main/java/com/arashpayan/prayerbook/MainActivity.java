@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main_activity);
         BottomNavigationView bar = findViewById(R.id.bottom_bar);
-        bar.setOnNavigationItemSelectedListener(barItemListener);
-        bar.setOnNavigationItemReselectedListener(reselectListener);
+        bar.setOnItemSelectedListener(barItemListener);
+        bar.setOnItemReselectedListener(reselectListener);
 
         String appName = getString(R.string.app_name);
         int headerColor = ContextCompat.getColor(this, R.color.task_header);
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private final BottomNavigationView.OnNavigationItemSelectedListener barItemListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private final BottomNavigationView.OnItemSelectedListener barItemListener = new BottomNavigationView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             FragmentManager fm = getSupportFragmentManager();
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private final BottomNavigationView.OnNavigationItemReselectedListener reselectListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
+    private final BottomNavigationView.OnItemReselectedListener reselectListener = new BottomNavigationView.OnItemReselectedListener() {
         @Override
         public void onNavigationItemReselected(@NonNull MenuItem item) {
             if (item.getItemId() == R.id.prayers) {

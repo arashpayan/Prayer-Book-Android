@@ -19,8 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="@color/secondary_text"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         tools:text="144 words"/>
     <TextView
         android:id="@+id/prayer_summary"
@@ -35,8 +34,7 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintVertical_chainStyle="packed"
         android:lines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/primary_text"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         android:ellipsize="end"
         tools:text="O Thou kind Lord!" />
     <TextView
@@ -50,8 +48,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/prayer_summary"
         app:layout_constraintHorizontal_bias="0"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="@color/secondary_text"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:ellipsize="end"
         tools:text="'Abdu'l-Bahá"/>
 

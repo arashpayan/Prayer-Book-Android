@@ -9,7 +9,7 @@
 
         #prayer p {
             margin: 0 0px .75em 0px;
-            color: #333333;
+            color: {{textColor}};
             font: normal {{fontWidth}}em/{{fontHeight}}em {{font}};
             clear: both;
             text-indent: 1em;
@@ -26,7 +26,7 @@
 
         #prayer p.commentcaps {
             font: normal {{commentSize}}em sans-serif;
-            color: #444433;
+            color: {{commentColor}};
             text-transform: uppercase;
             margin: 0 0px 20px 5px;
             text-indent: 0;
@@ -34,7 +34,7 @@
 
         #prayer p.comment {
             font: normal {{commentSize}}em sans-serif;
-            color: #444433;
+            color: {{commentColor}};
             margin: 0 0px .825em 1.5em;
             text-indent: 0;
         }
@@ -46,7 +46,7 @@
 
         #prayer p.commentnoindent {
             font: normal {{commentSize}}em sans-serif;
-            color: #444433;
+            color: {{commentColor}};
             margin: 0 0px 15px 5px;
             text-indent: 0;
         }

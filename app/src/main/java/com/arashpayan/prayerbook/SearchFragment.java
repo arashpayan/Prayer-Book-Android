@@ -44,7 +44,7 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = new RecyclerView(requireContext());
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(requireContext());
@@ -103,12 +103,14 @@ public class SearchFragment extends Fragment implements OnPrayerSelectedListener
         });
         // if there's no query saved, then show the keyboard
         if (mQuery == null) {
+            View edit = mSearchView.findViewById(R.id.search_field);
+            edit.requestFocus();
             InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm == null) {
                 // should never happen
                 return;
             }
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            imm.showSoftInput(edit, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
