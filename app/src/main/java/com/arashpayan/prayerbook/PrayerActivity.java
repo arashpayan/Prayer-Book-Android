@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.arashpayan.prayerbook.database.UserDB;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
