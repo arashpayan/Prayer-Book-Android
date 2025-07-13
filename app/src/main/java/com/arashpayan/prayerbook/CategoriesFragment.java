@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,12 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.arashpayan.prayerbook.thread.UiRunnable;
 import com.arashpayan.prayerbook.thread.WorkerRunnable;
 import com.arashpayan.util.DividerItemDecoration;
+import com.google.android.material.appbar.MaterialToolbar;
 
 /**
  *
  * @author arash
  */
-public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Toolbar.OnMenuItemClickListener, Prefs.Listener {
+public class CategoriesFragment extends Fragment implements CategoriesAdapter.OnCategorySelectedListener, Prefs.Listener, MenuProvider {
     
     static final String TAG = "prayers";
 
@@ -61,13 +63,7 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
             }
         });
 
-        setHasOptionsMenu(true);
         Prefs.get().addListener(this);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.categories, menu);
     }
 
     @Override
@@ -76,6 +72,10 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
+
+        MaterialToolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+        toolbar.removeMenuProvider(this);
+        toolbar.addMenuProvider(this);
 
         return recyclerView;
     }
@@ -112,26 +112,13 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
         }
     }
 
-    public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.search_prayers) {
-            onSearch();
-            return true;
-        }
-
-        return false;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
 
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.categories);
-            toolbar.setOnMenuItemClickListener(this);
             toolbar.setTitle(R.string.app_name);
-            toolbar.setNavigationIcon(null);
         }
     }
 
@@ -186,4 +173,23 @@ public class CategoriesFragment extends Fragment implements CategoriesAdapter.On
             }
         });
     }
+
+    //region MenuProvider
+
+    @Override
+    public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.categories, menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.search_prayers) {
+            onSearch();
+            return true;
+        }
+
+        return false;
+    }
+
+    //endregion
 }

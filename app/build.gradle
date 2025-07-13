@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     buildFeatures.dataBinding = true
 
     defaultConfig {
         applicationId 'com.arashpayan.prayerbook'
         minSdkVersion 23
-        targetSdk 35
+        targetSdk 36
         versionCode 24
         versionName '2.3.0'
         vectorDrawables.useSupportLibrary = true

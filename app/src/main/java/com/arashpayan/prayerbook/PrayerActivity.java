@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class PrayerActivity extends AppCompatActivity {
 
@@ -40,7 +39,6 @@ public class PrayerActivity extends AppCompatActivity {
         super.onCreate(state);
 
         setContentView(R.layout.prayer_activity);
-        Toolbar toolbar = findViewById(R.id.prayer_toolbar);
 
         String appName = getString(R.string.app_name);
         int headerColor = ContextCompat.getColor(this, R.color.task_header);
@@ -50,8 +48,6 @@ public class PrayerActivity extends AppCompatActivity {
             Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             setTaskDescription(new ActivityManager.TaskDescription(appName, appIcon, headerColor));
         }
-
-//        setSupportActionBar(toolbar);
 
         if (state == null) {
             Bundle extras = getIntent().getExtras();

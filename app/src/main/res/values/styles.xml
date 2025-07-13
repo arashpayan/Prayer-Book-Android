@@ -15,7 +15,5 @@
 
     <style name="OverflowButtonStyle" parent="AppTheme">
         <item name="android:src">@drawable/ic_more_vert</item>
-<!--        <item name="android:padding">24dp</item>-->
-<!--        <item name="android:layout_marginEnd">16dp</item>-->
     </style>
 </resources>
