@@ -21,6 +21,10 @@
         <activity
             android:name=".PrayerActivity"
             android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/about"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

@@ -1,0 +1,65 @@
+<!-- res/layout/dialog_speech_settings.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"        android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/speak_on_open_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/speak_prayer_on_open"
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+    <!-- Speech Rate Slider -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/speech_rate"
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+    <TextView
+        android:id="@+id/rate_value_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="1.0x"
+        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/rate_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.5"
+        android:valueTo="2.0"
+        android:stepSize="0.1"
+        android:value="1.0" />
+
+    <!-- Speech Pitch Slider -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/speech_pitch"
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+    <TextView
+        android:id="@+id/pitch_value_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="1.0x"
+        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/pitch_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.5"
+        android:valueTo="2.0"
+        android:stepSize="0.1"
+        android:value="1.0" />
+
+</LinearLayout>

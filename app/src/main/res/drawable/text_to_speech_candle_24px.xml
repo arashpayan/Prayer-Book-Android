@@ -1,0 +1,11 @@
+<!-- Placeholder for text_to_speech_candle_24px.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="?attr/colorControlNormal">
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M480,880q-83,0 -156,-31.5t-127,-86.5q-54,-55 -85.5,-127.5t-31.5,-156.5q0,-83 31.5,-156t86.5,-127q55,-54 127.5,-85.5t156.5,-31.5q83,0 156,31.5t127,86.5q54,55 85.5,127.5t31.5,156.5q0,-83 -31.5,-156t-86.5,-127q-55,-54 -127.5,-85.5t-156.5,-31.5q-142,0 -241,99t-99,241q0,142 99,241t241,99q142,0 241,-99t99,-241h-80q0,117 -81.5,198.5t-198.5,81.5q-117,0 -198.5,-81.5t-81.5,-198.5q0,-117 81.5,-198.5t198.5,-81.5q75,0 138.5,40t92.5,104h-231v80h320v-320h-80v223q-49,-78 -132,-121t-179,-43q-142,0 -241,99t-99,241q0,142 99,241t241,99z"/>
+</vector>

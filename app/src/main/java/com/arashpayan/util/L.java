@@ -1,15 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.arashpayan.util;
 
 import android.util.Log;
 
-/**
- *
- * @author arash
- */
+
 public class L {
     private static final String TAG = "PrayerBook";
     
@@ -18,7 +11,7 @@ public class L {
     }
     
     public static void d(String msg) {
-        Log.d(TAG, msg);
+        //Log.d(TAG, msg);
     }
     
     public static void w(String msg) {

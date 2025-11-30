@@ -1,10 +1,24 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21" // this version matches your Kotlin version
 }
+
 
 android {
     compileSdk 36
-    buildFeatures.dataBinding = true
+
+    buildFeatures {
+        compose true
+        dataBinding true
+    }
+
+    composeOptions {
+        // Find the correct version for your Kotlin plugin
+        // from the official Compose to Kotlin compatibility map.
+        kotlinCompilerExtensionVersion '1.5.15'
+    }
 
     defaultConfig {
         applicationId 'com.arashpayan.prayerbook'
@@ -24,17 +38,41 @@ android {
     }
 
     namespace 'com.arashpayan.prayerbook'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.samskivert:jmustache:1.14'
+    implementation 'com.samskivert:jmustache:1.16'
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.activity:activity-ktx:1.11.0'
+    implementation 'androidx.databinding:databinding-runtime:8.13.1'
+
+    // Compose Bill of Materials (BOM) - Manages versions for other Compose libraries
+    def composeBom = platform('androidx.compose:compose-bom:2025.10.01')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    // Compose UI, includes AndroidView
+    implementation 'androidx.compose.ui:ui'
+
+    // Compose Material 3 for Text, etc.
+    implementation 'androidx.compose.material3:material3'
+
+    // For @Preview annotation
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    // Integration with Activities
+    implementation 'androidx.activity:activity-compose:1.11.0'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test:rules:1.7.0'
 }

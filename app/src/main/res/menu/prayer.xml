@@ -2,6 +2,8 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
     <item
         android:id="@+id/action_toggle_bookmark"
         android:icon="@drawable/ic_bookmark_24dp"
@@ -21,6 +23,10 @@
         android:id="@+id/action_classic_theme"
         android:title="@string/classic_theme"
         android:checkable="true"/>
+    <item
+        android:id="@+id/action_speech_settings"
+        android:title="@string/speech_settings"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_share_prayer"
         android:title="@string/share"

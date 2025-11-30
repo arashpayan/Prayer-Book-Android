@@ -30,9 +30,91 @@
     <string name="clear">Clear</string>
     <string name="clear_recents_interrogative">Clear recents?</string>
     <string name="no">No</string>
+    <string name="speak">Speak Prayer</string>
+    <string name="speech_settings">Speech Settings</string>
+    <string name="speech_rate">Speech Rate</string>
+    <string name="speech_pitch">Speech Pitch</string>
+    <string name="speak_prayer_on_open">Speak prayer on open</string>
+
 
     <plurals name="number_of_words">
         <item quantity="one">%d word</item>
         <item quantity="other">%d words</item>
     </plurals>
+
+    <string name="about_html">
+    <![CDATA[
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title><strong>About - Prayer Book</strong></title>
+</head>
+
+<body>
+    <p><strong>Changes</strong></p>
+
+    <p>Version 2.3.0 (2025-07-12)</p>
+    <ul>
+        <li>Dark mode support</li>
+        <li>Switch to Material 3 UI components</li>
+        <li>Update dependencies and the Android SDK to v36</li>
+    </ul>
+
+    <p>Version 2.2.1 (2023-12-10)</p>
+    <ul>
+        <li>Updated dependencies and Android SDK version</li>
+    </ul>
+
+    <p>Version 2.2.0 (2022-05-31)</p>
+    <ul>
+        <li>Added all the newly translated English prayers from the past 2 years from <a href="https://www.bahai.org/library/authoritative-texts/prayers/">bahai.org</a>. All the new prayers and prayers that were previously under the Recently Added category have been moved to specific categories.</li>
+        <li>Added the Spanish version of the prayer for America</li>
+        <li>The app requires Android 6 (Marshmallow) or newer</li>
+    </ul>
+
+    <p>Version 2.1.0 (2020-09-05)</p>
+    <ul>
+        <li>Many more and updated Spanish translations from the Panel Internacional de Traducción de Literatura Bahá&apos;í al Español</li>
+        <li>Minor correction to a Persian prayer</li>
+    </ul>
+
+    <p>Version 2.0.0 (2018-02-01)</p>
+    <ul>
+        <li>Reverted back to original English compilation</li>
+        <li>Corrections to several English prayers</li>
+        <li>Added a new category named <em>Recently Added</em> that contains newly translated English prayers</li>
+        <li class="no-decor">
+            <ul>
+                <li>12 prayers from Bahá&apos;u&apos;lláh</li>
+                <li>19 prayers from &apos;Abdu&apos;l-Bahá</li>
+            </ul>
+        </li>
+        <li>Added a bottom bar allowing easier access to languages and other new features</li>
+        <li>Bookmarks!</li>
+        <li>Recently viewed prayers!</li>
+        <li>Updates and additions to localizations of the app&apos;s interface in many languages</li>
+    </ul>
+
+    <hr>
+
+    <p><strong>News</strong></p>
+
+    <p>For news and updates about Prayer Book, visit the website: <a href="https://www.prayerbook.app/">https://www.prayerbook.app</a>.</p>
+
+    <hr>
+
+    <p><strong>License</strong></p>
+
+    <p>All Bahá&apos;í sacred writings copyright Bahá&apos;í International Community, source: <a href="https://reference.bahai.org">reference.bahai.org</a></p>
+
+    <p>Created by <a href="https://arashpayan.com">Arash Payan</a>. This app is licensed under the GPLv3 or later. The source code is <a href="https://github.com/arashpayan/Prayer-Book-Android">available on GitHub</a>.</p>
+
+</body>
+
+</html>
+
+    ]]>
+        </string>
 </resources>
