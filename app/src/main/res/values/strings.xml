@@ -31,6 +31,15 @@
     <string name="clear_recents_interrogative">Clear recents?</string>
     <string name="no">No</string>
 
+
+    <string name="speak">Speak Prayer</string>
+    <string name="speech_settings">Speech Settings</string>
+    <string name="speech_rate">Speech Rate</string>
+    <string name="speech_pitch">Speech Pitch</string>
+    <string name="speech_voice">Voice</string>
+    <string name="speak_prayer_on_open">Speak prayer on open</string>
+
+
     <plurals name="number_of_words">
         <item quantity="one">%d word</item>
         <item quantity="other">%d words</item>

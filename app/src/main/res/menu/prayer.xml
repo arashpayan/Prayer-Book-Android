@@ -21,6 +21,12 @@
         android:id="@+id/action_classic_theme"
         android:title="@string/classic_theme"
         android:checkable="true"/>
+
+    <item
+        android:id="@+id/action_speech_settings"
+        android:title="@string/speech_settings"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_share_prayer"
         android:title="@string/share"

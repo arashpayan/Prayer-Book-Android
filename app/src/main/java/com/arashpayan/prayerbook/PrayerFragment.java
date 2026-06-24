@@ -39,6 +39,25 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Locale;
 
+
+//  ************************** new code ************************
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
+import android.util.Log;
+import android.view.Gravity;
+import android.widget.ImageButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.text.HtmlCompat;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+//  ************************** end new code ************************
+
+
+
+
 /**
  *
  * @author arash
@@ -54,6 +73,18 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
     
     private static final String PRAYER_ID_ARGUMENT = "PrayerId";
 
+    //  ************************** new code ************************
+    private TextToSpeech tts;
+    private boolean isTtsInitialized = false;
+    private boolean isSpeaking = false;
+    private boolean isPaused = false;
+    private int currentSentenceIndex = 0;
+    private List<String> bookSentences = Collections.emptyList();
+
+    private ImageButton playButton;
+
+    //  ************************** end new code ************************
+
     @NonNull
     static PrayerFragment newInstance(long prayerId) {
         PrayerFragment fragment = new PrayerFragment();
@@ -62,6 +93,193 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         fragment.setArguments(args);
         return fragment;
     }
+
+
+    //  ************************** new code ************************
+    private final UtteranceProgressListener utteranceListener = new UtteranceProgressListener() {
+        @Override
+        public void onStart(String utteranceId) {
+            App.runOnUiThread(new UiRunnable() {
+                @Override
+                public void run() {
+                    if (utteranceId != null && utteranceId.startsWith("BookSentence_")) {
+                        isSpeaking = true;
+                        isPaused = false;
+                        updatePlayButtonIcon();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onDone(String utteranceId) {
+            App.runOnUiThread(new UiRunnable() {
+                @Override
+                public void run() {
+                    if (utteranceId != null && utteranceId.startsWith("BookSentence_")) {
+                        if (isSpeaking && !isPaused) {
+                            currentSentenceIndex++;
+                            speakNextSentence();
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onError(String utteranceId) {
+            App.runOnUiThread(new UiRunnable() {
+                @Override
+                public void run() {
+                    if (utteranceId != null && utteranceId.startsWith("BookSentence_")) {
+                        stopSpeaking();
+                        Log.e("TTS_BookViewer", "Speech error for " + utteranceId);
+                    }
+                }
+            });
+        }
+    };
+
+    private void initializeTts() {
+        if (tts != null) {
+            return; // Already initialized
+        }
+
+        tts = new TextToSpeech(requireContext(), status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                isTtsInitialized = true;
+
+                String languageCode = Prefs.get().getLanguage();
+                Locale locale = new Locale(languageCode);
+                int result = tts.setLanguage(locale);
+
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    // Language not supported
+                }
+
+                tts.setOnUtteranceProgressListener(utteranceListener);
+
+                if (Prefs.get().getSpeakPrayerOnOpen()) {
+                    startSpeakingPrayer();
+                }
+
+            } else {
+                // TTS Initialization Failed
+            }
+        });
+    }
+
+    public void startSpeakingPrayer() {
+        if (!isTtsInitialized) {
+            Log.w("TTS_BookViewer", "TTS not ready.");
+            return;
+        }
+
+        if (isSpeaking && !isPaused) {
+            // Pause logic
+            if (tts != null) {
+                tts.stop();
+            }
+            isPaused = true;
+            updatePlayButtonIcon();
+        } else if (isPaused) {
+            // Resume logic
+            isPaused = false;
+            speakNextSentence();
+        } else {
+            // Play from start logic
+            if (prayer == null) {
+                Log.w("TTS_BookViewer", "Prayer not loaded.");
+                return;
+            }
+
+            if (tts != null) {
+                tts.setSpeechRate(Prefs.get().getSpeechRate());
+                tts.setPitch(Prefs.get().getSpeechPitch());
+                String voiceName = Prefs.get().getSpeechVoice();
+                if (voiceName != null) {
+                    try {
+                        for (Voice voice : tts.getVoices()) {
+                            if (voice.getName().equals(voiceName)) {
+                                tts.setVoice(voice);
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("TTS_BookViewer", "Error setting voice", e);
+                    }
+                }
+            }
+
+            String prayerText = prayer.text;
+            if (prayerText == null || prayerText.isEmpty()) {
+                return;
+            }
+
+            String plainTextPrayer = HtmlCompat.fromHtml(prayerText, HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
+            String fullPrayerText = plainTextPrayer + "\n\n - " + prayer.author;
+            bookSentences = new ArrayList<>();
+            String[] sentences = fullPrayerText.split("(?<=[.!?])\\s*");
+            for (String sentence : sentences) {
+                if (!sentence.trim().isEmpty()) {
+                    bookSentences.add(sentence);
+                }
+            }
+
+
+            if (bookSentences.isEmpty()) {
+                return;
+            }
+
+            currentSentenceIndex = 0;
+            speakNextSentence();
+        }
+    }
+
+    private void stopSpeaking() {
+        if (tts != null) {
+            tts.stop();
+        }
+        isSpeaking = false;
+        isPaused = false;
+        currentSentenceIndex = 0;
+        updatePlayButtonIcon();
+    }
+
+    @UiThread
+    private void updatePlayButtonIcon() {
+        if (playButton != null) {
+            if (isSpeaking && !isPaused) {
+                playButton.setImageResource(R.drawable.text_to_speech_cancel_24px);
+            } else {
+                playButton.setImageResource(R.drawable.text_to_speech_24px);
+            }
+        }
+    }
+
+    private void speakNextSentence() {
+        if (!isTtsInitialized || tts == null) {
+            isSpeaking = false;
+            return;
+        }
+
+        if (currentSentenceIndex < bookSentences.size()) {
+            String sentence = bookSentences.get(currentSentenceIndex);
+            String utteranceId = "BookSentence_" + currentSentenceIndex;
+            int result = tts.speak(sentence, TextToSpeech.QUEUE_ADD, null, utteranceId);
+            if (result == TextToSpeech.ERROR) {
+                isSpeaking = false; // Stop on error
+            }
+        } else {
+            // All sentences spoken
+            isSpeaking = false;
+            isPaused = false;
+            currentSentenceIndex = 0;
+            updatePlayButtonIcon();
+        }
+    }
+
+//  ************************** end new code ************************
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +315,10 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         
         mWebView = new WebView(requireContext());
         mWebView.getSettings().setSupportZoom(true);
-        mWebView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mWebView.setLayoutParams(
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
         mWebView.setKeepScreenOn(true);
         reloadPrayer();
 
@@ -111,10 +332,16 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         if (mWebView == null) {
             return;
         }
-        mWebView.loadDataWithBaseURL(null, getPrayerHTML(), "text/html", "UTF-8", null);
+        mWebView.loadDataWithBaseURL(null, getPrayerHTML(),"text/html", "UTF-8", null);
+
+        initializeTts();
+
     }
 
-    @Override
+
+
+    //********************* old onPause  ********************
+    /*@Override
     public void onPause() {
         super.onPause();
         
@@ -122,10 +349,42 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
 
         UserDB.get().removeListener(this);
     }
+    */
+    //********************* end old onPause  ********************
+
+    //  ************************** new code ************************
+
+    // new onPause
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopSpeaking();
+        if (getActivity() != null) {
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+        UserDB.get().removeListener(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (tts != null) {
+            tts.shutdown();
+        }
+        tts = null;
+        mWebView = null;
+        playButton = null;
+        bookmarkMenuItem = null;
+    }
+//  ************************** end new code ************************
 
     @Override
     public void onResume() {
         super.onResume();
+
+        //  ************************** new code ************************
+        updatePlayButtonIcon(); // Make sure icon is correct when fragment is shown
+        //  ************************** end new code ************************
 
         UserDB.get().addListener(this);
         // check if this prayer is bookmarked, and if so, change the icon color
@@ -144,6 +403,8 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         });
     }
 
+    // *************** old onViewCreated  ****************
+    /*
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -155,6 +416,42 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         // add a listener so we can go back when tapped
         toolbar.setNavigationOnClickListener(view1 -> requireActivity().getOnBackPressedDispatcher().onBackPressed());
     }
+    */
+    // *************** end old onViewCreated  ****************
+
+//  ************************** new code ************************
+
+    // new onViewCreated
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        MaterialToolbar toolbar = requireActivity().findViewById(R.id.prayer_toolbar);
+        toolbar.setTitle("");
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
+
+        playButton = new ImageButton(requireContext());
+        playButton.setImageResource(R.drawable.text_to_speech_24px);
+        playButton.setBackgroundResource(android.R.color.transparent);
+        playButton.setOnClickListener(v -> startSpeakingPrayer());
+
+        Toolbar.LayoutParams params = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.END;
+        int marginEnd = (int) (24 * getResources().getDisplayMetrics().density);
+        params.setMarginEnd(marginEnd);
+
+        toolbar.addView(playButton, params);
+
+        toolbar.setNavigationOnClickListener(v -> {
+            if (requireActivity() instanceof AppCompatActivity) {
+                ((AppCompatActivity) requireActivity()).getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
+
+        toolbar.addMenuProvider(this, getViewLifecycleOwner());
+    }
+//  ************************** end new code ************************
+
 
     private String getPrayerHTML() {
         float pFontWidth = 1.1f * mScale;
@@ -173,13 +470,16 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
         args.put("authorHeight", String.format(Locale.US, "%f", authorHeight));
         args.put("versalWidth", String.format(Locale.US, "%f", versalWidth));
         args.put("versalHeight", String.format(Locale.US, "%f", versalHeight));
+
         boolean useClassicTheme = Prefs.get().useClassicTheme();
+
         String bgColor;
         String textColor;
         String commentColor;
         String versalAndAuthorColor;
         String font;
         String italicOrNothing;
+
         if (useClassicTheme) {
             bgColor = "#D6D2C9";
             textColor = "#333333";
@@ -326,33 +626,62 @@ public class PrayerFragment extends Fragment implements UserDB.Listener, MenuPro
                 mScale += 0.05f;
                 prefs.setPrayerTextScalar(mScale);
                 reloadPrayer();
+
+                // old C programmer changed this
+                return true;
+
             }
         } else if (itemId == R.id.action_decrease_text_size) {
             if (mScale > .75) {
                 mScale -= 0.05f;
                 prefs.setPrayerTextScalar(mScale);
                 reloadPrayer();
+
+                // old C programmer changed this
+                return true;
+
             }
         } else if (itemId == R.id.action_classic_theme) {
             boolean useClassic = !item.isChecked(); // toggle the value
             item.setChecked(useClassic);
             prefs.setUseClassicTheme(useClassic);
             reloadPrayer();
+
+            // old C programmer changed this
+            return true;
+
         } else if (itemId == R.id.action_share_prayer) {
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
             sharingIntent.putExtra(Intent.EXTRA_TEXT, getPrayerText());
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+            // old C programmer changed this
+            return true;
+
         } else if (itemId == R.id.action_print_prayer) {
             printPrayer();
+
+            // old C programmer changed this
+            return true;
+
         } else if (itemId == R.id.action_toggle_bookmark) {
             toggleBookmark();
-        } else {
-            // unexpected id
-            return false;
+
+            // old C programmer changed this
+            return true;
         }
 
-        return true;
+        //  ************************** new code ************************
+        else if (itemId == R.id.action_speech_settings) {
+            SpeechSettingsDialogFragment.newInstance(prayer.language.code).show(getParentFragmentManager(), SpeechSettingsDialogFragment.TAG);
+            return true;
+        }
+        //  ************************** new code ************************
+
+        // old C programmer changed this
+        return false;
+
     }
 
     //endregion

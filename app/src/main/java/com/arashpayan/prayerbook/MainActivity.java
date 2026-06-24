@@ -17,6 +17,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+/*
+import com.google.android.material.navigation.NavigationBarView;
+
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -30,6 +34,114 @@ public class MainActivity extends AppCompatActivity {
 
         String appName = getString(R.string.app_name);
         int headerColor = ContextCompat.getColor(this, R.color.task_header);
+
+        if (Build.VERSION.SDK_INT > 27) {
+            setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, headerColor));
+        } else {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            setTaskDescription(new ActivityManager.TaskDescription(appName, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher, options), headerColor));
+        }
+
+        if (savedInstanceState == null) {
+            CategoriesFragment fragment = CategoriesFragment.newInstance();
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_container, fragment, CategoriesFragment.TAG)
+                    .setPrimaryNavigationFragment(fragment)
+                    .commit();
+        }
+    }
+
+    private final NavigationBarView.OnItemSelectedListener barItemListener =
+            item -> {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.about) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    AboutFragment aboutFragment = AboutFragment.newInstance();
+                    fm.beginTransaction()
+                            .replace(R.id.main_container, aboutFragment, AboutFragment.TAG)
+                            .addToBackStack(null)
+                            .commit();
+                    return true; // Event is handled
+                }
+
+                FragmentManager fm = getSupportFragmentManager();
+                fm.popBackStackImmediate();
+                Fragment toShow;
+                String tag = "";
+
+                if (itemId == R.id.prayers) {
+                    tag = CategoriesFragment.TAG;
+                } else if (itemId == R.id.bookmarks) {
+                    tag = BookmarksFragment.TAG;
+                } else if (itemId == R.id.recents) {
+                    tag = RecentsFragment.TAG;
+                } else if (itemId == R.id.languages) {
+                    tag = LanguagesFragment.TAG;
+                }
+
+                toShow = fm.findFragmentByTag(tag);
+                if (toShow != null) {
+                    L.i("showing " + tag);
+                    FragmentTransaction ft =
+                            fm.beginTransaction().attach(toShow).setPrimaryNavigationFragment(toShow);
+                    Fragment primaryNavFragment = fm.getPrimaryNavigationFragment();
+                    if (primaryNavFragment != null) {
+                        ft.detach(primaryNavFragment);
+                    }
+                    ft.commit();
+                    return true;
+                }
+
+                if (itemId == R.id.prayers) {
+                    toShow = CategoriesFragment.newInstance();
+                } else if (itemId == R.id.bookmarks) {
+                    toShow = BookmarksFragment.newInstance();
+                } else if (itemId == R.id.recents) {
+                    toShow = RecentsFragment.newInstance();
+                } else if (itemId == R.id.languages) {
+                    toShow = LanguagesFragment.newInstance();
+                } else {
+                    throw new RuntimeException("Unknown bottom bar item id");
+                }
+
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(R.id.main_container, toShow, tag);
+                ft.setPrimaryNavigationFragment(toShow);
+                Fragment primaryNavFragment = fm.getPrimaryNavigationFragment();
+                if (primaryNavFragment != null) {
+                    ft.detach(primaryNavFragment);
+                }
+                ft.commit();
+                return true;
+            };
+
+    private final NavigationBarView.OnItemReselectedListener reselectListener =
+            item -> {
+                if (item.getItemId() == R.id.prayers) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+            };
+}
+*/
+
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.main_activity);
+        BottomNavigationView bar = findViewById(R.id.bottom_bar);
+        bar.setOnItemSelectedListener(barItemListener);
+        bar.setOnItemReselectedListener(reselectListener);
+
+        String appName = getString(R.string.app_name);
+        int headerColor = ContextCompat.getColor(this, R.color.task_header);
+
         if (Build.VERSION.SDK_INT > 27) {
             setTaskDescription(new ActivityManager.TaskDescription(appName, R.mipmap.ic_launcher, headerColor));
         } else {
@@ -68,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             }
             toShow = fm.findFragmentByTag(tag);
             if (toShow != null) {
-                L.i("showing " + tag);
+                //L.i("showing " + tag);
                 FragmentTransaction ft = fm.beginTransaction().attach(toShow).setPrimaryNavigationFragment(toShow);
                 if (fm.getPrimaryNavigationFragment() != null) {
                     ft.detach(fm.getPrimaryNavigationFragment());

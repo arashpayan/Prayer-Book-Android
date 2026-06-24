@@ -37,7 +37,7 @@ public class RecentsFragment extends Fragment implements UserDB.Listener {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        L.i("Recents.onCreate");
+        //L.i("Recents.onCreate");
         super.onCreate(savedInstanceState);
 
         adapter = new RecentsAdapter(prayerSelectionListener);

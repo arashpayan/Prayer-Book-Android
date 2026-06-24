@@ -7,4 +7,12 @@
         android:orderInCategory="1"
         android:icon="@drawable/ic_search_24dp"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_speech_settings"
+        android:title="@string/speech_settings"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_settings_24dp"
+        app:showAsAction="ifRoom" />
+
 </menu>

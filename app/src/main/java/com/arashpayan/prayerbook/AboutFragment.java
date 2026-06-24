@@ -81,7 +81,7 @@ public class AboutFragment extends Fragment {
             String html = getStringFromInputStream(getResources().openRawResource(R.raw.about));
             binding.webview.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
         } catch (IOException ex) {
-            L.w("Unable to open 'about' html", ex);
+            //L.w("Unable to open 'about' html", ex);
         }
     }
 

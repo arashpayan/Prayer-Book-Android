@@ -11,6 +11,11 @@
         <item name="windowActionBarOverlay">true</item>
         <item name="android:actionMenuTextColor">#fff</item>
         <item name="android:actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
+        <item name="materialAlertDialogTheme">@style/AppDialogTheme</item>
+    </style>
+
+    <style name="AppDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/dialog_button_color</item>
     </style>
 
     <style name="OverflowButtonStyle" parent="AppTheme">

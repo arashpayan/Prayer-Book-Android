@@ -63,7 +63,7 @@ public class App extends Application {
         PrayersDB.databaseFile = databaseFile;
         if (dbVersion != LatestDatabaseVersion) {
             // then we need to copy over the latest database
-            L.i("database file: " + databaseFile.getAbsolutePath());
+            //L.i("database file: " + databaseFile.getAbsolutePath());
             try {
                 BufferedInputStream is = new BufferedInputStream(getAssets().open("pbdb.jet"), 8192);
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(databaseFile), 8192);
@@ -78,7 +78,7 @@ public class App extends Application {
                 Prefs.get().setDatabaseVersion(LatestDatabaseVersion);
                 filterBrokenPrayerIds(PrayersDB.get(), UserDB.get());
             } catch (IOException ex) {
-                L.w("Error writing prayer database", ex);
+                //L.w("Error writing prayer database", ex);
             }
         }
     }

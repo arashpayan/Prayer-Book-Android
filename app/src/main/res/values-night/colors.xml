@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="prayer_book_primary">#003d6b</color>
+    <color name="prayer_book_primary_dark">#001840</color>
+    <color name="dialog_button_color">#90caf9</color>
+
+    <color name="primary_text">#deffffff</color>
+    <color name="secondary_text">#8affffff</color>
+</resources>

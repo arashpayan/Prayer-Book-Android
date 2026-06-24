@@ -6,6 +6,7 @@
     <color name="prayer_book_primary_dark">#001840</color>
     <color name="prayer_book_accent">#ffc325</color>
     <color name="task_header">@color/prayer_book_primary</color>
+    <color name="dialog_button_color">@color/prayer_book_primary</color>
 
     <color name="primary_text">#de000000</color>
     <color name="secondary_text">#8a000000</color>

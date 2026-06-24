@@ -30,6 +30,7 @@ class LanguagesAdapter extends RecyclerView.Adapter<LanguagesFragment.LanguageVi
         holder.checkBox.setChecked(prefs.isLanguageEnabled(l));
     }
 
+    /* old onCreateViewHolder
     @NonNull
     @Override
     public LanguagesFragment.LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -56,4 +57,39 @@ class LanguagesAdapter extends RecyclerView.Adapter<LanguagesFragment.LanguageVi
         });
         return holder;
     }
+     */
+
+    @NonNull
+    @Override
+    public LanguagesFragment.LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.language_item, parent, false);
+        final LanguagesFragment.LanguageViewHolder holder = new LanguagesFragment.LanguageViewHolder(itemView);
+
+        View.OnClickListener clickListener = v -> {
+            int pos = holder.getAbsoluteAdapterPosition();
+            if (pos == RecyclerView.NO_POSITION) {
+                return;
+            }
+
+            Language selectedLanguage = languages[pos];
+
+            // Single-selection logic (radio button effect)
+            for (int i = 0; i < languages.length; i++) {
+                Language lang = languages[i];
+                boolean shouldBeEnabled = lang == selectedLanguage;
+                if (prefs.isLanguageEnabled(lang) != shouldBeEnabled) {
+                    prefs.setLanguageEnabled(lang, shouldBeEnabled);
+                    notifyItemChanged(i);
+                }
+            }
+        };
+
+        itemView.setOnClickListener(clickListener);
+        if (holder.checkBox != null) {
+            holder.checkBox.setOnClickListener(clickListener);
+        }
+
+        return holder;
+    }
+
 }

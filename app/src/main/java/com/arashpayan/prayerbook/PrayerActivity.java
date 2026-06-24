@@ -68,5 +68,4 @@ public class PrayerActivity extends AppCompatActivity {
             ft.commit();
         }
     }
-
 }

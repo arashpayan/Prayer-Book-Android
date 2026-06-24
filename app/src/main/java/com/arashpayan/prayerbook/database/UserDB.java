@@ -62,7 +62,7 @@ public class UserDB {
         try {
             db.execSQL(insertSQL);
         } catch (SQLException ex) {
-            L.w("Error adding bookmark", ex);
+            //L.w("Error adding bookmark", ex);
             return false;
         }
 
@@ -116,7 +116,7 @@ public class UserDB {
         try {
             db.execSQL(insertSql, new Object[]{"" + prayerId, "" + System.currentTimeMillis()});
         } catch (SQLException ex) {
-            L.w("Error updating prayer access time", ex);
+            //L.w("Error updating prayer access time", ex);
             return false;
         }
 
@@ -131,7 +131,7 @@ public class UserDB {
         try {
             db.delete(RECENTS_TABLE, null, null);
         } catch (SQLException ex) {
-            L.w("Error deleting recent records", ex);
+            //L.w("Error deleting recent records", ex);
         }
 
         notifyRecentsCleared();
@@ -170,7 +170,7 @@ public class UserDB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            L.i("onUpgrade - old: " + oldVersion + ", new: " + newVersion);
+            //L.i("onUpgrade - old: " + oldVersion + ", new: " + newVersion);
         }
     }
 
